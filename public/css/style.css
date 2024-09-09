@@ -1,0 +1,153 @@
+/* Resetting some default margins and paddings */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    height: 100%; /* Ensure body and html take full height */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Styling the navbar logo */
+.navbar-logo img {
+    max-width: 100px; /* Adjust logo size */
+    height: auto;
+}
+
+/* Button Styles */
+.btn {
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer; /* Makes the text uppercase */
+}
+
+/* About Us Button */
+.about-btn {
+    background-color: transparent;
+    color: #0089D0;
+    border: none;
+    transition: color 0.3s;
+}
+
+.about-btn:hover {
+    color: #00689D;
+}
+
+/* Login Button */
+.navbar .login-btn {
+    background-color: #00689D;
+    color: #fff;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+    background-color: #96dcff;
+}
+
+/* Main Content Styling */
+.main-content {
+    padding: 150px 10px;
+    background-color: transparent;
+}
+
+.sub-title {
+    font-size: 48px;
+    font-weight: 600;
+    color: #0089D0;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-weight: 400;
+    color: #707070;
+    margin-bottom: 30px;
+}
+
+/* Main Login Button Styling */
+.main-content .login-main-btn {
+    background-color: #00689D;
+    color: #fff;
+    padding: 10px 30px;
+    border-radius: 10px; /* Border-radius 25px */
+    transition: background-color 0.3s;
+}
+
+.login-main-btn:hover {
+    background-color: #96dcff;
+}
+
+/* Illustration Styling */
+.illustration-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.illustration {
+    position: fixed;
+    z-index: -1; /* Keep it behind other content */
+}
+
+.wp1 {
+    top: 10%;
+    right: 0;
+    width: 50%; /* Adjust the size */
+    z-index: 1;
+}
+
+.wp2 {
+    bottom: 0;
+    left: 0;
+    width: 20%; /* Adjust the size */
+    z-index: -1; /* Keep it behind other content */
+}
+
+.wp3 {
+    bottom: 0;
+    right: 0;
+    width: 20%; /* Adjust the size */
+    z-index: -1; /* Keep it behind other content */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar-logo img {
+        max-width: 80px; /* Adjust logo size for smaller screens */
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .sub-title {
+        font-size: 18px;
+    }
+
+    .description {
+        font-size: 14px;
+    }
+
+    .illustration {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .wp1 {
+        width: 40%; /* Adjust size for smaller screens */
+        top: 65%;
+        right: 150px;
+    }
+
+    .wp2 {
+        width: 40%; /* Adjust size for smaller screens */
+    }
+
+    .wp3 {
+        width: 40%; /* Adjust size for smaller screens */
+    }
+}
