@@ -185,6 +185,7 @@ body{
     margin-right: 8px;
 }
 
+
 .content{
   padding: 20px;
   display: flex;
@@ -283,7 +284,20 @@ body{
     margin-bottom: 20px;
 }
 
+
 .surat-section h3 {
+    font-size: 18px;
+    color: #00689D;
+    margin-bottom: 10px;
+}
+
+.suratmasuk-section {
+    margin-bottom: 20px;
+    margin-left: -120px;
+}
+
+
+.suratmasuk-section h3 {
     font-size: 18px;
     color: #00689D;
     margin-bottom: 10px;
@@ -324,6 +338,13 @@ table a:hover {
 }
 
 .surat-section .surat-card {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.suratmasuk-section .suratmasuk-card {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;

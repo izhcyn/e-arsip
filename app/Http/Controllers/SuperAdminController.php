@@ -3,25 +3,33 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\SuratMasuk;
 use App\Models\SuratKeluar;
+use App\Models\Indeks; // Pastikan model ini sudah ada
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Hash;
 
 class SuperAdminController extends Controller
 {
     // Metode untuk menampilkan dashboard
     public function index()
     {
-        $totalSuratMasuk = SuratMasuk::count();
-        $totalSuratKeluar = SuratKeluar::count();
+        $totalSuratMasuk = SuratMasuk::count();  // Gunakan 'SuratMasuk' (CamelCase)
+
+        // Menghitung jumlah surat keluar
+        $totalSuratKeluar = SuratKeluar::count();  // Contoh model lain jika ada
+
+        // Menghitung total indeks
         $totalIndeks = SuratMasuk::distinct('kode_indeks')->count();
+
+        // Menghitung total pengguna
         $totalUsers = User::count();
 
+        // Menghitung surat masuk dan keluar hari ini
         $today = Carbon::today();
-        $suratMasukHariIni = SuratMasuk::whereDate('tanggal_diterima', $today)->get();
-        $suratKeluarHariIni = SuratKeluar::whereDate('tanggal_keluar', $today)->get();
+        $suratMasukHariIni = SuratMasuk::whereDate('tanggal_diterima', $today)->count();
+        $suratKeluarHariIni = SuratKeluar::whereDate('tanggal_keluar', $today)->count();
 
         return view('super_admin.dashboard', [
             'totalSuratMasuk' => $totalSuratMasuk,
@@ -31,6 +39,11 @@ class SuperAdminController extends Controller
             'suratMasukHariIni' => $suratMasukHariIni,
             'suratKeluarHariIni' => $suratKeluarHariIni
         ]);
+
+        $suratMasuk = SuratMasuk::all();
+
+        // Mengirim data ke view
+        return view('super_admin.suratmasuk', compact('suratMasuk'));
     }
 
     // Metode untuk menampilkan daftar pengguna
@@ -49,42 +62,59 @@ class SuperAdminController extends Controller
     // Menyimpan data pengguna baru
     public function store(Request $request)
 {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users',
+        'username' => 'required|string|max:255|unique:users',
+        'password' => 'required|min:8',
+        'role' => 'required|in:superadmin,admin,user',
+    ]);
 
-        $request->validate([
-            'email' => 'required|email|unique:users',
-            'name' => 'required|string|max:255',
-            'password' => 'required|min:8',
-            'role' => 'required|in:superadmin,admin,user', // Pastikan role termasuk dalam opsi valid
-        ]);
+    // Simpan data user baru ke database
+    User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'username' => $request->username,
+        'password' => bcrypt($request->password), // Pastikan password di-hash
+        'role' => $request->role,
+    ]);
 
-
-        // Simpan data ke database dengan hashing password
-        User::create([
-            'email' => $request->email,
-            'name' => $request->name,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-
-        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan');
+    return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan');
 }
 
 
 
-    // Mengedit pengguna
-    public function edit($id)
-    {
-        $user = User::find($id);
-        return view('super_admin.edit_user', compact('user'));
-    }
 
-    // Mengupdate pengguna
-    public function update(Request $request, $id)
-    {
-        $user = User::find($id);
-        $user->update($request->all());
-        return redirect()->route('user.index')->with('success', 'Pengguna berhasil diperbarui');
-    }
+    // Mengedit pengguna
+   // Menampilkan form edit user
+public function edit($id)
+{
+    $user = User::findOrFail($id); // Ambil data user berdasarkan ID
+    return view('super_admin.edit_user', compact('user'));
+}
+
+// Menyimpan perubahan user
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,'.$id, // Pastikan email tetap unik kecuali untuk user ini
+        'username' => 'required|string|max:255|unique:users,username,'.$id,
+        'role' => 'required|in:superadmin,admin,user',
+    ]);
+
+    // Update data user
+    $user = User::findOrFail($id);
+    $user->update([
+        'name' => $request->name,
+        'email' => $request->email,
+        'username' => $request->username,
+        'role' => $request->role,
+    ]);
+
+    return redirect()->route('user.index')->with('success', 'User berhasil diperbarui');
+}
+
 
     // Menghapus pengguna
     public function destroy($id)

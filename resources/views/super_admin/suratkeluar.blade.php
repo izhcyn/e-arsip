@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>User Setting</title>
+    <title>Surat Masuk</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
@@ -66,7 +66,7 @@
                             <li><a href="#" class="active">Buat Surat</a></li>
                             <li><a href="#" class="active">Draft Surat</a></li>
                             <li><a href="/super_admin/suratmasuk" class="active">Surat Masuk</a></li>
-                            <li><a href="#" class="active">Surat Keluar</a></li>
+                            <li><a href="/super_admin/suratkeluar" class="active">Surat Keluar</a></li>
                         </ul>
                     </li>
                     <li><a href="#">
@@ -76,7 +76,7 @@
                         </a>
                         <ul class="accordion">
                             <li><a href="#" class="active">indeks</a></li>
-                            <li><a href="{{ route('user.index') }}" class="active">User</a></li>
+                            <li><a href="/super_admin/user" class="active">User</a></li>
                             <li><a href="#" class="active">Change Password</a></li>
                         </ul>
                     </li>
@@ -93,7 +93,7 @@
                     <i class="fas fa-bars"></i>
                 </div>
                 <div class="logo">
-                    <a href="#">USERS</a>
+                    <a href="#">Surat Keluar</a>
                 </div>
                 <div class="user_info">
                     <i class="fas fa-user-circle"></i>
@@ -102,16 +102,23 @@
             </div>
 
             <div class="container mt-5">
-                <div class="d-flex justify-content-between">
-                    <h1 class="heading-daftar-pengguna">Daftar Pengguna</h1>
-                </div>
-
                 <!-- Form toggle button -->
-                <button id="toggleForm" class="btn btn-secondary mt-3">Tambah User Baru</button>
+                <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Surat Keluar</button>
 
                 <!-- Form untuk tambah user yang bisa di-minimize -->
                 <div class="card mt-4 user-form" style="display: none;">
-                    <div class="card-header">Tambah User Baru</div>
+                    @if (session('success'))
+                            <div class="alert alert-success mt-3">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if (session('error'))
+                            <div class="alert alert-danger mt-3">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+                    <div class="card-header">Surat Keluar</div>
                     <div class="card-body">
                         <form action="{{ route('user.store') }}" method="POST">
                             @csrf
@@ -144,62 +151,72 @@
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </form>
 
-                        @if (session('success'))
-                            <div class="alert alert-success mt-3">
-                                {{ session('success') }}
-                            </div>
-                        @endif
 
-                        @if (session('error'))
-                            <div class="alert alert-danger mt-3">
-                                {{ session('error') }}
-                            </div>
-                        @endif
                     </div>
                 </div>
 
                 <!-- Tabel pengguna -->
-                <div class="card card-table mt-4">
-                    <table class="table">
-                        <thead class="thead-light">
+                <div class="suratmasuk-section">
+            <div class="suratmasuk-card">
+            <h3>Surat Keluar</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No. Surat</th>
+                        <th>Indeks Surat</th>
+                        <th>Asal Surat</th>
+                        <th>Perihal</th>
+                        <th>Penerima</th>
+                        <th>Tanggal Diterima</th>
+                        <th>Dokumen</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tbody>
+                        @if($suratKeluar->isEmpty())
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Aksi</th>
+                                <td colspan="8">Tidak ada surat keluar.</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($users as $user)
+                        @else
+                            @foreach($suratKeluar as $item)
                                 <tr>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->role }}</td>
+                                    <td>{{ $item->no_surat }}</td>
+                                    <td>{{ $item->kode_indeks }}</td>
+                                    <td>{{ $item->asal_surat }}</td>
+                                    <td>{{ $item->perihal }}</td>
+                                    <td>{{ $item->penerima }}</td>
+                                    <td>{{ $item->tanggal_diterima }}</td>
+                                    <td><a href="{{ $item->dokumen }}">Dokumen</a></td>
                                     <td>
-                                        <a href="{{ route('user.show', $user->id) }}" class="btn btn-info btn-sm">Lihat</a>
-                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                        <a href="{{ route('surat.show', $item->id) }}" class="btn btn-primary btn-sm" title="Lihat">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ route('surat.download', $item->id) }}" class="btn btn-info btn-sm" title="Download PDF">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+
+                                        @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
+                                        <a href="{{ route('surat.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        @endif
+
+                                        @if(auth()->user()->role == 'super_admin')
+                                        <form action="{{ route('surat.destroy', $item->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">Hapus</button>
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </form>
+                                        @endif
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="text-center">Tidak ada data pengguna.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="d-flex justify-content-center mt-3">
-                    {{ $users->links() }} <!-- Otomatis menghasilkan tautan pagination -->
-                </div>
-            </div>
+                            @endforeach
+                        @endif
+                    </tbody>
+            </table>
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

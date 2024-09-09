@@ -11,6 +11,10 @@ class SuratKeluar extends Model
 
     protected $table = 'surat_keluar';
 
+    protected $primaryKey = 'suratkeluar_id';
+
+    public $timestamps = true;
+
     protected $fillable = [
         'no_surat',
         'kode_indeks',

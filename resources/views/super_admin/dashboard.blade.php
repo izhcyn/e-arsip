@@ -57,10 +57,10 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="#" class="active">Buat Surat</a></li>
-                       <li><a href="#" class="active">Draft Surat</a></li>
-                       <li><a href="#" class="active">Surat Masuk</a></li>
-                       <li><a href="#" class="active">Surat Keluar</a></li>
+                       <li><a href="/super_admin/buatsurat" class="active">Buat Surat</a></li>
+                       <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
+                       <li><a href="/super_admin/suratmasuk" class="active">Surat Masuk</a></li>
+                       <li><a href="/super_admin/suratkeluar" class="active">Surat Keluar</a></li>
                     </ul>
                 </li>
                 <li><a href="#">
@@ -158,7 +158,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($suratMasukHariIni->isEmpty())
+                    @if($suratMasukHariIni == 0)
                     <tr>
                         <td colspan="8">Tidak ada surat masuk hari ini.</td>
                     </tr>
@@ -223,7 +223,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($suratKeluarHariIni->isEmpty())
+                    @if($suratKeluarHariIni == 0)
                     <tr>
                         <td colspan="8">Tidak ada surat keluar hari ini.</td>
                     </tr>

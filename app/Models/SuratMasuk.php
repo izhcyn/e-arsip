@@ -9,8 +9,16 @@ class SuratMasuk extends Model
 {
     use HasFactory;
 
+    // Menentukan nama tabel
     protected $table = 'surat_masuk';
 
+    // Menentukan primary key jika bukan 'id'
+    protected $primaryKey = 'suratmasuk_id';
+
+    // Jika timestamps sudah ada (created_at dan updated_at)
+    public $timestamps = true;
+
+    // Kolom-kolom yang bisa diisi
     protected $fillable = [
         'no_surat',
         'kode_indeks',
@@ -19,6 +27,6 @@ class SuratMasuk extends Model
         'penerima',
         'tanggal_diterima',
         'dokumen',
-        'visibility'
+        'visibility',
     ];
 }
