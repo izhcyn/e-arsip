@@ -30,14 +30,15 @@ class LoginController extends Controller
         if (Auth::attempt([$loginType => $request->email, 'password' => $request->password])) {
             // Login berhasil
             $user = Auth::user();
-            return $this->redirectUser($user);
+            return $this->redirectUser($user)->with('success', 'Login berhasil!'); // Flash message untuk login berhasil
         } else {
             // Login gagal
             return redirect()->back()->withErrors([
                 'email' => 'These credentials do not match our records.',
-            ]);
+            ])->withInput()->with('error', 'Login gagal. Periksa kembali kredensial Anda.'); // Flash message untuk login gagal
         }
     }
+
 
     // Redirect pengguna berdasarkan role
     protected function redirectUser($user)

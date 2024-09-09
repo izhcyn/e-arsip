@@ -127,7 +127,6 @@
                                 <label for="username">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
                             </div>
-
                             <div class="form-group">
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
@@ -136,7 +135,7 @@
                                 <label for="role">Role</label>
                                 <select class="form-control" id="role" name="role" required>
                                     <option value="">Pilih Role</option>
-                                    <option value="superadmin">Super_Admin</option>
+                                    <option value="super_admin">Super_Admin</option> <!-- Sesuaikan dengan enum -->
                                     <option value="admin">Admin</option>
                                     <option value="user">User</option>
                                 </select>
@@ -144,22 +143,29 @@
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </form>
 
-                        @if (session('success'))
-                            <div class="alert alert-success mt-3">
-                                {{ session('success') }}
-                            </div>
-                        @endif
 
-                        @if (session('error'))
-                            <div class="alert alert-danger mt-3">
-                                {{ session('error') }}
-                            </div>
-                        @endif
                     </div>
                 </div>
 
                 <!-- Tabel pengguna -->
                 <div class="card card-table mt-4">
+
+                    @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                     <table class="table">
                         <thead class="thead-light">
                             <tr>
@@ -175,15 +181,14 @@
                                 <tr>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->username }}</td>
                                     <td>{{ $user->role }}</td>
                                     <td>
-                                        <a href="{{ route('user.show', $user->id) }}" class="btn btn-info btn-sm">Lihat</a>
                                         <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" id="delete-form-{{ $user->id }}" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">Hapus</button>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $user->id }})">Hapus</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -202,6 +207,26 @@
             </div>
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+            function confirmDelete(userId) {
+                Swal.fire({
+                    title: "Apa kamu yakin?",
+                    text: "Data ini tidak dapat dikembalikan",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "##28a745",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, hapus ini!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Temukan form dengan ID yang sesuai dan submit
+                        document.getElementById("delete-form-" + userId).submit();
+                    }
+                });
+            }
+            </script>
+
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         </div>
     </div>

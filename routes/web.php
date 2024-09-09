@@ -28,9 +28,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('super_admin/user/{id}/edit', [SuperAdminController::class, 'edit'])->name('user.edit'); // Edit user
     Route::put('super_admin/user/{id}', [SuperAdminController::class, 'update'])->name('user.update'); // Update user
     Route::delete('super_admin/user/{id}', [SuperAdminController::class, 'destroy'])->name('user.destroy'); // Hapus user
-    Route::post('/user/store', [SuperAdminController::class, 'store'])->name('user.store');
-
-
 
     // Admin dan User Dashboard
     Route::get('admin/dashboard', [AdminController::class, 'index']);

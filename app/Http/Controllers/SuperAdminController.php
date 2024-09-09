@@ -48,27 +48,28 @@ class SuperAdminController extends Controller
 
     // Menyimpan data pengguna baru
     public function store(Request $request)
-{
-
+    {
+        // Validasi input
         $request->validate([
             'email' => 'required|email|unique:users',
             'name' => 'required|string|max:255',
+            'username' => 'required|string|unique:users', // Validasi untuk username
             'password' => 'required|min:8',
-            'role' => 'required|in:superadmin,admin,user', // Pastikan role termasuk dalam opsi valid
+            'role' => 'required|in:super_admin,admin,user',
         ]);
 
-
-        // Simpan data ke database dengan hashing password
-        User::create([
+        // Simpan data pengguna baru ke dalam database
+        $user = User::create([
             'email' => $request->email,
             'name' => $request->name,
+            'username' => $request->username, // Tambahkan username di sini
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
 
+        // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan');
-}
-
+    }
 
 
     // Mengedit pengguna
@@ -81,18 +82,51 @@ class SuperAdminController extends Controller
     // Mengupdate pengguna
     public function update(Request $request, $id)
     {
-        $user = User::find($id);
-        $user->update($request->all());
+        $user = User::findOrFail($id);
+
+        // Validasi input
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|unique:users,username,' . $user->id,
+            'password' => 'nullable|min:8', // Password boleh kosong jika tidak diubah
+            'role' => 'required|in:super_admin,admin,user',
+        ]);
+
+        // Update data pengguna
+        $user->email = $request->email;
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->role = $request->role;
+
+        // Jika ada input password, maka update password
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
         return redirect()->route('user.index')->with('success', 'Pengguna berhasil diperbarui');
     }
+
+
+
 
     // Menghapus pengguna
     public function destroy($id)
     {
         $user = User::find($id);
+
+        if (!$user) {
+            return redirect()->route('user.index')->with('error', 'Pengguna tidak ditemukan');
+        }
+
         $user->delete();
+
         return redirect()->route('user.index')->with('success', 'Pengguna berhasil dihapus');
     }
+
+
 
     // Menampilkan detail pengguna
     public function show($id)

@@ -16,6 +16,20 @@
             <h1>E-ARSIP</h1>
         </div>
         <div class="login-card">
+            <!-- Tampilkan pesan sukses -->
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            <!-- Tampilkan pesan error -->
+            @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endif
+
             <form action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="form-group">
