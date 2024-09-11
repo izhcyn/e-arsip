@@ -63,24 +63,23 @@
                         <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                         </a>
                         <ul class="accordion">
-                            <li><a href="#" class="active">Buat Surat</a></li>
-                            <li><a href="#" class="active">Draft Surat</a></li>
+                            <li><a href="/super_admin/buatsurat" class="active">Buat Surat</a></li>
+                            <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
                             <li><a href="/super_admin/suratmasuk" class="active">Surat Masuk</a></li>
                             <li><a href="/super_admin/suratkeluar" class="active">Surat Keluar</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#">
-                        <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
-                        <div class="title">PENGATURAN</div>
-                        <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                        </a>
-                        <ul class="accordion">
-                            <li><a href="#" class="active">indeks</a></li>
-                            <li><a href="/super_admin/user" class="active">User</a></li>
+                         </ul>
+                     </li>
+                     <li><a href="#">
+                         <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
+                         <div class="title">PENGATURAN</div>
+                         <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                         </a>
+                       <ul class="accordion">
+                            <li><a href="/super_admin/indeks" class="active">indeks</a></li>
+                            <li><a href="/super_admin/templatesurat" class="active">Template Surat</a></li>
+                            <li><a href="{{ route('user.index') }}" class="active">User</a></li>
                             <li><a href="#" class="active">Change Password</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                         </ul>
                 <div class="logout_btn">
                     <a href="/">Logout</a>
                 </div>

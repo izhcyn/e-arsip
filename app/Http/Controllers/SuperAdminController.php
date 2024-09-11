@@ -1,36 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\SuratMasuk;
 use App\Models\SuratKeluar;
-use App\Models\Indeks; // Pastikan model ini sudah ada
 use App\Models\User;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Hash;
 class SuperAdminController extends Controller
 {
     // Metode untuk menampilkan dashboard
     public function index()
     {
-        $totalSuratMasuk = SuratMasuk::count();  // Gunakan 'SuratMasuk' (CamelCase)
-
-        // Menghitung jumlah surat keluar
-        $totalSuratKeluar = SuratKeluar::count();  // Contoh model lain jika ada
-
-        // Menghitung total indeks
+        $totalSuratMasuk = SuratMasuk::count();
+        $totalSuratKeluar = SuratKeluar::count();
         $totalIndeks = SuratMasuk::distinct('kode_indeks')->count();
-
-        // Menghitung total pengguna
         $totalUsers = User::count();
-
-        // Menghitung surat masuk dan keluar hari ini
         $today = Carbon::today();
-        $suratMasukHariIni = SuratMasuk::whereDate('tanggal_diterima', $today)->count();
-        $suratKeluarHariIni = SuratKeluar::whereDate('tanggal_keluar', $today)->count();
-
+        $suratMasukHariIni = SuratMasuk::whereDate('tanggal_diterima', $today)->get();
+        $suratKeluarHariIni = SuratKeluar::whereDate('tanggal_keluar', $today)->get();
         return view('super_admin.dashboard', [
             'totalSuratMasuk' => $totalSuratMasuk,
             'totalSuratKeluar' => $totalSuratKeluar,
@@ -39,20 +27,13 @@ class SuperAdminController extends Controller
             'suratMasukHariIni' => $suratMasukHariIni,
             'suratKeluarHariIni' => $suratKeluarHariIni
         ]);
-
-        $suratMasuk = SuratMasuk::all();
-
-        // Mengirim data ke view
-        return view('super_admin.suratmasuk', compact('suratMasuk'));
     }
-
     // Metode untuk menampilkan daftar pengguna
     public function showUsers()
     {
         $users = User::paginate(5);
         return view('super_admin.users', compact('users'));
     }
-
     // Metode untuk membuat pengguna baru
     public function create()
     {
@@ -62,67 +43,98 @@ class SuperAdminController extends Controller
     // Menyimpan data pengguna baru
     public function store(Request $request)
 {
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users',
-        'username' => 'required|string|max:255|unique:users',
-        'password' => 'required|min:8',
-        'role' => 'required|in:superadmin,admin,user',
-    ]);
 
-    // Simpan data user baru ke database
-    User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'username' => $request->username,
-        'password' => bcrypt($request->password), // Pastikan password di-hash
-        'role' => $request->role,
-    ]);
+    {
+        // Validasi input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,',
+            'username' => 'required|string|unique:users,username,',
+            'password' => 'required|min:8',
+            'role' => 'required|in:super_admin,admin,user',
 
-    return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan');
-}
+        ]);
+
+
+
+        // Simpan data pengguna baru ke dalam database
+        $user = User::create([
+            'email' => $request->email,
+            'name' => $request->name,
+            'username' => $request->username, // Tambahkan username di sini
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
+
+        // Redirect ke halaman index dengan pesan sukses
+        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan');
+}}
 
 
 
 
     // Mengedit pengguna
-   // Menampilkan form edit user
-public function edit($id)
-{
-    $user = User::findOrFail($id); // Ambil data user berdasarkan ID
-    return view('super_admin.edit_user', compact('user'));
-}
+    // Menampilkan form untuk mengedit pengguna
+    public function edit($id)
+    {
+        $user = User::find($id); // Temukan pengguna berdasarkan ID
 
-// Menyimpan perubahan user
-public function update(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,'.$id, // Pastikan email tetap unik kecuali untuk user ini
-        'username' => 'required|string|max:255|unique:users,username,'.$id,
-        'role' => 'required|in:superadmin,admin,user',
-    ]);
+        if (!$user) {
+            return redirect()->route('user.index')->with('error', 'Pengguna tidak ditemukan');
+        }
 
-    // Update data user
-    $user = User::findOrFail($id);
-    $user->update([
-        'name' => $request->name,
-        'email' => $request->email,
-        'username' => $request->username,
-        'role' => $request->role,
-    ]);
+        return view('super_admin.edit_user', compact('user')); // Tampilkan form edit dengan data pengguna
+    }
 
-    return redirect()->route('user.index')->with('success', 'User berhasil diperbarui');
-}
+    // Mengupdate pengguna
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+
+        // Validasi input
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|unique:users,username,' . $user->id,
+            'password' => 'nullable|min:8', // Password boleh kosong jika tidak diubah
+            'role' => 'required|in:super_admin,admin,user',
+        ]);
+
+        // Update data pengguna
+        $user->email = $request->email;
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->role = $request->role;
+
+        // Jika ada input password, maka update password
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('user.index')->with('success', 'Pengguna berhasil diperbarui');
+    }
+
+
 
 
     // Menghapus pengguna
     public function destroy($id)
     {
         $user = User::find($id);
+
+        if (!$user) {
+            return redirect()->route('user.index')->with('error', 'Pengguna tidak ditemukan');
+        }
+
         $user->delete();
+
         return redirect()->route('user.index')->with('success', 'Pengguna berhasil dihapus');
     }
+
+
 
     // Menampilkan detail pengguna
     public function show($id)

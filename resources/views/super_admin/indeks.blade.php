@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>User Setting</title>
+    <title>Indeks</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
     <link rel="stylesheet" href="/css/user.css">
@@ -96,43 +96,41 @@
             </div>
             <div class="container mt-5">
                 <div class="d-flex justify-content-between">
-                    <h1 class="heading-daftar-pengguna">Daftar Pengguna</h1>
+                    <h1 class="heading-daftar-pengguna">Daftar Indeks</h1>
                 </div>
                 <!-- Form toggle button -->
-                <button id="toggleForm" class="btn btn-secondary mt-3">Tambah User Baru</button>
+                <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Indeks Baru</button>
                 <!-- Form untuk tambah user yang bisa di-minimize -->
                 <div class="card mt-4 user-form" style="display: none;">
-                    <div class="card-header">Tambah User Baru</div>
+                    <div class="card-header">Tambah Indeks Baru</div>
                     <div class="card-body">
-                        <form action="{{ route('user.store') }}" method="POST">
+                        <form action="{{ route('indeks.store') }}" method="POST">
                             @csrf
+
                             <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
+                                <label for="kode_indeks">Kode Indeks</label>
+                                <input type="text" class="form-control" id="kode_indeks" name="kode_indeks" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-
-                                <label for="role">Role</label>
-                                <select class="form-control" id="role" name="role" required>
-                                    <option value="">Pilih Role</option>
-                                    <option value="superadmin">Super_Admin</option><!-- Sesuaikan dengan enum -->
-                                    <option value="admin">Admin</option>
-                                    <option value="user">User</option>
-                                </select>
+                                <label for="kode_surat">Kode Surat</label>
+                                <input type="text" class="form-control" id="kode_surat" name="kode_surat" required>
                             </div>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
+
+                            <div class="form-group">
+                                <label for="judul_indeks">Judul Indeks</label>
+                                <input type="text" class="form-control" id="judul_indeks" name="judul_indeks" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="detail_indeks">Detail Indeks</label>
+                                <input type="text" class="form-control" id="detail_indeks" name="detail_indeks" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Update Indeks</button>
                         </form>
+
+
                     </div>
                 </div>
 
@@ -158,38 +156,38 @@
                     <table class="table">
                         <thead class="thead-light">
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>username</th>
-                                <th>password</th>
-                                <th>role</th>
+                                <th>Kode Indeks</th>
+                                <th>Kode Surat</th>
+                                <th>Judul Indeks</th>
+                                <th>Detail Indeks</th>
                                 <th>Aksi</th>
                             </tr>
                             <tr>
-                                @foreach ($users as $user)
-                                <tr>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->username }}</td>
-                                    <td>{{ $user->password }}</td>
-                                    <td>{{ $user->role }}</td>
-                                    <td>
-                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" id="delete-form-{{ $user->id }}" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $user->id }})">Hapus</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                @foreach ($indeks as $indek)
+                                    <tr>
+                                        <td>{{ $indek->kode_indeks }}</td>
+                                        <td>{{ $indek->kode_surat }}</td>
+                                        <td>{{ $indek->judul_indeks }}</td>
+                                        <td>{{ $indek->detail_indeks }}</td>
+                                        <td>
+                                            <a href="{{ route('indeks.edit', $indek->indeks_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                            <form action="{{ route('indeks.destroy', $indek->indeks_id) }}" method="POST" id="delete-form-{{ $indek->indeks_id}}" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $indek->indeks_id}})">Hapus</button>
+                                            </form>
+                                        </td>
+                                    </tr>
                                 @endforeach
+                            </tr>
+
 
             </div>
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
-            function confirmDelete(userId) {
+            function confirmDelete(indeksId) {
                 Swal.fire({
                     title: "Apa kamu yakin?",
                     text: "Data ini tidak dapat dikembalikan",
@@ -201,7 +199,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Temukan form dengan ID yang sesuai dan submit
-                        document.getElementById("delete-form-" + userId).submit();
+                        document.getElementById("delete-form-" + indeksId).submit();
                     }
                 });
             }

@@ -69,7 +69,8 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="#" class="active">indeks</a></li>
+                       <li><a href="/super_admin/indeks" class="active">indeks</a></li>
+                       <li><a href="/super_admin/templatesurat" class="active">Template Surat</a></li>
                        <li><a href="{{ route('user.index') }}" class="active">User</a></li>
                        <li><a href="#" class="active">Change Password</a></li>
                     </ul>
@@ -158,7 +159,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($suratMasukHariIni == 0)
+                    @if($suratMasukHariIni->isEmpty())
                     <tr>
                         <td colspan="8">Tidak ada surat masuk hari ini.</td>
                     </tr>
@@ -223,7 +224,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($suratKeluarHariIni == 0)
+                    @if($suratKeluarHariIni->isEmpty())
                     <tr>
                         <td colspan="8">Tidak ada surat keluar hari ini.</td>
                     </tr>

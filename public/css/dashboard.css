@@ -147,6 +147,7 @@ body{
 }
 
 .navbar {
+    position: fixed;
     background: #fff;
     height: 60px;
     width: 100%;
@@ -155,6 +156,7 @@ body{
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
+    z-index: 1000;
 }
 
 .navbar .hamburger{
@@ -524,19 +526,7 @@ table a:hover {
     box-shadow: 0 4px 15px rgba(0, 104, 157, 0.3);
 }
 
-/* Tampilan Responsif untuk modal */
-@media (max-width: 768px) {
-    .modal-dialog {
-        width: 100%;
-        right: 0;
-        left: 0;
-        margin: 0 auto;
-    }
 
-    .modal-content {
-        padding: 15px;
-    }
-}
 
 
 @media (max-width: 1024px) {
@@ -585,4 +575,60 @@ table a:hover {
   .content .item{
     width: 100%;
   }
+}
+
+@media (max-width: 768px) {
+    .card-header, .card-body {
+        padding: 50%;
+    }
+
+    .btn {
+        width: 95%;
+        margin-top: 10px;
+    }
+
+    .user-form label, .user-form input, .user-form select, .user-form button {
+        width: 95%;
+    }
+
+    .user-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    /* Table Adjustments for Mobile */
+    .table th, .table td {
+        display: block;
+        width: 50%;
+        text-align: right;
+    }
+
+    .table th::before, .table td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+    }
+
+    .table th, .table td {
+        border: 0;
+        padding: 10px 5px;
+    }
+
+    .table th {
+        background-color: #f2f2f2;
+    }
+}
+
+@media (max-width: 576px) {
+    .card {
+        margin: 5px;
+        padding: 15px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+
+    .table th, .table td {
+        padding: 8px 5px;
+    }
 }
