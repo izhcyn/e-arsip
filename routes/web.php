@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('super_admin/suratmasuk', [SuratMasukController::class, 'index'])->name('suratmasuk.index');
     Route::get('super_admin/suratkeluar', [SuratKeluarController::class, 'index'])->name('suratkeluar.index');
-// Route untuk menampilkan daftar indeks
+    // Route untuk menampilkan daftar indeks
     Route::get('super_admin/indeks', [IndeksController::class, 'index'])->name('indeks.index');
 
     // Route untuk menampilkan form tambah indeks
@@ -48,14 +48,16 @@ Route::middleware(['auth'])->group(function () {
     // Route untuk menghapus indeks
     Route::delete('super_admin/indeks/{id}', [IndeksController::class, 'destroy'])->name('indeks.destroy');
 
-    // routes/web.php
-
 
     Route::get('/super_admin/buatsurat', [SuratController::class, 'create'])->name('super_admin.buatsurat');
     Route::post('/super_admin/store', [SuratController::class, 'store'])->name('super_admin.store');
     // Admin dan User Dashboard
     Route::get('admin/dashboard', [AdminController::class, 'index']);
     Route::get('user/dashboard', [UserController::class, 'index']);
+
+    //menyimpan surat masuk
+    Route::post('super_admin/suratmasuk', [SuratMasukController::class, 'store'])->name('suratmasuk.store');
+    Route::get('/surat/{id}', [SuratMasukController::class, 'show'])->name('surat.show');
 });
 
 
