@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/buatsurat.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 	<script>
 		$(document).ready(function(){
 			$(".siderbar_menu li").click(function(){
@@ -128,7 +129,7 @@
                 </select>
 
                 <br /><label for="lampiran">Lampiran:</label>
-                <input type="text" id="lampiran" name="lampiran"" value="isi dengan - jika tidak ada">
+                <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran" name="lampiran">
 
                 <label for="kepada">Kepada:</label>
                 <input type="text" id="kepada" name="kepada" value="{{ old('kepada') }}">
