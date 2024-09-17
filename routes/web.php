@@ -9,6 +9,7 @@ use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\IndeksController;
 use App\Http\Controllers\SuratController;
+use App\Http\Controllers\TemplateSuratController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,6 +54,16 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/super_admin/buatsurat', [SuratController::class, 'create'])->name('super_admin.buatsurat');
     Route::post('/super_admin/store', [SuratController::class, 'store'])->name('super_admin.store');
+
+
+    Route::resource('super_admin/template', TemplateSuratController::class);
+    Route::get('/super_admin/template', [TemplateSuratController::class, 'index'])->name('template.index');
+    Route::get('/super_admin/template/create', [TemplateSuratController::class, 'create'])->name('template.create');
+    Route::post('/super_admin/template', [TemplateSuratController::class, 'store'])->name('template.store');
+    Route::get('/super_admin/template/{id}/edit', [TemplateSuratController::class, 'edit'])->name('template.edit');
+    Route::put('/super_admin/template/{id}', [TemplateSuratController::class, 'update'])->name('template.updtae');
+    Route::delete('/super_admin/template/{id}', [TemplateSuratController::class, 'destroy'])->name('template.destroy');
+
     // Admin dan User Dashboard
     Route::get('admin/dashboard', [AdminController::class, 'index']);
     Route::get('user/dashboard', [UserController::class, 'index']);

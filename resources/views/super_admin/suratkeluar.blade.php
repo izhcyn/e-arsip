@@ -76,7 +76,7 @@
                          </a>
                        <ul class="accordion">
                             <li><a href="/super_admin/indeks" class="active">indeks</a></li>
-                            <li><a href="/super_admin/templatesurat" class="active">Template Surat</a></li>
+                            <li><a href="/super_admin/template" class="active">Template Surat</a></li>
                             <li><a href="{{ route('user.index') }}" class="active">User</a></li>
                             <li><a href="#" class="active">Change Password</a></li>
                          </ul>
@@ -191,7 +191,7 @@
                                         <a href="{{ route('surat.show', $item->id) }}" class="btn btn-primary btn-sm" title="Lihat">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('surat.download', $item->id) }}" class="btn btn-info btn-sm" title="Download PDF">
+                                        <a href="{{ Storage::url($item->dokumen) }}" class="btn btn-info btn-sm" title="Download PDF">
                                             <i class="fas fa-print"></i>
                                         </a>
 

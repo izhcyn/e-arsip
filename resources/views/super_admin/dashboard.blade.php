@@ -70,7 +70,7 @@
                     </a>
                   <ul class="accordion">
                        <li><a href="/super_admin/indeks" class="active">indeks</a></li>
-                       <li><a href="/super_admin/templatesurat" class="active">Template Surat</a></li>
+                       <li><a href="/super_admin/template" class="active">Template Surat</a></li>
                        <li><a href="{{ route('user.index') }}" class="active">User</a></li>
                        <li><a href="#" class="active">Change Password</a></li>
                     </ul>

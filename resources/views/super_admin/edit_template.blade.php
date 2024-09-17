@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Indeks</title>
+    <title>User Setting</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/user.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
+    <script src="https://cdn.tiny.cloud/1/zgev9qnaivedr9z3cynwqe34owhimfprefdpid7lnhlfdpy1/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script>
         $(document).ready(function(){
@@ -90,7 +90,7 @@
                     <i class="fas fa-bars"></i>
                 </div>
                 <div class="logo">
-                    <a href="#">USERS</a>
+                    <a href="#">Template Surat<a>
                 </div>
                 <div class="user_info">
                     <i class="fas fa-user-circle"></i>
@@ -100,37 +100,41 @@
 
             <!-- Form untuk edit user -->
 <div class="card mt-4">
-    <div class="card-header">Edit Indeks</div>
+    <div class="card-header">Edit Template</div>
     <div class="card-body">
-        <form action="{{ route('indeks.update', $indeks->indeks_id) }}" method="POST">
+        <form action="{{ route('template.update', $template->id) }}" method="POST">
             @csrf
             @method('PUT') <!-- Tambahkan method PUT untuk update -->
 
             <div class="form-group">
-                <label for="kode_indeks">Kode Indeks</label>
-                <input type="text" class="form-control" id="kode_indeks" name="kode_indeks" value="{{ old('kode_indeks', $indeks->kode_indeks) }}" required>
+                <label for="judul_template">Judul</label>
+                <input type="text" class="form-control" id="judul_template" name="judul_template" value="{{ old('judul_template', $template->judul_template) }}" required>
             </div>
 
             <div class="form-group">
-                <label for="kode_surat">Kode Surat</label>
-                <input type="text" class="form-control" id="kode_surat" name="kode_surat" value="{{ old('kode_surat', $indeks->kode_surat) }}" required>
+                <label for="isi_surat">Isi Surat</label>
+                <textarea class="form-control" id="isi_surat" name="isi_surat" required>{{ old('isi_surat', $template->isi_surat) }}</textarea>
             </div>
 
-            <div class="form-group">
-                <label for="judul_indeks">Judul Indeks</label>
-                <input type="text" class="form-control" id="judul_indeks" name="judul_indeks" value="{{ old('judul_indeks', $indeks->judul_indeks) }}" required>
-            </div>
-
-            <div class="form-group">
-                <label for="detail_indeks">Detail Indeks</label>
-                <input type="detail_indeks" class="form-control" id="detail_indeks" name="detail_indeks" value="{{ old('detail_indeks', $indeks->detail_indeks) }}" required>
-            </div>
             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </form>
     </div>
 </div>
 
-
+<script>
+    tinymce.init({
+        selector: '#isi_surat',  // Target the textarea with id "isi_surat"
+        plugins: 'table lists',  // Include the table and list plugins (or other plugins as needed)
+        toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Customize the toolbar
+        menubar: 'file edit view insert format table tools help',  // Add menubar with table options
+        height: 500,  // Set the height of the editor
+        setup: function (editor) {
+            editor.on('init', function () {
+                this.getContainer().style.transition = 'border-color 0.15s ease-in-out';
+            });
+        }
+    });
+</script>
 
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
