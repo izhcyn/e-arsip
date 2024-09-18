@@ -69,6 +69,8 @@ Route::middleware(['auth'])->group(function () {
     //menyimpan surat masuk
     Route::post('super_admin/suratmasuk', [SuratMasukController::class, 'store'])->name('suratmasuk.store');
     Route::get('/surat/{id}', [SuratMasukController::class, 'show'])->name('surat.show');
+    Route::post('super_admin/suratkeluar', [SuratKeluarController::class, 'store'])->name('suratkeluar.store');
+    Route::get('/surat/{id}', [SuratKeluarController::class, 'show'])->name('surat.show');
 });
 
 

@@ -106,56 +106,63 @@
 
                 <!-- Form untuk tambah user yang bisa di-minimize -->
                 <div class="card mt-4 user-form" style="display: none;">
-                    @if (session('success'))
-                            <div class="alert alert-success mt-3">
-                                {{ session('success') }}
-                            </div>
-                        @endif
-
-                        @if (session('error'))
-                            <div class="alert alert-danger mt-3">
-                                {{ session('error') }}
-                            </div>
-                        @endif
-                    <div class="card-header">Surat Keluar</div>
+                    <div class="card-header">Tambah Surat Masuk</div>
                     <div class="card-body">
-                        <form action="{{ route('user.store') }}" method="POST">
+                        <form action="{{ route('suratkeluar.store') }}" method="POST">
                             @csrf
                             <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <label for="no_surat">No Surat</label>
+                                <input type="text" class="form-control" id="no_surat" name="no_surat" required>
                             </div>
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="role">Role</label>
-                                <select class="form-control" id="role" name="role" required>
-                                    <option value="">Pilih Role</option>
-                                    <option value="superadmin">Super_Admin</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="user">User</option>
+                                <label for="kode_indeks">Kode Indeks</label>
+                                <select class="form-control" id="kode_indeks" name="kode_indeks" required>
+                                    <option value="" disabled selected>Pilih Kode Indeks</option>
+                                    @foreach ($indeks as $indek)
+                                        <option value="{{ $indek->kode_indeks }}">{{ $indek->kode_indeks }} - {{ $indek->judul_indeks }}</option>
+                                    @endforeach
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="perihal">Perihal</label>
+                                <input type="text" class="form-control" id="perihal" name="perihal" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="penulis">Penulis</label>
+                                <input type="text" class="form-control" id="penulis" name="penulis" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="penerima">Penerima</label>
+                                <input type="text" class="form-control" id="penerima" name="penerima" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tanggal_keluar">Tanggal keluar</label>
+                                <input type="date" class="form-control" id="tanggal_keluar" name="tanggal_keluar" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dokumen">Unggah Dokumen</label>
+                                <input type="file" class="form-control" id="dokumen" name="dokumen" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </form>
-
-
                     </div>
                 </div>
+            </div>
 
-                <!-- Tabel pengguna -->
-                <div class="suratmasuk-section">
+            <div class="container mt-5">
+                @if (session('success'))
+                    <div class="alert alert-success mt-3">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger mt-3">
+                        {{ session('error') }}
+                    </div>
+                @endif
+            <!-- Tabel pengguna -->
+            <div class="suratmasuk-section">
             <div class="suratmasuk-card">
             <h3>Surat Keluar</h3>
             <table>
@@ -163,7 +170,6 @@
                     <tr>
                         <th>No. Surat</th>
                         <th>Indeks Surat</th>
-                        <th>Asal Surat</th>
                         <th>Perihal</th>
                         <th>Penerima</th>
                         <th>Tanggal Diterima</th>
@@ -182,27 +188,23 @@
                                 <tr>
                                     <td>{{ $item->no_surat }}</td>
                                     <td>{{ $item->kode_indeks }}</td>
-                                    <td>{{ $item->asal_surat }}</td>
                                     <td>{{ $item->perihal }}</td>
                                     <td>{{ $item->penerima }}</td>
-                                    <td>{{ $item->tanggal_diterima }}</td>
+                                    <td>{{ $item->tanggal_keluar }}</td>
                                     <td><a href="{{ $item->dokumen }}">Dokumen</a></td>
                                     <td>
-                                        <a href="{{ route('surat.show', $item->id) }}" class="btn btn-primary btn-sm" title="Lihat">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
                                         <a href="{{ Storage::url($item->dokumen) }}" class="btn btn-info btn-sm" title="Download PDF">
                                             <i class="fas fa-print"></i>
                                         </a>
 
                                         @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                                        <a href="{{ route('surat.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                        <a href="" class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @endif
 
                                         @if(auth()->user()->role == 'super_admin')
-                                        <form action="{{ route('surat.destroy', $item->id) }}" method="POST" style="display:inline;">
+                                        <form action="" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">

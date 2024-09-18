@@ -4,17 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\SuratMasuk; // Model SuratMasuk
 use Illuminate\Http\Request;
+use App\Models\Indeks;
 
 class SuratMasukController extends Controller
 {
     public function index()
     {
-        // Ambil semua data dari tabel surat_masuk
+        // Fetch all data from the surat_masuk table
         $suratMasuk = SuratMasuk::all();
 
-        // Kirim data ke view
-        return view('super_admin.suratmasuk', compact('suratMasuk'));
+        // Fetch data from the indeks table
+        $indeks = Indeks::all();
+
+        // Send both variables to the view
+        return view('super_admin.suratmasuk', compact('suratMasuk', 'indeks'));
     }
+
 
     public function store(Request $request)
     {
@@ -43,5 +48,6 @@ class SuratMasukController extends Controller
         // Redirect kembali ke halaman surat masuk dengan pesan sukses
         return redirect()->route('suratmasuk.index')->with('success', 'Surat masuk berhasil ditambahkan.');
     }
+
 
 }

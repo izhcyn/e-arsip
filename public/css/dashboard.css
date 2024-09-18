@@ -369,7 +369,7 @@ table a:hover {
     padding: 10px 20px;
     text-decoration: none;
     margin-bottom: 20px;
-    margin-left: 50px;
+    margin-left: 0px;
     margin-right: -100px;/* Mengurangi jarak dari kiri */
 }
 

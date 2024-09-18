@@ -18,12 +18,10 @@ class SuratKeluar extends Model
     protected $fillable = [
         'no_surat',
         'kode_indeks',
-        'asal_surat',
         'perihal',
         'penulis',
         'penerima',
         'tanggal_keluar',
         'dokumen',
-        'visibility'
     ];
 }

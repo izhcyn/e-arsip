@@ -20,7 +20,7 @@ class CreateSuratMasukTable extends Migration
             $table->string('perihal', 255)->nullable();
             $table->string('penerima', 255)->nullable();
             $table->date('tanggal_diterima')->nullable();
-            $table->string('dokumen', 255)->nullable();
+            $table->string('dokumen')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->string('visibility', 255)->default('public');

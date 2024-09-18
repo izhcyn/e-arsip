@@ -116,8 +116,14 @@
                             </div>
                             <div class="form-group">
                                 <label for="kode_indeks">Kode Indeks</label>
-                                <input type="text" class="form-control" id="kode_indeks" name="kode_indeks" required>
+                                <select class="form-control" id="kode_indeks" name="kode_indeks" required>
+                                    <option value="" disabled selected>Pilih Kode Indeks</option>
+                                    @foreach ($indeks as $indek)
+                                        <option value="{{ $indek->kode_indeks }}">{{ $indek->kode_indeks }} - {{ $indek->judul_indeks }}</option>
+                                    @endforeach
+                                </select>
                             </div>
+
                             <div class="form-group">
                                 <label for="asal_surat">Asal Surat</label>
                                 <input type="text" class="form-control" id="asal_surat" name="asal_surat" required>

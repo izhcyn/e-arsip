@@ -174,28 +174,28 @@
                         <td>{{ $item->tanggal_diterima }}</td>
                         <td><a href="{{ $item->dokumen }}">Lihat Dokumen</a></td>
                         <td>
-                            <a href="{{ route('surat.show', $item->id) }}" class="btn btn-primary btn-sm" title="Lihat">
+                            <a href="{{ route('surat.show', $item->suratmasuk_id) }}" class="btn btn-primary btn-sm" title="Lihat">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="{{ route('surat.download', $item->id) }}" class="btn btn-info btn-sm" title="Download PDF">
+                            {{-- <a href="{{ route('surat.download', $item->suratmasuk_id) }}" class="btn btn-info btn-sm" title="Download PDF">
                                 <i class="fas fa-print"></i>
-                            </a>
+                            </a> --}}
 
-                            @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                            <a href="{{ route('surat.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                            {{-- @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
+                            <a href="{{ route('surat.edit', $item->suratmasuk_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            @endif
+                            @endif --}}
 
-                            @if(auth()->user()->role == 'super_admin')
-                            <form action="{{ route('surat.destroy', $item->id) }}" method="POST" style="display:inline;">
+                            {{-- @if(auth()->user()->role == 'super_admin')
+                            <form action="{{ route('surat.destroy', $item->suratmasuk_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                            @endif
+                            @endif --}}
                         </td>
                     </tr>
                     @endforeach
@@ -214,11 +214,10 @@
                     <tr>
                         <th>No. Surat</th>
                         <th>Indeks Surat</th>
-                        <th>Asal Surat</th>
                         <th>Perihal</th>
                         <th>Penulis</th>
                         <th>Penerima</th>
-                        <th>Tanggal Diterima</th>
+                        <th>Tanggal Keluar</th>
                         <th>Dokumen</th>
                         <th>Aksi</th>
                     </tr>
@@ -233,35 +232,34 @@
                     <tr>
                         <td>{{ $item->no_surat }}</td>
                         <td>{{ $item->kode_indeks }}</td>
-                        <td>{{ $item->asal_surat }}</td>
                         <td>{{ $item->perihal }}</td>
                         <td>{{ $item->penulis }}</td>
                         <td>{{ $item->penerima }}</td>
-                        <td>{{ $item->tanggal_diterima }}</td>
+                        <td>{{ $item->tanggal_keluar }}</td>
                         <td><a href="{{ $item->dokumen }}">Lihat Dokumen</a></td>
                         <td>
-                            <a href="{{ route('surat.show', $item->id) }}" class="btn btn-primary btn-sm" title="Lihat">
+                            <a href="{{ route('surat.show', $item->suratkeluar_id) }}" class="btn btn-primary btn-sm" title="Lihat">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="{{ route('surat.download', $item->id) }}" class="btn btn-info btn-sm" title="Download PDF">
+                            {{-- <a href="{{ route('surat.download', $item->suratkeluar_id) }}" class="btn btn-info btn-sm" title="Download PDF">
                                 <i class="fas fa-print"></i>
-                            </a>
+                            </a> --}}
 
-                            @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                            <a href="{{ route('surat.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                            {{-- @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
+                            <a href="{{ route('surat.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            @endif
+                            @endif --}}
 
-                            @if(auth()->user()->role == 'super_admin')
-                            <form action="{{ route('surat.destroy', $item->id) }}" method="POST" style="display:inline;">
+                            {{-- @if(auth()->user()->role == 'super_admin')
+                            <form action="{{ route('surat.destroy', $item->suratkeluar_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                            @endif
+                            @endif --}}
                         </td>
                     </tr>
                     @endforeach

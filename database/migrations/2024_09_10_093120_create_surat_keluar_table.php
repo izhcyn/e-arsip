@@ -17,7 +17,6 @@ class CreateSuratKeluarTable extends Migration
             $table->bigIncrements('suratkeluar_id');
             $table->string('no_surat', 255)->nullable();
             $table->string('kode_indeks', 50)->nullable();
-            $table->string('asal_surat', 255)->nullable();
             $table->string('perihal', 255)->nullable();
             $table->string('penulis', 255)->nullable();
             $table->string('penerima', 255)->nullable();
