@@ -74,7 +74,7 @@
                        <ul class="accordion">
                             <li><a href="/super_admin/indeks" class="active">indeks</a></li>
                             <li><a href="/super_admin/template" class="active">Template Surat</a></li>
-                            <li><a href="{{ route('user.index') }}" class="active">User</a></li>
+                            <li><a href="{{ route('users.index') }}" class="active">User</a></li>
                             <li><a href="#" class="active">Change Password</a></li>
                          </ul>
                     </li>
@@ -102,9 +102,9 @@
 <div class="card mt-4">
     <div class="card-header">Edit User</div>
     <div class="card-body">
-        <form action="{{ route('user.update', $user->id) }}" method="POST">
+        <form action="{{ route('users.update', $user->id) }}" method="POST">
             @csrf
-            @method('PUT') <!-- Tambahkan method PUT untuk update -->
+            @method('PUT') <!-- Use PUT for the update -->
 
             <div class="form-group">
                 <label for="name">Name</label>
@@ -122,20 +122,20 @@
             </div>
 
             <div class="form-group">
-                <label for="password">Password (kosongkan jika tidak diubah)</label>
+                <label for="password">Password (leave blank if you do not want to change it)</label>
                 <input type="password" class="form-control" id="password" name="password">
             </div>
 
             <div class="form-group">
                 <label for="role">Role</label>
                 <select class="form-control" id="role" name="role" required>
-                    <option value="super_admin" {{ $user->role == 'super_admin' ? 'selected' : '' }}>Super_Admin</option>
+                    <option value="super_admin" {{ $user->role == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
                     <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                     <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>
 </div>

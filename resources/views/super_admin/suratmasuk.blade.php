@@ -165,7 +165,7 @@
                 <!-- Tabel surat masuk -->
                 <div class="suratmasuk-section">
                     <div class="suratmasuk-card">
-                        <h3>Surat Masuk Hari ini</h3>
+                        <h3>Surat Masuk</h3>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -214,7 +214,7 @@
                                                 <form action="{{ route('suratmasuk.destroy', $item->suratmasuk_id) }}" method="POST" id="delete-form-{{ $item->suratmasuk_id }}" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratmasuk_id }})">Hapus</button>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratmasuk_id }})"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                 </form>
                                                 @endif
                                             </td>

@@ -71,7 +71,7 @@
                        <ul class="accordion">
                             <li><a href="/super_admin/indeks" class="active">indeks</a></li>
                             <li><a href="/super_admin/template" class="active">Template Surat</a></li>
-                            <li><a href="{{ route('user.index') }}" class="active">User</a></li>
+                            <li><a href="{{ route('users.index') }}" class="active">User</a></li>
                             <li><a href="#" class="active">Change Password</a></li>
                          </ul>
                     </li>
@@ -104,7 +104,7 @@
                 <div class="card mt-4 user-form" style="display: none;">
                     <div class="card-header">Tambah User Baru</div>
                     <div class="card-body">
-                        <form action="{{ route('user.store') }}" method="POST">
+                        <form action="{{ route('users.store') }}" method="POST">
                             @csrf
                             <div class="form-group">
                                 <label for="name">Name</label>
@@ -126,7 +126,7 @@
                                 <label for="role">Role</label>
                                 <select class="form-control" id="role" name="role" required>
                                     <option value="">Pilih Role</option>
-                                    <option value="superadmin">Super_Admin</option><!-- Sesuaikan dengan enum -->
+                                    <option value="super_admin">super_admin</option><!-- Sesuaikan dengan enum -->
                                     <option value="admin">Admin</option>
                                     <option value="user">User</option>
                                 </select>
@@ -174,8 +174,8 @@
                                     <td>{{ $user->password }}</td>
                                     <td>{{ $user->role }}</td>
                                     <td>
-                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST" id="delete-form-{{ $user->id }}" style="display:inline;">
+                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" id="delete-form-{{ $user->id }}" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $user->id }})">Hapus</button>

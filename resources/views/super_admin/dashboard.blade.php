@@ -46,7 +46,7 @@
               </div>
 
               <ul class="siderbar_menu">
-                  <li class="active"><a href="/super_admin/dashboard">
+                  <li class="active"><a href="{{ route('superadmin.dashboard')}}">
                     <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
                     <div class="title">DASHBOARD</div>
                     </a>
@@ -57,10 +57,10 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="/super_admin/buatsurat" class="active">Buat Surat</a></li>
+                       <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
                        <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
-                       <li><a href="/super_admin/suratmasuk" class="active">Surat Masuk</a></li>
-                       <li><a href="/super_admin/suratkeluar" class="active">Surat Keluar</a></li>
+                       <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
+                       <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                     </ul>
                 </li>
                 <li><a href="#">
@@ -69,9 +69,9 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="/super_admin/indeks" class="active">indeks</a></li>
-                       <li><a href="/super_admin/template" class="active">Template Surat</a></li>
-                       <li><a href="{{ route('user.index') }}" class="active">User</a></li>
+                       <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
+                       <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
+                       <li><a href="{{ route('users.index') }}" class="active">User</a></li>
                        <li><a href="#" class="active">Change Password</a></li>
                     </ul>
                 </li>
@@ -193,7 +193,7 @@
                             <form action="{{ route('suratmasuk.destroy', $item->suratmasuk_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="confirmDeleteSM({{ $item->suratkeluar_id }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
@@ -241,25 +241,21 @@
                         <td>{{ $item->tanggal_keluar }}</td>
                         <td><a href="{{ $item->dokumen }}">Lihat Dokumen</a></td>
                         <td>
-                            <a href="{{ route('surat.show', $item->suratkeluar_id) }}" class="btn btn-primary btn-sm" title="Lihat">
-                                <i class="fas fa-eye"></i>
-                            </a>
-
-                            {{-- @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                            <a href="{{ route('surat.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit">
+                            @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
+                            <a href="{{ route('suratkeluar.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
                             @endif
 
                             @if(auth()->user()->role == 'super_admin')
-                            <form action="{{ route('surat.destroy', $item->suratkeluar_id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="confirmDeleteSK({{ $item->suratkeluar_id }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
-                            @endif --}}
+                            @endif
                         </td>
                     </tr>
                     @endforeach
@@ -272,5 +268,39 @@
         </div>
       </div>
     </div>
+    <script>
+        function confirmDeleteSM(suratmasukId) {
+            Swal.fire({
+                title: "Apa kamu yakin?",
+                text: "Data ini tidak dapat dikembalikan",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "##28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus ini!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Temukan form dengan ID yang sesuai dan submit
+                    document.getElementById("delete-form-" + suratmasukId).submit();
+                }
+            });
+        }
+        function confirmDeleteSK(suratkeluarId) {
+            Swal.fire({
+                title: "Apa kamu yakin?",
+                text: "Data ini tidak dapat dikembalikan",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "##28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus ini!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Temukan form dengan ID yang sesuai dan submit
+                    document.getElementById("delete-form-" + suratkeluarId).submit();
+                }
+            });
+        }
+    </script>
 </body>
 </html>

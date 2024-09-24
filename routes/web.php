@@ -20,16 +20,17 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Route untuk dashboard
 Route::middleware(['auth'])->group(function () {
     // Super Admin Routes
-    Route::get('super_admin/dashboard', [SuperAdminController::class, 'index'])->name('dashboard');
+    Route::get('super_admin/dashboard', [SuperAdminController::class, 'index'])->name('superadmin.dashboard');
     // Routes untuk menampilkan dan mengelola pengguna
-    Route::get('super_admin/user', [SuperAdminController::class, 'showUsers'])->name('user.index'); // Tampilkan daftar user
-    Route::get('super_admin/user/create', [SuperAdminController::class, 'create'])->name('user.create'); // Form tambah user
-    Route::post('super_admin/user', [SuperAdminController::class, 'store'])->name('user.store'); // Simpan user
-    Route::get('super_admin/user/{id}', [SuperAdminController::class, 'show'])->name('user.show'); // Detail user
-    Route::get('super_admin/user/{id}/edit', [SuperAdminController::class, 'edit'])->name('user.edit'); // Edit user
-    Route::put('super_admin/user/{id}', [SuperAdminController::class, 'update'])->name('user.update'); // Update user
-    Route::delete('super_admin/user/{id}', [SuperAdminController::class, 'destroy'])->name('user.destroy'); // Hapus user
-    Route::post('/user/store', [SuperAdminController::class, 'store'])->name('user.store');
+    Route::get('super_admin/user', [SuperAdminController::class, 'showUsers'])->name('users.index'); // Tampilkan daftar user
+    Route::get('super_admin/user/create', [SuperAdminController::class, 'create'])->name('users.create'); // Form tambah user
+    Route::post('super_admin/user', [SuperAdminController::class, 'store'])->name('users.store'); // Simpan user
+    Route::get('super_admin/user/{id}', [SuperAdminController::class, 'show'])->name('users.show'); // Detail user
+    Route::get('super_admin/user/{id}/edit', [SuperAdminController::class, 'edit'])->name('users.edit'); // Edit user
+    Route::put('super_admin/user/{id}', [SuperAdminController::class, 'update'])->name('users.update'); // Update user
+    Route::delete('super_admin/user/{id}', [SuperAdminController::class, 'destroy'])->name('users.destroy'); // Hapus user
+    Route::post('/user/store', [SuperAdminController::class, 'store'])->name('users.store');
+    Route::resource('user', SuperAdminController::class);
 
     Route::get('super_admin/suratmasuk', [SuratMasukController::class, 'index'])->name('suratmasuk.index');
     Route::get('super_admin/suratkeluar', [SuratKeluarController::class, 'index'])->name('suratkeluar.index');
@@ -72,7 +73,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/suratmasuk/{id}/edit', [SuratMasukController::class, 'edit'])->name('suratmasuk.edit');
 
     // Route to handle the update process
-    Route::put('/suratmasuk/{id}', [SuratMasukController::class, 'update'])->name('suratmasuk.update');    Route::delete('/super_admin/suratmasuk/{id}', [SuratMasukController::class, 'destroy'])->name('suratmasuk.destroy');
+    Route::put('/suratmasuk/{id}', [SuratMasukController::class, 'update'])->name('suratmasuk.update');
+    Route::delete('/super_admin/suratmasuk/{id}', [SuratMasukController::class, 'destroy'])->name('suratmasuk.destroy');
     Route::resource('suratmasuk', SuratMasukController::class);
 
     Route::post('super_admin/suratkeluar', [SuratKeluarController::class, 'store'])->name('suratkeluar.store');

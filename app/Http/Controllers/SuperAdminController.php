@@ -67,7 +67,7 @@ class SuperAdminController extends Controller
         ]);
 
         // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan');
+        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan');
 }}
 
 
@@ -77,44 +77,46 @@ class SuperAdminController extends Controller
     // Menampilkan form untuk mengedit pengguna
     public function edit($id)
     {
-        $user = User::find($id); // Temukan pengguna berdasarkan ID
+        // Find the user by their ID
+        $user = User::findOrFail($id);
 
-        if (!$user) {
-            return redirect()->route('user.index')->with('error', 'Pengguna tidak ditemukan');
-        }
+        // Return the view for editing the user
+        return view('super_admin.edit_user', compact('user'));
 
-        return view('super_admin.edit_user', compact('user')); // Tampilkan form edit dengan data pengguna
     }
 
-    // Mengupdate pengguna
+
+    // Update User in the Database
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
 
-
-        // Validasi input
+        // Validate the input data
         $request->validate([
-            'email' => 'required|email|unique:users,email,' . $user->id,
             'name' => 'required|string|max:255',
-            'username' => 'required|string|unique:users,username,' . $user->id,
-            'password' => 'nullable|min:8', // Password boleh kosong jika tidak diubah
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'password' => 'nullable|string|min:8',
             'role' => 'required|in:super_admin,admin,user',
         ]);
 
-        // Update data pengguna
-        $user->email = $request->email;
+        // Update user details
         $user->name = $request->name;
+        $user->email = $request->email;
         $user->username = $request->username;
-        $user->role = $request->role;
 
-        // Jika ada input password, maka update password
+        // Update the password only if it is provided
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
+        // Update the role
+        $user->role = $request->role;
+
+        // Save the updated user data
         $user->save();
 
-        return redirect()->route('user.index')->with('success', 'Pengguna berhasil diperbarui');
+        return redirect()->route('users.index')->with('success', 'User updated successfully');
     }
 
 
@@ -126,23 +128,13 @@ class SuperAdminController extends Controller
         $user = User::find($id);
 
         if (!$user) {
-            return redirect()->route('user.index')->with('error', 'Pengguna tidak ditemukan');
+            return redirect()->route('users.index')->with('error', 'Pengguna tidak ditemukan');
         }
 
         $user->delete();
 
-        return redirect()->route('user.index')->with('success', 'Pengguna berhasil dihapus');
+        return redirect()->route('users.index')->with('success', 'Pengguna berhasil dihapus');
     }
 
 
-
-    // Menampilkan detail pengguna
-    public function show($id)
-    {
-        $user = User::find($id);
-        if (!$user) {
-            return redirect()->route('user.index')->with('error', 'Pengguna tidak ditemukan');
-        }
-        return view('super_admin.show_user', compact('user'));
-    }
 }
