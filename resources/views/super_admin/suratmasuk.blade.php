@@ -214,7 +214,7 @@
                                                 <form action="{{ route('suratmasuk.destroy', $item->suratmasuk_id) }}" method="POST" id="delete-form-{{ $item->suratmasuk_id }}" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratmasuk_id }})">Hapus</button>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratmasuk_id }})"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                                 </form>
                                                 @endif
                                             </td>
@@ -222,28 +222,37 @@
                                     @endforeach
                                 @endif
                             </tbody>
-
                         </table>
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination">
-                              <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                  <span aria-hidden="true">&laquo;</span>
-                                  <span class="sr-only">Previous</span>
-                                </a>
-                              </li>
-                              <li class="page-item"><a class="page-link" href="#">1</a></li>
-                              <li class="page-item"><a class="page-link" href="#">2</a></li>
-                              <li class="page-item"><a class="page-link" href="#">3</a></li>
-                              <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
-                                  <span aria-hidden="true">&raquo;</span>
-                                  <span class="sr-only">Next</span>
-                                </a>
-                              </li>
-                            </ul>
-                          </nav>
                     </div>
+                </div>
+                 <!-- Links Pagination -->
+                <div class="mt-3">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {{-- Previous Button --}}
+                            <li class="page-item {{ $suratMasuk->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $suratMasuk->previousPageUrl() }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+
+                            {{-- Page Numbers --}}
+                            @for ($i = 1; $i <= $suratMasuk->lastPage(); $i++)
+                                <li class="page-item {{ $i == $suratMasuk->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $suratMasuk->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+
+                            {{-- Next Button --}}
+                            <li class="page-item {{ $suratMasuk->hasMorePages() ? '' : 'disabled' }}">
+                                <a class="page-link" href="{{ $suratMasuk->nextPageUrl() }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>

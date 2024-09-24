@@ -13,7 +13,7 @@ class SuratMasukController extends Controller
     public function index()
     {
         // Fetch all data from the surat_masuk table
-        $suratMasuk = SuratMasuk::all();
+        $suratMasuk = SuratMasuk::orderBy('created_at', 'desc')->paginate(10);
 
         // Fetch data from the indeks table
         $indeks = Indeks::all();
@@ -32,14 +32,22 @@ class SuratMasukController extends Controller
             'perihal' => 'required|string|max:255',
             'penerima' => 'required|string|max:255',
             'tanggal_diterima' => 'required|date',
-            'dokumen' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:2048', // Validasi dokumen sebagai file
+            'dokumen' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:15360',  // Batas ukuran file maksimal 15MB
         ]);
 
-        // Simpan file jika ada
+        // Proses upload file
         if ($request->hasFile('dokumen')) {
+            // Set zona waktu ke Indonesia (Waktu Indonesia Barat)
+            date_default_timezone_set('Asia/Jakarta');
+
+            // Mengambil file dari request
             $file = $request->file('dokumen');
-            $fileName = time() . '_' . $file->getClientOriginalName(); // Menggunakan nama asli ditambah timestamp untuk menghindari konflik
-            $path = $file->storeAs('uploads', $fileName, 'public'); // Simpan file dengan nama asli
+
+            // Membuat nama file yang unik dengan menambahkan timestamp (format: dmyHis)
+            $fileName = date('dmyHis') . '_' . $file->getClientOriginalName();
+
+            // Menyimpan file ke storage dengan folder 'uploads'
+            $path = $file->storeAs('uploads', $fileName, 'public');
         } else {
             return redirect()->back()->with('error', 'Dokumen tidak ditemukan. Pastikan Anda mengunggah file.');
         }
@@ -76,7 +84,7 @@ class SuratMasukController extends Controller
             'perihal' => 'required|string|max:255',
             'penerima' => 'required|string|max:255',
             'tanggal_diterima' => 'required|date',
-            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png'
+            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:15360',
         ]);
 
         $suratMasuk = SuratMasuk::findOrFail($id);
@@ -89,14 +97,20 @@ class SuratMasukController extends Controller
 
         // Handle the file upload if a new document is uploaded
         if ($request->hasFile('dokumen')) {
-            // Delete the old file if it exists
-            if ($suratMasuk->dokumen && Storage::exists('public/' . $suratMasuk->dokumen)) {
-                Storage::delete('public/' . $suratMasuk->dokumen);
-            }
+            // Set zona waktu ke Indonesia (Waktu Indonesia Barat)
+            date_default_timezone_set('Asia/Jakarta');
 
-            // Store the new file and save the path
-            $filePath = $request->file('dokumen')->store('dokumen', 'public');
-            $suratMasuk->dokumen = $filePath;
+            // Mengambil file dari request
+            $file = $request->file('dokumen');
+
+            // Membuat nama file unik dengan waktu lokal Indonesia (format YmdHis)
+            $fileName = date('dmyHis') . '_' . $file->getClientOriginalName(); // Format contoh: 20240924123015_FileName.jpg
+
+            // Menyimpan file ke storage dengan folder 'uploads' dan nama file yang sudah ditentukan
+            $path = $file->storeAs('uploads', $fileName, 'public');
+
+            // Simpan nama file yang dihasilkan ke dalam database
+            $suratMasuk->dokumen = $path;
         }
 
         $suratMasuk->save();

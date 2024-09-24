@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\SuratKeluar; // Model SuratMasuk
 use Illuminate\Http\Request;
 use App\Models\Indeks;
+use Illuminate\Support\Facades\Storage;
 
 class SuratKeluarController extends Controller
 {
     public function index()
     {
         // Ambil semua data dari tabel surat_masuk
-        $suratKeluar = SuratKeluar::all();
+        $suratKeluar = SuratKeluar::orderBy('created_at', 'desc')->paginate(10);
         $indeks = Indeks::all();
 
         // Kirim data ke view
@@ -28,16 +29,19 @@ class SuratKeluarController extends Controller
             'penulis' => 'required|string|max:255',
             'penerima' => 'required|string|max:255',
             'tanggal_keluar' => 'required|date',
-            'dokumen' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:2048',
+            'dokumen' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:15360',  // Batas ukuran file maksimal 15MB
         ]);
 
         // Proses upload file
         if ($request->hasFile('dokumen')) {
+            // Set zona waktu ke Indonesia (Waktu Indonesia Barat)
+            date_default_timezone_set('Asia/Jakarta');
+
             // Mengambil file dari request
             $file = $request->file('dokumen');
 
-            // Membuat nama file yang unik dengan menambahkan timestamp
-            $fileName = time() . '_' . $file->getClientOriginalName();
+            // Membuat nama file yang unik dengan menambahkan timestamp (format: dmyHis)
+            $fileName = date('dmyHis') . '_' . $file->getClientOriginalName();
 
             // Menyimpan file ke storage dengan folder 'uploads'
             $path = $file->storeAs('uploads', $fileName, 'public');
@@ -58,6 +62,7 @@ class SuratKeluarController extends Controller
 
         return redirect()->route('suratkeluar.index')->with('success', 'Surat keluar berhasil ditambahkan.');
     }
+
 
     public function edit($id)
     {
@@ -81,29 +86,11 @@ class SuratKeluarController extends Controller
             'penulis' => 'required|string|max:255',
             'penerima' => 'required|string|max:255',
             'tanggal_keluar' => 'required|date',
-            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:2048', // File bisa kosong, tidak wajib
+            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:15360', // File bisa kosong, tidak wajib
         ]);
 
         // Temukan surat keluar berdasarkan ID
         $suratKeluar = SuratKeluar::findOrFail($id);
-
-        if ($request->hasFile('dokumen')) {
-            $path = $request->file('dokumen')->store('uploads', 'public'); // Simpan file baru ke storage
-        } else {
-            $path = $suratKeluar->dokumen; // Gunakan dokumen lama
-        }
-
-        $suratKeluar->update([
-            'no_surat'=>$request->no_surat,
-            'kode_indeks'=>$request->kode_indeks,
-            'perihal'=>$request->perihal,
-            'penulis'=>$request->penulis,
-            'penerima'=>$request->penerima,
-            'tanggal_keluar'=>$request->tanggal_keluar,
-            'dokumen'=>$path,
-        ]);
-
-        $suratKeluar = new SuratKeluar();
         $suratKeluar->no_surat = $request->no_surat;
         $suratKeluar->kode_indeks = $request->kode_indeks;
         $suratKeluar->perihal = $request->perihal;
@@ -111,9 +98,29 @@ class SuratKeluarController extends Controller
         $suratKeluar->penerima = $request->penerima;
         $suratKeluar->tanggal_keluar = $request->tanggal_keluar;
 
-        // Redirect ke halaman index surat keluar dengan pesan sukses
-        return redirect()->route('suratkeluar.index')->with('success', 'Surat keluar berhasil diperbarui.');
+        // Handle the file upload if a new document is uploaded
+        if ($request->hasFile('dokumen')) {
+            // Set zona waktu ke Indonesia (Waktu Indonesia Barat)
+            date_default_timezone_set('Asia/Jakarta');
+
+            // Mengambil file dari request
+            $file = $request->file('dokumen');
+
+            // Membuat nama file unik dengan waktu lokal Indonesia (format YmdHis)
+            $fileName = date('dmyHis') . '_' . $file->getClientOriginalName(); // Format contoh: 20240924123015_FileName.jpg
+
+            // Menyimpan file ke storage dengan folder 'uploads' dan nama file yang sudah ditentukan
+            $path = $file->storeAs('uploads', $fileName, 'public');
+
+            // Simpan nama file yang dihasilkan ke dalam database
+            $suratKeluar->dokumen = $path;
+        }
+
+        $suratKeluar->save();
+
+        return redirect()->route('suratkeluar.index')->with('success', 'Surat keluar berhasil diupdate.');
     }
+
 
     public function destroy($id)
     {

@@ -72,15 +72,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/suratmasuk/{id}/edit', [SuratMasukController::class, 'edit'])->name('suratmasuk.edit');
 
     // Route to handle the update process
-    Route::put('/suratmasuk/{id}', [SuratMasukController::class, 'update'])->name('suratmasuk.update');    Route::delete('/super_admin/suratmasuk/{id}', [SuratMasukController::class, 'destroy'])->name('suratmasuk.destroy');
+    Route::put('/suratmasuk/{id}', [SuratMasukController::class, 'update'])->name('suratmasuk.update');
+    Route::delete('/super_admin/suratmasuk/{id}', [SuratMasukController::class, 'destroy'])->name('suratmasuk.destroy');
     Route::resource('suratmasuk', SuratMasukController::class);
 
     Route::post('super_admin/suratkeluar', [SuratKeluarController::class, 'store'])->name('suratkeluar.store');
     Route::get('/surat/{id}', [SuratKeluarController::class, 'show'])->name('surat.show');
-    Route::get('/super_admin/suratkeluar/{id}/edit', [SuratKeluarController::class, 'edit'])->name('suratkeluar.edit');
-    Route::put('/super_admin/suratkeluar/{id}', [SuratKeluarController::class, 'update'])->name('suratkeluar.update');
+    Route::get('/suratkeluar/{id}/edit', [SuratKeluarController::class, 'edit'])->name('suratkeluar.edit');
+    Route::put('/suratkeluar/{id}', [SuratKeluarController::class, 'update'])->name('suratkeluar.update');
     Route::delete('/super_admin/suratkeluar/{id}', [SuratKeluarController::class, 'destroy'])->name('suratkeluar.destroy');
-    Route::get('/surat/{id}', [SuratKeluarController::class, 'show'])->name('surat.show');
+    Route::resource('suratkeluar', SuratKeluarController::class);
 });
 
 

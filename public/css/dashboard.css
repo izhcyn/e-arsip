@@ -1,149 +1,149 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700|Trade+Winds&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,600,700|Trade+Winds&display=swap");
 
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  list-style: none;
-  text-decoration: none;
-  font-family: 'Inter';
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+    text-decoration: none;
+    font-family: "Inter";
 }
 
-body{
-  background: #e7f1ff;
-  font-size: 14px;
-  letter-spacing: 1px;
+body {
+    background: #e7f1ff;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 
-.wrapper{
-  display: flex;
-  width: 100%;
+.wrapper {
+    display: flex;
+    width: 100%;
 }
 
-.sidebar{
-  position: relative;
+.sidebar {
+    position: relative;
 }
 
-.sidebar .bg_shadow{
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: #000;
-  z-index: 998;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
+.sidebar .bg_shadow {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
 .sidebar_inner {
-  width: 250px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  background: #00689D;
-  z-index: 999;
-  transition: all 0.3s ease;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background: #00689d;
+    z-index: 999;
+    transition: all 0.3s ease;
 }
 
 .main_container {
-  margin-left: 250px;
-  width: calc(100% - 250px);
-   transition: all 0.3s ease;
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    transition: all 0.3s ease;
 }
 
 .sidebar_inner .arsip_info {
-  padding: 20px;
-  text-align: center;
+    padding: 20px;
+    text-align: center;
 }
 
 .sidebar_inner .arsip_info .logo_img {
-  width: 100px;
-  margin: 0 auto 5px;
+    width: 100px;
+    margin: 0 auto 5px;
 }
 
 .sidebar_inner .arsip_info .logo_img img {
-  width: 100%;
-  display: block;
+    width: 100%;
+    display: block;
 }
 
 .sidebar_inner .arsip_info .arsip_data .arsip {
-  font-size: 18px;
-  color: #fff;
-  margin-bottom: 5px;
-  font-family: 'Inter';
+    font-size: 18px;
+    color: #fff;
+    margin-bottom: 5px;
+    font-family: "Inter";
 }
 
 .sidebar_inner .profile_info .profile_data span {
-  color: #c4dcff;
+    color: #c4dcff;
 }
 
-.sidebar_inner .siderbar_menu{
-      height: 490px;
+.sidebar_inner .siderbar_menu {
+    height: 490px;
     overflow: auto;
 }
 
 .sidebar_inner .siderbar_menu > li > a {
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  position: relative;
-  margin-bottom: 1px;
-  color: #c4dcff;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 1px;
+    color: #c4dcff;
 }
 
 .sidebar_inner .siderbar_menu > li > a .icon {
-  font-size: 25px;
-  margin-right: 15px;
+    font-size: 25px;
+    margin-right: 15px;
 }
 
 .sidebar_inner .siderbar_menu > li.active > a,
-.sidebar_inner .siderbar_menu > li > a:hover{
-  background: #6E7191;
-  color: #fff;
+.sidebar_inner .siderbar_menu > li > a:hover {
+    background: #6e7191;
+    color: #fff;
 }
 
-.sidebar_inner .siderbar_menu > li > a .arrow{
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  transition: all 0.3s ease;
+.sidebar_inner .siderbar_menu > li > a .arrow {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    transition: all 0.3s ease;
 }
 
-.sidebar .logout_btn a{
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  width: 210px;
-  border: 1px solid #fff;
-  color: #fff;
-  border-radius: 3px;
-  font-weight: 600;
-  padding: 10px;
-  text-align: center;
-  transition: all 0.3s ease;
+.sidebar .logout_btn a {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 210px;
+    border: 1px solid #fff;
+    color: #fff;
+    border-radius: 3px;
+    font-weight: 600;
+    padding: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
 }
 
-.sidebar .logout_btn a:hover{
-  background: #fff;
-  color: #6E7191;
+.sidebar .logout_btn a:hover {
+    background: #fff;
+    color: #6e7191;
 }
 
-.sidebar_inner .close{
+.sidebar_inner .close {
     position: absolute;
     top: 5px;
     right: 15px;
     font-size: 25px;
     color: #fff;
-  cursor: pointer;
-  display: none;
+    cursor: pointer;
+    display: none;
 }
 
 .sidebar_inner .close:hover,
-.navbar .hamburger:hover{
-  opacity: 0.7;
+.navbar .hamburger:hover {
+    opacity: 0.7;
 }
 
 .navbar {
@@ -151,7 +151,7 @@ body{
     background: #fff;
     height: 60px;
     width: 100%;
-    box-shadow: 0 3px 5px rgba(0,0,0,0.125);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.125);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -159,27 +159,27 @@ body{
     z-index: 1000;
 }
 
-.navbar .hamburger{
-  font-size: 25px;
-  cursor: pointer;
-  margin-right: 20px;
-  color: #00689D;
-  display: none;
+.navbar .hamburger {
+    font-size: 25px;
+    cursor: pointer;
+    margin-right: 20px;
+    color: #00689d;
+    display: none;
 }
 
-.navbar .logo a{
-  font-family: 'Inter';
-  color: #0089D0;
-  font-size: 26px;
-  font-weight: 600;
-  bottom: 10px;
+.navbar .logo a {
+    font-family: "Inter";
+    color: #0089d0;
+    font-size: 26px;
+    font-weight: 600;
+    bottom: 10px;
 }
 
 .navbar .user_info {
     display: flex;
     align-items: center;
     font-size: 16px;
-    color: #00689D;
+    color: #00689d;
 }
 
 .navbar .user_info i {
@@ -187,52 +187,52 @@ body{
     margin-right: 8px;
 }
 
-
-.content{
-  padding: 20px;
-  display: flex;
-  flex-wrap: wrap;
+.content {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.content .item{
-  background: #fff;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.125), -2px -2px 4px rgba(0,0,0,0.125);
-  margin: 10px 5px;
-  width: 31.8%;
-  padding: 20px;
+.content .item {
+    background: #fff;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.125),
+        -2px -2px 4px rgba(0, 0, 0, 0.125);
+    margin: 10px 5px;
+    width: 31.8%;
+    padding: 20px;
 }
 
-.accordion{
-  background: #6E7191;
-  padding-left: 50px;
-  height: 0px;
-  transition: all 0.3s ease;
-  overflow: hidden;
+.accordion {
+    background: #6e7191;
+    padding-left: 50px;
+    height: 0px;
+    transition: all 0.3s ease;
+    overflow: hidden;
 }
 
-.accordion li a{
-  display: block;
-  color: #c4dcff;
-  padding: 12px 0;
-  padding-left: 10px;
+.accordion li a {
+    display: block;
+    color: #c4dcff;
+    padding: 12px 0;
+    padding-left: 10px;
 }
 
-.accordion li:last-child a{
-  border-bottom: 0px;
+.accordion li:last-child a {
+    border-bottom: 0px;
 }
 
 .accordion li a:hover,
-.accordion li a.active{
-  color: #fff;
+.accordion li a.active {
+    color: #fff;
 }
 
-.siderbar_menu > li.active .accordion{
-  height: 200px;
+.siderbar_menu > li.active .accordion {
+    height: 200px;
 }
 
-.siderbar_menu > li.active .arrow{
-  transform: rotate(180deg);
-  transition: all 0.3s ease;
+.siderbar_menu > li.active .arrow {
+    transform: rotate(180deg);
+    transition: all 0.3s ease;
 }
 
 .content .dashboard-container {
@@ -250,7 +250,7 @@ body{
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 2px 10px #00689D;
+    box-shadow: 0 2px 10px #00689d;
     margin-bottom: 20px;
     transition: transform 0.2s;
 }
@@ -278,7 +278,7 @@ body{
 
 .dashboard-info span {
     font-size: 24px;
-    color: #00689D;
+    color: #00689d;
     font-weight: 600;
 }
 
@@ -286,32 +286,32 @@ body{
     margin-bottom: 20px;
 }
 
-
 .surat-section h3 {
     font-size: 18px;
-    color: #00689D;
+    color: #00689d;
     margin-bottom: 10px;
 }
 
 .suratmasuk-section {
     margin-bottom: 20px;
-    margin-left: -120px;
+    margin-left: 0; /* Hilangkan margin kiri negatif */
+    width: 100%;
 }
-
 
 .suratmasuk-section h3 {
     font-size: 18px;
-    color: #00689D;
+    color: #00689d;
     margin-bottom: 10px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 
-table th, table td {
+table th,
+table td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
@@ -331,7 +331,7 @@ table tbody tr:hover {
 }
 
 table a {
-    color: #00689D;
+    color: #00689d;
     text-decoration: none;
 }
 
@@ -347,10 +347,11 @@ table a:hover {
 }
 
 .suratmasuk-section .suratmasuk-card {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin: 20px 0;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: white;
+    margin-bottom: 20px;
+    width: 100%;
 }
 
 .justify-content-between .heading-daftar-pengguna {
@@ -370,7 +371,7 @@ table a:hover {
     text-decoration: none;
     margin-bottom: 20px;
     margin-left: 0px;
-    margin-right: -100px;/* Mengurangi jarak dari kiri */
+    margin-right: -100px; /* Mengurangi jarak dari kiri */
 }
 
 .btn-primary:hover {
@@ -381,7 +382,7 @@ table a:hover {
 
 .mt-3 {
     margin-top: 20px;
-    margin-left: -150px;
+    margin-left: 0;
     margin-bottom: 20px;
 }
 
@@ -400,7 +401,7 @@ table a:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     margin-left: -150px;
-    width: 125%;
+    width: 100%;
 }
 
 /* Table styles */
@@ -421,8 +422,8 @@ table a:hover {
 /* Custom pagination style */
 .pagination {
     margin-top: 20px;
-    justify-content: center; /* Center the pagination */
-    padding-left: 10px; /* Tambahkan padding kiri */
+    margin-left: 20px;
+    justify-content: start;
 }
 
 .page-item {
@@ -469,7 +470,6 @@ table a:hover {
     z-index: 1050;
 }
 
-
 .modal-content {
     padding: 20px;
     border-radius: 8px;
@@ -495,7 +495,8 @@ table a:hover {
     border-collapse: collapse;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     padding: 10px;
     text-align: left;
     border: 1px solid #ddd;
@@ -526,9 +527,6 @@ table a:hover {
     box-shadow: 0 4px 15px rgba(0, 104, 157, 0.3);
 }
 
-
-
-
 @media (max-width: 1024px) {
     .content .dashboard-card {
         width: 47%;
@@ -543,42 +541,42 @@ table a:hover {
     }
 }
 
-
 @media (max-width: 1024px) {
-  .sidebar_inner{
-    left: -115%;
-    transition: all 0.5s ease;
-  }
-  .main_container{
-    width: 100%;
-    margin-left: 0;
-  }
-  .navbar .hamburger,
-  .sidebar_inner .close{
-    display: block;
-  }
-  .content .item{
-    width: 47%;
-  }
-  .wrapper.active .sidebar_inner{
-  left: 0;
-  transition: all 0.5s ease;
-}
+    .sidebar_inner {
+        left: -115%;
+        transition: all 0.5s ease;
+    }
+    .main_container {
+        width: 100%;
+        margin-left: 0;
+    }
+    .navbar .hamburger,
+    .sidebar_inner .close {
+        display: block;
+    }
+    .content .item {
+        width: 47%;
+    }
+    .wrapper.active .sidebar_inner {
+        left: 0;
+        transition: all 0.5s ease;
+    }
 
-.wrapper.active .sidebar .bg_shadow{
-  visibility: visible;
-  opacity: 0.7;
-}
+    .wrapper.active .sidebar .bg_shadow {
+        visibility: visible;
+        opacity: 0.7;
+    }
 }
 
 @media (max-width: 528px) {
-  .content .item{
-    width: 100%;
-  }
+    .content .item {
+        width: 100%;
+    }
 }
 
 @media (max-width: 768px) {
-    .card-header, .card-body {
+    .card-header,
+    .card-body {
         padding: 50%;
     }
 
@@ -587,7 +585,10 @@ table a:hover {
         margin-top: 10px;
     }
 
-    .user-form label, .user-form input, .user-form select, .user-form button {
+    .user-form label,
+    .user-form input,
+    .user-form select,
+    .user-form button {
         width: 95%;
     }
 
@@ -596,19 +597,22 @@ table a:hover {
     }
 
     /* Table Adjustments for Mobile */
-    .table th, .table td {
+    .table th,
+    .table td {
         display: block;
         width: 50%;
         text-align: right;
     }
 
-    .table th::before, .table td::before {
+    .table th::before,
+    .table td::before {
         content: attr(data-label);
         float: left;
         font-weight: bold;
     }
 
-    .table th, .table td {
+    .table th,
+    .table td {
         border: 0;
         padding: 10px 5px;
     }
@@ -628,7 +632,8 @@ table a:hover {
         font-size: 14px;
     }
 
-    .table th, .table td {
+    .table th,
+    .table td {
         padding: 8px 5px;
     }
 }

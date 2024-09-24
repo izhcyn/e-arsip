@@ -157,22 +157,22 @@
                 @endif
 
                 @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-            <!-- Tabel pengguna -->
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+            </div>
             <div class="suratmasuk-section">
-            <div class="suratmasuk-card">
-            <h3>Surat Keluar</h3>
-            <table>
-                <thead>
-                    <tr>
+                <h1>Tabel Surat Keluar</h1>
+
+                <div class="suratmasuk-card">
+                  <table id="table" class="table-responsive">
+                    <thead>
+                      <tr>
                         <th>No. Surat</th>
                         <th>Indeks Surat</th>
                         <th>Perihal</th>
@@ -181,54 +181,87 @@
                         <th>Tanggal Keluar</th>
                         <th>Dokumen</th>
                         <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
+                      </tr>
+                      <tr>
+                        <th><input type="text" id="filterNoSurat" placeholder="Filter No. Surat"></th>
+                        <th><input type="text" id="filterIndeksSurat" placeholder="Filter Indeks"></th>
+                        <th><input type="text" id="filterPerihal" placeholder="Filter Perihal"></th>
+                        <th><input type="text" id="filterPenulis" placeholder="Filter Penulis"></th>
+                        <th><input type="text" id="filterPenerima" placeholder="Filter Penerima"></th>
+                        <th><input type="date" id="filterTanggalKeluar"></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </thead>
                     <tbody>
-                        @if($suratKeluar->isEmpty())
-                            <tr>
-                                <td colspan="8">Tidak ada surat keluar.</td>
-                            </tr>
-                        @else
-                            @foreach($suratKeluar as $item)
-                                <tr>
-                                    <td>{{ $item->no_surat }}</td>
-                                    <td>{{ $item->kode_indeks }}</td>
-                                    <td>{{ $item->perihal }}</td>
-                                    <td>{{ $item->penulis }}</td>
-                                    <td>{{ $item->penerima }}</td>
-                                    <td>{{ $item->tanggal_keluar }}</td>
-                                    <td>
-                                        @php
-                                            $filePath = asset('storage/' . $item->dokumen); // Path untuk file PDF
-                                            $fileName = basename($filePath); // Menampilkan nama file
-                                        @endphp
+                      @if($suratKeluar->isEmpty())
+                        <tr>
+                          <td colspan="8">Tidak ada surat keluar.</td>
+                        </tr>
+                      @else
+                        @foreach($suratKeluar as $item)
+                          <tr>
+                            <td>{{ $item->no_surat }}</td>
+                            <td>{{ $item->kode_indeks }}</td>
+                            <td>{{ $item->perihal }}</td>
+                            <td>{{ $item->penulis }}</td>
+                            <td>{{ $item->penerima }}</td>
+                            <td>{{ $item->tanggal_keluar }}</td>
+                            <td><a href="{{ asset('storage/' . $item->dokumen) }}" target="_blank">{{ basename($item->dokumen) }}</a></td>
+                            <td>
+                              @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
+                                <a href="{{ route('suratkeluar.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                  <i class="fas fa-edit"></i>
+                                </a>
+                              @endif
 
-                                        <!-- Tampilkan link untuk download dan preview -->
-                                        <a href="{{ asset('storage/' . $item->dokumen) }}" target="_blank">{{ basename($item->dokumen) }}</a>
-
-                                    </td>
-                                    <td>
-
-                                        @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                                        <a href="{{ route('suratkeluar.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        @endif
-
-                                        @if(auth()->user()->role == 'super_admin')
-                                        <form action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}" method="POST" id="delete-form-{{ $item->suratkeluar_id }}" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratkeluar_id }})"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                        </form>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @endif
+                              @if(auth()->user()->role == 'super_admin')
+                                <form action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}" method="POST" id="delete-form-{{ $item->suratkeluar_id }}" style="display:inline;">
+                                  @csrf
+                                  @method('DELETE')
+                                  <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratkeluar_id }})"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                </form>
+                              @endif
+                            </td>
+                          </tr>
+                        @endforeach
+                      @endif
                     </tbody>
-            </table>
+                  </table>
+                </div>
+            </div>
+
+
+            <!-- Links Pagination -->
+            <div class="mt-3">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        {{-- Previous Button --}}
+                        <li class="page-item {{ $suratKeluar->onFirstPage() ? 'disabled' : '' }}">
+                            <a class="page-link" href="{{ $suratKeluar->previousPageUrl() }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+
+                        {{-- Page Numbers --}}
+                        @for ($i = 1; $i <= $suratKeluar->lastPage(); $i++)
+                            <li class="page-item {{ $i == $suratKeluar->currentPage() ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $suratKeluar->url($i) }}">{{ $i }}</a>
+                            </li>
+                        @endfor
+
+                        {{-- Next Button --}}
+                        <li class="page-item {{ $suratKeluar->hasMorePages() ? '' : 'disabled' }}">
+                            <a class="page-link" href="{{ $suratKeluar->nextPageUrl() }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
             <script>
                 function confirmDelete(suratkeluarId) {
                     Swal.fire({
@@ -269,9 +302,58 @@
                 // Tampilkan modal
                 $('#documentModal').modal('show');
                 }
-                </script>
+            </script>
 
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+            $(document).ready(function () {
+                $("#filterNoSurat").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#table tbody tr").filter(function () {
+                    $(this).toggle($(this).find('td:eq(0)').text().toLowerCase().indexOf(value) > -1);
+                });
+                });
+
+                $("#filterIndeksSurat").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#table tbody tr").filter(function () {
+                    $(this).toggle($(this).find('td:eq(1)').text().toLowerCase().indexOf(value) > -1);
+                });
+                });
+
+                $("#filterPerihal").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#table tbody tr").filter(function () {
+                    $(this).toggle($(this).find('td:eq(2)').text().toLowerCase().indexOf(value) > -1);
+                });
+                });
+
+                $("#filterPenulis").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#table tbody tr").filter(function () {
+                    $(this).toggle($(this).find('td:eq(3)').text().toLowerCase().indexOf(value) > -1);
+                });
+                });
+
+                $("#filterPenerima").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#table tbody tr").filter(function () {
+                    $(this).toggle($(this).find('td:eq(4)').text().toLowerCase().indexOf(value) > -1);
+                });
+                });
+
+                $("#filterTanggalKeluar").on("change", function () {
+                var value = $(this).val();
+                $("#table tbody tr").filter(function () {
+                    $(this).toggle($(this).find('td:eq(5)').text().indexOf(value) > -1);
+                });
+                });
+            });
+            </script>
+
+
+
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
