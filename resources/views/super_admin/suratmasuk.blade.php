@@ -108,7 +108,7 @@
                 <div class="card mt-4 user-form" style="display: none;">
                     <div class="card-header">Tambah Surat Masuk</div>
                     <div class="card-body">
-                        <form action="{{ route('suratmasuk.store') }}" method="POST">
+                        <form action="{{ route('suratmasuk.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label for="no_surat">No Surat</label>
@@ -193,25 +193,28 @@
                                             <td>{{ $item->perihal }}</td>
                                             <td>{{ $item->penerima }}</td>
                                             <td>{{ $item->tanggal_diterima }}</td>
-                                            <td><a href="{{ $item->dokumen }}">Dokumen</a></td>
                                             <td>
-                                                <a href="" class="btn btn-info btn-sm" title="Download PDF">
-                                                    <i class="fas fa-print"></i>
-                                                </a>
+                                                @php
+                                                    $filePath = asset('storage/' . $item->dokumen); // Path untuk file PDF
+                                                    $fileName = basename($filePath); // Menampilkan nama file
+                                                @endphp
 
+                                                <!-- Tampilkan link untuk download dan preview -->
+                                                <a href="{{ $filePath }}" target="_blank">{{ $fileName }}</a>
+
+                                            </td>
+                                            <td>
                                                 @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                                                <a href="" class="btn btn-warning btn-sm" title="Edit">
+                                                <a href="{{ route('suratmasuk.edit', $item->suratmasuk_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 @endif
 
                                                 @if(auth()->user()->role == 'super_admin')
-                                                <form action="" method="POST" style="display:inline;">
+                                                <form action="{{ route('suratmasuk.destroy', $item->suratmasuk_id) }}" method="POST" id="delete-form-{{ $item->suratmasuk_id }}" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratmasuk_id }})">Hapus</button>
                                                 </form>
                                                 @endif
                                             </td>
@@ -219,14 +222,77 @@
                                     @endforeach
                                 @endif
                             </tbody>
+
                         </table>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                              <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                  <span aria-hidden="true">&laquo;</span>
+                                  <span class="sr-only">Previous</span>
+                                </a>
+                              </li>
+                              <li class="page-item"><a class="page-link" href="#">1</a></li>
+                              <li class="page-item"><a class="page-link" href="#">2</a></li>
+                              <li class="page-item"><a class="page-link" href="#">3</a></li>
+                              <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                  <span aria-hidden="true">&raquo;</span>
+                                  <span class="sr-only">Next</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </nav>
                     </div>
                 </div>
             </div>
         </div>
 
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        function confirmDelete(suratmasukId) {
+            Swal.fire({
+                title: "Apa kamu yakin?",
+                text: "Data ini tidak dapat dikembalikan",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "##28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus ini!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Temukan form dengan ID yang sesuai dan submit
+                    document.getElementById("delete-form-" + suratmasukId).submit();
+                }
+            });
+        }
+
+        function showDocument(filePath, extension) {
+        let previewHTML = '';
+
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension.toLowerCase())) {
+            // Preview gambar
+            previewHTML = `<img src="${filePath}" alt="Preview Gambar" style="max-width: 100%; height: auto;">`;
+        } else if (extension.toLowerCase() === 'pdf') {
+            // Preview PDF
+            previewHTML = `<iframe src="${filePath}" width="100%" height="600px"></iframe>`;
+        } else if (['doc', 'docx', 'xls', 'xlsx'].includes(extension.toLowerCase())) {
+            // Preview Word/Excel dengan Google Docs Viewer
+            previewHTML = `<iframe src="https://docs.google.com/gview?url=${filePath}&embedded=true" width="100%" height="600px"></iframe>`;
+        } else {
+            previewHTML = `<p>Dokumen tidak dapat ditampilkan. <a href="${filePath}" target="_blank">Download file</a></p>`;
+        }
+
+        // Masukkan konten preview ke dalam modal
+        document.getElementById('documentPreview').innerHTML = previewHTML;
+
+        // Tampilkan modal
+        $('#documentModal').modal('show');
+        }
+        </script>
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         </div>
     </div>
 </body>

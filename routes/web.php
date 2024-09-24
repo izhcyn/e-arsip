@@ -69,7 +69,15 @@ Route::middleware(['auth'])->group(function () {
     //menyimpan surat masuk
     Route::post('super_admin/suratmasuk', [SuratMasukController::class, 'store'])->name('suratmasuk.store');
     Route::get('/surat/{id}', [SuratMasukController::class, 'show'])->name('surat.show');
+    Route::get('/super_admin/suratmasuk/{id}/edit', [SuratMasukController::class, 'edit'])->name('suratmasuk.edit');
+    Route::put('/super_admin/suratmasuk/{id}', [SuratMasukController::class, 'update'])->name('suratmasuk.update');
+    Route::delete('/super_admin/suratmasuk/{id}', [SuratMasukController::class, 'destroy'])->name('suratmasuk.destroy');
+
     Route::post('super_admin/suratkeluar', [SuratKeluarController::class, 'store'])->name('suratkeluar.store');
+    Route::get('/surat/{id}', [SuratKeluarController::class, 'show'])->name('surat.show');
+    Route::get('/super_admin/suratkeluar/{id}/edit', [SuratKeluarController::class, 'edit'])->name('suratkeluar.edit');
+    Route::put('/super_admin/suratkeluar/{id}', [SuratKeluarController::class, 'update'])->name('suratkeluar.update');
+    Route::delete('/super_admin/suratkeluar/{id}', [SuratKeluarController::class, 'destroy'])->name('suratkeluar.destroy');
     Route::get('/surat/{id}', [SuratKeluarController::class, 'show'])->name('surat.show');
 });
 

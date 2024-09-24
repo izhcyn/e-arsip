@@ -108,7 +108,7 @@
                 <div class="card mt-4 user-form" style="display: none;">
                     <div class="card-header">Tambah Surat Masuk</div>
                     <div class="card-body">
-                        <form action="{{ route('suratkeluar.store') }}" method="POST">
+                        <form action="{{ route('suratkeluar.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label for="no_surat">No Surat</label>
@@ -136,7 +136,7 @@
                                 <input type="text" class="form-control" id="penerima" name="penerima" required>
                             </div>
                             <div class="form-group">
-                                <label for="tanggal_keluar">Tanggal keluar</label>
+                                <label for="tanggal_keluar">Tanggal Keluar</label>
                                 <input type="date" class="form-control" id="tanggal_keluar" name="tanggal_keluar" required>
                             </div>
                             <div class="form-group">
@@ -156,11 +156,16 @@
                     </div>
                 @endif
 
-                @if (session('error'))
-                    <div class="alert alert-danger mt-3">
-                        {{ session('error') }}
-                    </div>
-                @endif
+                @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
             <!-- Tabel pengguna -->
             <div class="suratmasuk-section">
             <div class="suratmasuk-card">
@@ -171,8 +176,9 @@
                         <th>No. Surat</th>
                         <th>Indeks Surat</th>
                         <th>Perihal</th>
+                        <th>Penulis</th>
                         <th>Penerima</th>
-                        <th>Tanggal Diterima</th>
+                        <th>Tanggal Keluar</th>
                         <th>Dokumen</th>
                         <th>Aksi</th>
                     </tr>
@@ -189,27 +195,32 @@
                                     <td>{{ $item->no_surat }}</td>
                                     <td>{{ $item->kode_indeks }}</td>
                                     <td>{{ $item->perihal }}</td>
+                                    <td>{{ $item->penulis }}</td>
                                     <td>{{ $item->penerima }}</td>
                                     <td>{{ $item->tanggal_keluar }}</td>
-                                    <td><a href="{{ $item->dokumen }}">Dokumen</a></td>
                                     <td>
-                                        <a href="{{ Storage::url($item->dokumen) }}" class="btn btn-info btn-sm" title="Download PDF">
-                                            <i class="fas fa-print"></i>
-                                        </a>
+                                        @php
+                                            $filePath = asset('storage/' . $item->dokumen); // Path untuk file PDF
+                                            $fileName = basename($filePath); // Menampilkan nama file
+                                        @endphp
+
+                                        <!-- Tampilkan link untuk download dan preview -->
+                                        <a href="{{ asset('storage/' . $item->dokumen) }}" target="_blank">{{ basename($item->dokumen) }}</a>
+
+                                    </td>
+                                    <td>
 
                                         @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                                        <a href="" class="btn btn-warning btn-sm" title="Edit">
+                                        <a href="{{ route('suratkeluar.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @endif
 
                                         @if(auth()->user()->role == 'super_admin')
-                                        <form action="" method="POST" style="display:inline;">
+                                        <form action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}" method="POST" id="delete-form-{{ $item->suratkeluar_id }}" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratkeluar_id }})"><i class="fa fa-trash" aria-hidden="true"></i></button>
                                         </form>
                                         @endif
                                     </td>
@@ -218,6 +229,49 @@
                         @endif
                     </tbody>
             </table>
+            <script>
+                function confirmDelete(suratkeluarId) {
+                    Swal.fire({
+                        title: "Apa kamu yakin?",
+                        text: "Data ini tidak dapat dikembalikan",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "##28a745",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Ya, hapus ini!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Temukan form dengan ID yang sesuai dan submit
+                            document.getElementById("delete-form-" + suratkeluarId).submit();
+                        }
+                    });
+                }
+
+                function showDocument(filePath, extension) {
+                let previewHTML = '';
+
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(extension.toLowerCase())) {
+                    // Preview gambar
+                    previewHTML = `<img src="${filePath}" alt="Preview Gambar" style="max-width: 100%; height: auto;">`;
+                } else if (extension.toLowerCase() === 'pdf') {
+                    // Preview PDF
+                    previewHTML = `<iframe src="${filePath}" width="100%" height="600px"></iframe>`;
+                } else if (['doc', 'docx', 'xls', 'xlsx'].includes(extension.toLowerCase())) {
+                    // Preview Word/Excel dengan Google Docs Viewer
+                    previewHTML = `<iframe src="https://docs.google.com/gview?url=${filePath}&embedded=true" width="100%" height="600px"></iframe>`;
+                } else {
+                    previewHTML = `<p>Dokumen tidak dapat ditampilkan. <a href="${filePath}" target="_blank">Download file</a></p>`;
+                }
+
+                // Masukkan konten preview ke dalam modal
+                document.getElementById('documentPreview').innerHTML = previewHTML;
+
+                // Tampilkan modal
+                $('#documentModal').modal('show');
+                }
+                </script>
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
