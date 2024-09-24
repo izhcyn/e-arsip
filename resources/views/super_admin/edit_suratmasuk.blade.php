@@ -106,10 +106,12 @@
                         <form action="{{ route('suratmasuk.update', $suratMasuk->suratmasuk_id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
+
                             <div class="form-group">
                                 <label for="no_surat">No Surat</label>
                                 <input type="text" class="form-control" id="no_surat" name="no_surat" value="{{ $suratMasuk->no_surat }}" required>
                             </div>
+
                             <div class="form-group">
                                 <label for="kode_indeks">Kode Indeks</label>
                                 <select class="form-control" id="kode_indeks" name="kode_indeks" required>
@@ -121,26 +123,41 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="form-group">
+                                <label for="asal_surat">Asal Surat</label>
+                                <input type="text" class="form-control" id="asal_surat" name="asal_surat" value="{{ $suratMasuk->asal_surat }}" required>
+                            </div>
+
                             <div class="form-group">
                                 <label for="perihal">Perihal</label>
                                 <input type="text" class="form-control" id="perihal" name="perihal" value="{{ $suratMasuk->perihal }}" required>
                             </div>
+
                             <div class="form-group">
                                 <label for="penerima">Penerima</label>
                                 <input type="text" class="form-control" id="penerima" name="penerima" value="{{ $suratMasuk->penerima }}" required>
                             </div>
+
                             <div class="form-group">
-                                <label for="tanggal_diterima">Tanggal Keluar</label>
-                                <input type="date" class="form-control" id="tanggal_diterima" name="tanggal_diterima" value="{{ $suratMasuk->tanggal_diterima    }}" required>
+                                <label for="tanggal_diterima">Tanggal Diterima</label>
+                                <input type="date" class="form-control" id="tanggal_diterima" name="tanggal_diterima" value="{{ $suratMasuk->tanggal_diterima }}" required>
                             </div>
+
                             <div class="form-group">
+                                @php
+                                    $filePath = asset('storage/' . $suratMasuk->dokumen); // Path untuk file PDF
+                                    $fileName = basename($filePath); // Menampilkan nama file
+                                @endphp
                                 <label for="dokumen">Unggah Dokumen</label>
                                 <input type="file" class="form-control" id="dokumen" name="dokumen">
                                 @if ($suratMasuk->dokumen)
-                                    <small>Dokumen saat ini: <a href="{{ asset('storage/' . $suratMasuk->dokumen) }}" target="_blank">{{ basename($suratMasuk->dokumen) }}</a></small>
+                                <small>Dokumen saat ini: <a href="{{ asset('storage/' . $suratMasuk->dokumen) }}" target="_blank">{{ $fileName }}</a></small>
                                 @endif
                             </div>
+
                             <button type="submit" class="btn btn-primary">Update</button>
+                        </form>
 
                     </div>
                 </div>
