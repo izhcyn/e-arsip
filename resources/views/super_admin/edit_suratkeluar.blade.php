@@ -100,6 +100,16 @@
 
             <!-- Form untuk edit user -->
             <div class="container mt-5">
+                @if($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
                 <div class="card">
                     <div class="card-header">Edit Surat Keluar</div>
                     <div class="card-body">
@@ -140,15 +150,21 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="tanggal_diterima">Tanggal Keluar</label>
-                                <input type="date" class="form-control" id="tanggal_diterima" name="tanggal_diterima" value="{{ $suratKeluar->tanggal_keluar }}" required>
+                                <label for="tanggal_keluar">Tanggal Keluar</label>
+                                <input type="date" class="form-control" id="tanggal_keluar" name="tanggal_keluar" value="{{ $suratKeluar->tanggal_keluar }}" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="dokumen">Unggah Dokumen</label>
                                 <input type="file" class="form-control" id="dokumen" name="dokumen">
+
                                 @if ($suratKeluar->dokumen)
-                                    <small>Dokumen saat ini: <a href="{{ asset('storage/' . $suratKeluar->dokumen) }}" target="_blank">{{ basename($suratKeluar->dokumen) }}</a></small>
+                                    <!-- Menampilkan link dokumen saat ini jika ada -->
+                                    <small>Dokumen saat ini:
+                                        <a href="{{ asset('storage/' . $suratKeluar->dokumen) }}" target="_blank">
+                                            {{ basename($suratKeluar->dokumen) }}
+                                        </a>
+                                    </small>
                                 @endif
                             </div>
 

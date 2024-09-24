@@ -79,10 +79,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('super_admin/suratkeluar', [SuratKeluarController::class, 'store'])->name('suratkeluar.store');
     Route::get('/surat/{id}', [SuratKeluarController::class, 'show'])->name('surat.show');
-    Route::get('/super_admin/suratkeluar/{id}/edit', [SuratKeluarController::class, 'edit'])->name('suratkeluar.edit');
-    Route::put('/super_admin/suratkeluar/{id}', [SuratKeluarController::class, 'update'])->name('suratkeluar.update');
+    Route::get('/suratkeluar/{id}/edit', [SuratKeluarController::class, 'edit'])->name('suratkeluar.edit');
+    Route::put('/suratkeluar/{id}', [SuratKeluarController::class, 'update'])->name('suratkeluar.update');
     Route::delete('/super_admin/suratkeluar/{id}', [SuratKeluarController::class, 'destroy'])->name('suratkeluar.destroy');
-    Route::get('/surat/{id}', [SuratKeluarController::class, 'show'])->name('surat.show');
+    Route::resource('suratkeluar', SuratKeluarController::class);
 });
 
 
