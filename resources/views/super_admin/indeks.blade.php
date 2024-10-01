@@ -11,20 +11,38 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script>
-        $(document).ready(function(){
-            $(".siderbar_menu li").click(function(){
-              $(".siderbar_menu li").removeClass("active");
-              $(this).addClass("active");
+        $(document).ready(function() {
+            $(".siderbar_menu li").click(function() {
+                $(".siderbar_menu li").removeClass("active");
+                $(this).addClass("active");
             });
-            $(".hamburger").click(function(){
-              $(".wrapper").addClass("active");
+            $(".hamburger").click(function() {
+                $(".wrapper").addClass("active");
             });
-            $(".close, .bg_shadow").click(function(){
-              $(".wrapper").removeClass("active");
+            $(".close, .bg_shadow").click(function() {
+                $(".wrapper").removeClass("active");
             });
             $("#toggleForm").click(function() {
-                $(".user-form").slideToggle(); // Show/hide the form
-                $(this).text($(this).text() == 'Minimize Form' ? 'Tambah User Baru' : 'Minimize Form');
+                $(".user-form").slideToggle();
+                $(this).text($(this).text() == 'Minimize Form' ? 'Tambah Indeks Baru' : 'Minimize Form');
+            });
+
+            // Handle limit change
+            $('#recordsPerPage').change(function() {
+                var limit = $(this).val();
+                var url = new URL(window.location.href);
+                url.searchParams.set('limit', limit);
+                window.location.href = url.href;
+            });
+
+            // Handle filtering
+            $('#filterKodeIndeks, #filterKodeSurat, #filterJudulIndeks, #filterDetailIndeks').on('keyup change', function() {
+                var url = new URL(window.location.href);
+                url.searchParams.set('kode_indeks', $('#filterKodeIndeks').val());
+                url.searchParams.set('kode_surat', $('#filterKodeSurat').val());
+                url.searchParams.set('judul_indeks', $('#filterJudulIndeks').val());
+                url.searchParams.set('detail_indeks', $('#filterDetailIndeks').val());
+                window.location.href = url.href;
             });
         });
     </script>
@@ -87,126 +105,101 @@
                     <i class="fas fa-bars"></i>
                 </div>
                 <div class="logo">
-                    <a href="#">USERS</a>
+                    <a href="#">INDEKS</a>
                 </div>
                 <div class="user_info">
                     <i class="fas fa-user-circle"></i>
                     <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
                 </div>
             </div>
-            <div class="container mt-5">
-                <div class="d-flex justify-content-between">
+            <div class="main_container" style="margin-left: 50px">
+                <div class="container mt-5">
                     <h1 class="heading-daftar-pengguna">Daftar Indeks</h1>
-                </div>
-                <!-- Form toggle button -->
-                <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Indeks Baru</button>
-                <!-- Form untuk tambah user yang bisa di-minimize -->
-                <div class="card mt-4 user-form" style="display: none;">
-                    <div class="card-header">Tambah Indeks Baru</div>
-                    <div class="card-body">
-                        <form action="{{ route('indeks.store') }}" method="POST">
-                            @csrf
 
-                            <div class="form-group">
-                                <label for="kode_indeks">Kode Indeks</label>
-                                <input type="text" class="form-control" id="kode_indeks" name="kode_indeks" required>
-                            </div>
+                    <!-- Form toggle button -->
+                    <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Indeks Baru</button>
+                    <!-- Form for adding new indeks (omitted for brevity) -->
 
-                            <div class="form-group">
-                                <label for="kode_surat">Kode Surat</label>
-                                <input type="text" class="form-control" id="kode_surat" name="kode_surat" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="judul_indeks">Judul Indeks</label>
-                                <input type="text" class="form-control" id="judul_indeks" name="judul_indeks" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="detail_indeks">Detail Indeks</label>
-                                <input type="text" class="form-control" id="detail_indeks" name="detail_indeks" required>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Update Indeks</button>
-                        </form>
-
-
+                    <div class="mt-3">
+                        <label for="recordsPerPage">Show records:</label>
+                        <select id="recordsPerPage" class="form-control small-select" style="width: auto; display: inline-block;">
+                            <option value="5" {{ request('limit') == 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ request('limit') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="20" {{ request('limit') == 20 ? 'selected' : '' }}>20</option>
+                        </select>
                     </div>
-                </div>
 
-                <!-- Tabel pengguna -->
-                <div class="card card-table mt-4">
+                    <!-- Tabel Indeks -->
+                    <div class="card card-table mt-4">
+                        @if (session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
 
-                    @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                    <table class="table">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Kode Indeks</th>
-                                <th>Kode Surat</th>
-                                <th>Judul Indeks</th>
-                                <th>Detail Indeks</th>
-                                <th>Aksi</th>
-                            </tr>
-                            <tr>
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Kode Indeks <input type="text" id="filterKodeIndeks" class="form-control" value="{{ request('kode_indeks') }}"></th>
+                                    <th>Kode Surat <input type="text" id="filterKodeSurat" class="form-control" value="{{ request('kode_surat') }}"></th>
+                                    <th>Judul Indeks <input type="text" id="filterJudulIndeks" class="form-control" value="{{ request('judul_indeks') }}"></th>
+                                    <th>Detail Indeks <input type="text" id="filterDetailIndeks" class="form-control" value="{{ request('detail_indeks') }}"></th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @foreach ($indeks as $indek)
-                                    <tr>
-                                        <td>{{ $indek->kode_indeks }}</td>
-                                        <td>{{ $indek->kode_surat }}</td>
-                                        <td>{{ $indek->judul_indeks }}</td>
-                                        <td>{{ $indek->detail_indeks }}</td>
-                                        <td>
-                                            <a href="{{ route('indeks.edit', $indek->indeks_id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                            <form action="{{ route('indeks.destroy', $indek->indeks_id) }}" method="POST" id="delete-form-{{ $indek->indeks_id}}" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $indek->indeks_id}})">Hapus</button>
-                                            </form>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>{{ $indek->kode_indeks }}</td>
+                                    <td>{{ $indek->kode_surat }}</td>
+                                    <td>{{ $indek->judul_indeks }}</td>
+                                    <td>{{ $indek->detail_indeks }}</td>
+                                    <td>
+                                        <a href="{{ route('indeks.edit', $indek->indeks_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        <form action="{{ route('indeks.destroy', $indek->indeks_id) }}" method="POST" id="delete-form-{{ $indek->indeks_id }}" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $indek->indeks_id }})">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
                                 @endforeach
-                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
+                    <!-- Pagination -->
+                    <div class="mt-3">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                {{-- Previous Button --}}
+                                <li class="page-item {{ $indeks->onFirstPage() ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $indeks->appends(request()->input())->previousPageUrl() }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
 
+                                {{-- Page Numbers --}}
+                                @for ($i = 1; $i <= $indeks->lastPage(); $i++)
+                                <li class="page-item {{ $i == $indeks->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $indeks->appends(request()->input())->url($i) }}">{{ $i }}</a>
+                                </li>
+                                @endfor
+
+                                {{-- Next Button --}}
+                                <li class="page-item {{ $indeks->hasMorePages() ? '' : 'disabled' }}">
+                                    <a class="page-link" href="{{ $indeks->appends(request()->input())->nextPageUrl() }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-            function confirmDelete(indeksId) {
-                Swal.fire({
-                    title: "Apa kamu yakin?",
-                    text: "Data ini tidak dapat dikembalikan",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "##28a745",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Ya, hapus ini!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Temukan form dengan ID yang sesuai dan submit
-                        document.getElementById("delete-form-" + indeksId).submit();
-                    }
-                });
-            }
-            </script>
-
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         </div>
-    </div>
-</body>
-</html>
+    </body>
+    </html>

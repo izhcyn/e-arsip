@@ -7,10 +7,73 @@
     <title>Surat Keluar</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <link rel="stylesheet" href="/css/surat.css">
     <link rel="stylesheet" href="/css/dashboard.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .table th, .table td {
+            padding: 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .table th input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .table th input,
+        .table th select {
+            margin: 0;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .table th {
+            position: relative;
+        }
+
+        /* Make sure filters fit with the columns */
+        .table th input {
+            margin: 0;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .table th select {
+            width: 100%;
+            padding: 5px;
+        }
+
+        /* Responsive handling */
+        @media (max-width: 768px) {
+            .table th, .table td {
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
+
+            .table th::before,
+            .table td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+            }
+
+            .table tbody tr {
+                margin-bottom: 10px;
+                display: block;
+            }
+
+            .table {
+                width: 100%;
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
     <script>
         $(document).ready(function(){
             $(".siderbar_menu li").click(function(){
@@ -101,12 +164,11 @@
             </div>
 
             <div class="container mt-5">
-                <!-- Form toggle button -->
+                <!-- Toggle Form Button -->
                 <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Surat Keluar</button>
-
-                <!-- Form untuk tambah user yang bisa di-minimize -->
+                <!-- Form for Adding Surat Keluar -->
                 <div class="card mt-4 user-form" style="display: none;">
-                    <div class="card-header">Tambah Surat Masuk</div>
+                    <div class="card-header">Tambah Surat Keluar</div>
                     <div class="card-body">
                         <form action="{{ route('suratkeluar.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -166,68 +228,74 @@
                 </div>
                 @endif
             </div>
+            <div class="container mt-5">
+                <label for="recordsPerPage">Show records:</label>
+                <select id="recordsPerPage" class="form-control small-select" style="width: auto; display: inline-block;">
+                    <option value="5" {{ request('limit') == 5 ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ request('limit') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="20" {{ request('limit') == 20 ? 'selected' : '' }}>20</option>
+                </select>
+            </div>
+
             <div class="suratmasuk-section">
-                <h1>Tabel Surat Keluar</h1>
-
                 <div class="suratmasuk-card">
-                  <table id="table" class="table-responsive">
-                    <thead>
-                      <tr>
-                        <th>No. Surat</th>
-                        <th>Indeks Surat</th>
-                        <th>Perihal</th>
-                        <th>Penulis</th>
-                        <th>Penerima</th>
-                        <th>Tanggal Keluar</th>
-                        <th>Dokumen</th>
-                        <th>Aksi</th>
-                      </tr>
-                      <tr>
-                        <th><input type="text" id="filterNoSurat" placeholder="Filter No. Surat"></th>
-                        <th><input type="text" id="filterIndeksSurat" placeholder="Filter Indeks"></th>
-                        <th><input type="text" id="filterPerihal" placeholder="Filter Perihal"></th>
-                        <th><input type="text" id="filterPenulis" placeholder="Filter Penulis"></th>
-                        <th><input type="text" id="filterPenerima" placeholder="Filter Penerima"></th>
-                        <th><input type="date" id="filterTanggalKeluar"></th>
-                        <th></th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @if($suratKeluar->isEmpty())
-                        <tr>
-                          <td colspan="8">Tidak ada surat keluar.</td>
-                        </tr>
-                      @else
-                        @foreach($suratKeluar as $item)
-                          <tr>
-                            <td>{{ $item->no_surat }}</td>
-                            <td>{{ $item->kode_indeks }}</td>
-                            <td>{{ $item->perihal }}</td>
-                            <td>{{ $item->penulis }}</td>
-                            <td>{{ $item->penerima }}</td>
-                            <td>{{ $item->tanggal_keluar }}</td>
-                            <td><a href="{{ asset('storage/' . $item->dokumen) }}" target="_blank">{{ basename($item->dokumen) }}</a></td>
-                            <td>
-                              @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                                <a href="{{ route('suratkeluar.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit">
-                                  <i class="fas fa-edit"></i>
-                                </a>
-                              @endif
-
-                              @if(auth()->user()->role == 'super_admin')
-                                <form action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}" method="POST" id="delete-form-{{ $item->suratkeluar_id }}" style="display:inline;">
-                                  @csrf
-                                  @method('DELETE')
-                                  <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratkeluar_id }})"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                </form>
-                              @endif
-                            </td>
-                          </tr>
-                        @endforeach
-                      @endif
-                    </tbody>
-                  </table>
+                    <h3>Tabel Surat Keluar</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%">No. Surat</th>
+                                <th style="width: 15%">Indeks Surat</th>
+                                <th style="width: 20%">Perihal</th>
+                                <th style="width: 15%">Penulis</th>
+                                <th style="width: 15%">Penerima</th>
+                                <th style="width: 10%">Tanggal Keluar</th>
+                                <th style="width: 10%">Dokumen</th>
+                                <th style="width: 10%">Aksi</th>
+                            </tr>
+                            <!-- Add filter row -->
+                            <tr>
+                                <th><input type="text" id="filterNoSurat" class="form-control"></th>
+                                <th><input type="text" id="filterIndeksSurat" class="form-control"></th>
+                                <th><input type="text" id="filterPerihal" class="form-control"></th>
+                                <th><input type="text" id="filterPenulis" class="form-control"></th>
+                                <th><input type="text" id="filterPenerima" class="form-control"></th>
+                                <th><input type="date" id="filterTanggalKeluar" class="form-control"></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if($suratKeluar->isEmpty())
+                                <tr>
+                                    <td colspan="8">Tidak ada surat keluar.</td>
+                                </tr>
+                            @else
+                                @foreach($suratKeluar as $item)
+                                    <tr>
+                                        <td>{{ $item->no_surat }}</td>
+                                        <td>{{ $item->kode_indeks }}</td>
+                                        <td>{{ $item->perihal }}</td>
+                                        <td>{{ $item->penulis }}</td>
+                                        <td>{{ $item->penerima }}</td>
+                                        <td>{{ $item->tanggal_keluar }}</td>
+                                        <td><a href="{{ asset('storage/' . $item->dokumen) }}" target="_blank">{{ basename($item->dokumen) }}</a></td>
+                                        <td>
+                                            @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
+                                            <a href="{{ route('suratkeluar.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
+                                            @endif
+                                            @if(auth()->user()->role == 'super_admin')
+                                            <form action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}" method="POST" id="delete-form-{{ $item->suratkeluar_id }}" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratkeluar_id }})"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                            </form>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -238,22 +306,20 @@
                     <ul class="pagination">
                         {{-- Previous Button --}}
                         <li class="page-item {{ $suratKeluar->onFirstPage() ? 'disabled' : '' }}">
-                            <a class="page-link" href="{{ $suratKeluar->previousPageUrl() }}" aria-label="Previous">
+                            <a class="page-link" href="{{ $suratKeluar->previousPageUrl() }}&limit={{ $suratKeluar->perPage() }}" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                                 <span class="sr-only">Previous</span>
                             </a>
                         </li>
-
                         {{-- Page Numbers --}}
                         @for ($i = 1; $i <= $suratKeluar->lastPage(); $i++)
                             <li class="page-item {{ $i == $suratKeluar->currentPage() ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $suratKeluar->url($i) }}">{{ $i }}</a>
+                                <a class="page-link" href="{{ $suratKeluar->url($i) }}&limit={{ $suratKeluar->perPage() }}">{{ $i }}</a>
                             </li>
                         @endfor
-
                         {{-- Next Button --}}
                         <li class="page-item {{ $suratKeluar->hasMorePages() ? '' : 'disabled' }}">
-                            <a class="page-link" href="{{ $suratKeluar->nextPageUrl() }}" aria-label="Next">
+                            <a class="page-link" href="{{ $suratKeluar->nextPageUrl() }}&limit={{ $suratKeluar->perPage() }}" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                                 <span class="sr-only">Next</span>
                             </a>
@@ -261,103 +327,58 @@
                     </ul>
                 </nav>
             </div>
-
-            <script>
-                function confirmDelete(suratkeluarId) {
-                    Swal.fire({
-                        title: "Apa kamu yakin?",
-                        text: "Data ini tidak dapat dikembalikan",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "##28a745",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "Ya, hapus ini!"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Temukan form dengan ID yang sesuai dan submit
-                            document.getElementById("delete-form-" + suratkeluarId).submit();
-                        }
-                    });
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete(suratkeluarId) {
+            Swal.fire({
+                title: "Apa kamu yakin?",
+                text: "Data ini tidak dapat dikembalikan",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "##28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus ini!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("delete-form-" + suratkeluarId).submit();
                 }
+            });
+        }
 
-                function showDocument(filePath, extension) {
-                let previewHTML = '';
+        $(document).ready(function () {
+            // Correct filtering logic
+            $("#filterNoSurat, #filterIndeksSurat, #filterPerihal, #filterPenulis, #filterPenerima, #filterTanggalKeluar").on("keyup change", function () {
+                var noSurat = $("#filterNoSurat").val().toLowerCase();
+                var indeksSurat = $("#filterIndeksSurat").val().toLowerCase();
+                var perihal = $("#filterPerihal").val().toLowerCase();
+                var penulis = $("#filterPenulis").val().toLowerCase();
+                var penerima = $("#filterPenerima").val().toLowerCase();
+                var tanggalKeluar = $("#filterTanggalKeluar").val();
 
-                if (['jpg', 'jpeg', 'png', 'gif'].includes(extension.toLowerCase())) {
-                    // Preview gambar
-                    previewHTML = `<img src="${filePath}" alt="Preview Gambar" style="max-width: 100%; height: auto;">`;
-                } else if (extension.toLowerCase() === 'pdf') {
-                    // Preview PDF
-                    previewHTML = `<iframe src="${filePath}" width="100%" height="600px"></iframe>`;
-                } else if (['doc', 'docx', 'xls', 'xlsx'].includes(extension.toLowerCase())) {
-                    // Preview Word/Excel dengan Google Docs Viewer
-                    previewHTML = `<iframe src="https://docs.google.com/gview?url=${filePath}&embedded=true" width="100%" height="600px"></iframe>`;
-                } else {
-                    previewHTML = `<p>Dokumen tidak dapat ditampilkan. <a href="${filePath}" target="_blank">Download file</a></p>`;
-                }
-
-                // Masukkan konten preview ke dalam modal
-                document.getElementById('documentPreview').innerHTML = previewHTML;
-
-                // Tampilkan modal
-                $('#documentModal').modal('show');
-                }
-            </script>
-
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script>
-            $(document).ready(function () {
-                $("#filterNoSurat").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#table tbody tr").filter(function () {
-                    $(this).toggle($(this).find('td:eq(0)').text().toLowerCase().indexOf(value) > -1);
-                });
-                });
-
-                $("#filterIndeksSurat").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#table tbody tr").filter(function () {
-                    $(this).toggle($(this).find('td:eq(1)').text().toLowerCase().indexOf(value) > -1);
-                });
-                });
-
-                $("#filterPerihal").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#table tbody tr").filter(function () {
-                    $(this).toggle($(this).find('td:eq(2)').text().toLowerCase().indexOf(value) > -1);
-                });
-                });
-
-                $("#filterPenulis").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#table tbody tr").filter(function () {
-                    $(this).toggle($(this).find('td:eq(3)').text().toLowerCase().indexOf(value) > -1);
-                });
-                });
-
-                $("#filterPenerima").on("keyup", function () {
-                var value = $(this).val().toLowerCase();
-                $("#table tbody tr").filter(function () {
-                    $(this).toggle($(this).find('td:eq(4)').text().toLowerCase().indexOf(value) > -1);
-                });
-                });
-
-                $("#filterTanggalKeluar").on("change", function () {
-                var value = $(this).val();
-                $("#table tbody tr").filter(function () {
-                    $(this).toggle($(this).find('td:eq(5)').text().indexOf(value) > -1);
-                });
+                $("table tbody tr").filter(function () {
+                    $(this).toggle(
+                        $(this).find('td:eq(0)').text().toLowerCase().indexOf(noSurat) > -1 &&
+                        $(this).find('td:eq(1)').text().toLowerCase().indexOf(indeksSurat) > -1 &&
+                        $(this).find('td:eq(2)').text().toLowerCase().indexOf(perihal) > -1 &&
+                        $(this).find('td:eq(3)').text().toLowerCase().indexOf(penulis) > -1 &&
+                        $(this).find('td:eq(4)').text().toLowerCase().indexOf(penerima) > -1 &&
+                        $(this).find('td:eq(5)').text().indexOf(tanggalKeluar) > -1
+                    );
                 });
             });
-            </script>
 
-
-
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        </div>
+            // Update limit (records per page)
+            $('#recordsPerPage').change(function() {
+                var limit = $(this).val();
+                var url = new URL(window.location.href);
+                url.searchParams.set('limit', limit);
+                window.location.href = url.href;
+            });
+        });
+    </script>
     </div>
 </body>
 </html>

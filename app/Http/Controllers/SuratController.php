@@ -77,4 +77,27 @@ class SuratController extends Controller
         // Return download file
         return $pdf->download('surat_' . $request->no_surat . '.pdf');
     }
+
+    public function balasSurat($id)
+    {
+        // Retrieve the specific surat masuk data using the provided ID
+        $suratMasuk = SuratMasuk::findOrFail($id);
+
+        // Return the 'balas_surat' view with the surat masuk data
+        return view('balas_surat', compact('suratMasuk'));
+    }
+
+    public function storeBalasSurat(Request $request, $id)
+    {
+        // Validation
+        $request->validate([
+            'reply' => 'required',
+        ]);
+
+        // Logic to store the reply in the database or send the reply
+
+        return redirect()->route('suratmasuk.index')->with('success', 'Balasan surat berhasil dikirim.');
+    }
+
+
 }

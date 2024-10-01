@@ -6,11 +6,13 @@ use Illuminate\Http\Request;
 
 class TemplateSuratController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $templates = TemplateSurat::all();
+        $perPage = $request->get('limit', 5); // Default 5 records per page
+        $templates = TemplateSurat::orderBy('created_at', 'desc')->paginate($perPage);
         return view('super_admin.template', compact('templates'));
     }
+
 
     public function create()
     {

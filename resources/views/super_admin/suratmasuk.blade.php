@@ -7,10 +7,73 @@
     <title>Surat Masuk</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <link rel="stylesheet" href="/css/surat.css">
     <link rel="stylesheet" href="/css/dashboard.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .table th, .table td {
+            padding: 8px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .table th input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .table th input,
+        .table th select {
+            margin: 0;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .table th {
+            position: relative;
+        }
+
+        /* Make sure filters fit with the columns */
+        .table th input {
+            margin: 0;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .table th select {
+            width: 100%;
+            padding: 5px;
+        }
+
+        /* Responsive handling */
+        @media (max-width: 768px) {
+            .table th, .table td {
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
+
+            .table th::before,
+            .table td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+            }
+
+            .table tbody tr {
+                margin-bottom: 10px;
+                display: block;
+            }
+
+            .table {
+                width: 100%;
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
     <script>
         $(document).ready(function(){
             $(".siderbar_menu li").click(function(){
@@ -31,6 +94,128 @@
                 $(this).text($(this).text() == 'Minimize Form' ? 'Tambah User Baru' : 'Minimize Form');
             });
         });
+
+        $(document).ready(function() {
+        // Load filter values from URL on page load
+        loadFiltersFromURL();
+
+        // Show records per page change event
+        $('#recordsPerPage').change(function() {
+            updateFiltersInURL();
+        });
+
+        // Text filters change event
+        $("#filterNoSurat, #filterIndeksSurat, #filterAsalSurat, #filterPerihal, #filterPenerima").on("keyup change", function() {
+            applyFilters();
+            updateFiltersInURL();
+        });
+
+        // Date filter logic
+        $("#startDate, #endDate").on("change", function() {
+            applyDateFilter();
+            updateFiltersInURL();
+        });
+
+        // Apply text filters
+        function applyFilters() {
+            var noSurat = $("#filterNoSurat").val().toLowerCase();
+            var indeksSurat = $("#filterIndeksSurat").val().toLowerCase();
+            var asalSurat = $("#filterAsalSurat").val().toLowerCase();
+            var perihal = $("#filterPerihal").val().toLowerCase();
+            var penerima = $("#filterPenerima").val().toLowerCase();
+
+            $("table tbody tr").filter(function() {
+                $(this).toggle(
+                    $(this).find('td:eq(0)').text().toLowerCase().indexOf(noSurat) > -1 &&
+                    $(this).find('td:eq(1)').text().toLowerCase().indexOf(indeksSurat) > -1 &&
+                    $(this).find('td:eq(2)').text().toLowerCase().indexOf(asalSurat) > -1 &&
+                    $(this).find('td:eq(3)').text().toLowerCase().indexOf(perihal) > -1 &&
+                    $(this).find('td:eq(4)').text().toLowerCase().indexOf(penerima) > -1
+                );
+            });
+        }
+
+        // Apply date filters
+        function applyDateFilter() {
+            var startDate = $("#startDate").val() ? new Date($("#startDate").val()) : null;
+            var endDate = $("#endDate").val() ? new Date($("#endDate").val()) : null;
+
+            $("table tbody tr").each(function() {
+                var rowDateStr = $(this).find('td:eq(5)').text().trim(); // Assuming date is in the 6th column (index 5)
+                var rowDate = new Date(rowDateStr);
+
+                // Check if the row date is a valid date
+                if (rowDateStr && !isNaN(rowDate.getTime())) {
+                    var visible = true;
+
+                    // Compare with start date if it's set
+                    if (startDate && rowDate < startDate) {
+                        visible = false;
+                    }
+
+                    // Compare with end date if it's set
+                    if (endDate && rowDate > endDate) {
+                        visible = false;
+                    }
+
+                    // Toggle row visibility
+                    $(this).toggle(visible);
+                } else {
+                    // If rowDate is not valid, hide the row
+                    $(this).toggle(false);
+                }
+            });
+        }
+
+        // Update URL with filter values
+        function updateFiltersInURL() {
+            var url = new URL(window.location.href);
+            url.searchParams.set('noSurat', $("#filterNoSurat").val());
+            url.searchParams.set('indeksSurat', $("#filterIndeksSurat").val());
+            url.searchParams.set('asalSurat', $("#filterAsalSurat").val());
+            url.searchParams.set('perihal', $("#filterPerihal").val());
+            url.searchParams.set('penerima', $("#filterPenerima").val());
+            url.searchParams.set('startDate', $("#startDate").val());
+            url.searchParams.set('endDate', $("#endDate").val());
+            url.searchParams.set('limit', $('#recordsPerPage').val());
+
+            // Update the page URL without reloading
+            window.history.replaceState(null, null, url.href);
+        }
+
+        // Load filter values from the URL
+        function loadFiltersFromURL() {
+            var urlParams = new URLSearchParams(window.location.search);
+            $("#filterNoSurat").val(urlParams.get('noSurat') || '');
+            $("#filterIndeksSurat").val(urlParams.get('indeksSurat') || '');
+            $("#filterAsalSurat").val(urlParams.get('asalSurat') || '');
+            $("#filterPerihal").val(urlParams.get('perihal') || '');
+            $("#filterPenerima").val(urlParams.get('penerima') || '');
+            $("#startDate").val(urlParams.get('startDate') || '');
+            $("#endDate").val(urlParams.get('endDate') || '');
+            $('#recordsPerPage').val(urlParams.get('limit') || '5');
+
+            // Apply filters after setting the values
+            applyFilters();
+            applyDateFilter();
+        }
+    });
+
+    function confirmDelete(suratmasukId) {
+        Swal.fire({
+            title: "Apa kamu yakin?",
+            text: "Data ini tidak dapat dikembalikan",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, hapus ini!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("delete-form-" + suratmasukId).submit();
+            }
+        });
+    }
     </script>
 </head>
 <body>
@@ -75,7 +260,7 @@
                          <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                          </a>
                        <ul class="accordion">
-                            <li><a href="/super_admin/indeks" class="active">indeks</a></li>
+                            <li><a href="/super_admin/indeks" class="active">Indeks</a></li>
                             <li><a href="/super_admin/template" class="active">Template Surat</a></li>
                             <li><a href="{{ route('user.index') }}" class="active">User</a></li>
                             <li><a href="#" class="active">Change Password</a></li>
@@ -104,7 +289,7 @@
                 <!-- Form toggle button -->
                 <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Surat Masuk</button>
 
-                <!-- Form untuk tambah user yang bisa di-minimize -->
+                <!-- Form untuk tambah surat yang bisa di-minimize -->
                 <div class="card mt-4 user-form" style="display: none;">
                     <div class="card-header">Tambah Surat Masuk</div>
                     <div class="card-body">
@@ -163,20 +348,44 @@
                     </div>
                 @endif
                 <!-- Tabel surat masuk -->
+                <div class="container mt-5">
+                    <label for="recordsPerPage">Show records:</label>
+                    <select id="recordsPerPage" class="form-control small-select" style="width: auto; display: inline-block;">
+                        <option value="5" {{ request('limit') == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ request('limit') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="20" {{ request('limit') == 20 ? 'selected' : '' }}>20</option>
+                    </select>
+                </div>
+
                 <div class="suratmasuk-section">
                     <div class="suratmasuk-card">
                         <h3>Surat Masuk</h3>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>No. Surat</th>
-                                    <th>Indeks Surat</th>
-                                    <th>Asal Surat</th>
-                                    <th>Perihal</th>
-                                    <th>Penerima</th>
-                                    <th>Tanggal Diterima</th>
-                                    <th>Dokumen</th>
-                                    <th>Aksi</th>
+                                    <th style="width: 8%;">No. Surat</th>
+                                    <th style="width: 8%;">Indeks Surat</th>
+                                    <th style="width: 15%;">Asal Surat</th>
+                                    <th style="width: 10%;">Perihal</th>
+                                    <th style="width: 15%;">Penerima</th>
+                                    <th style="width: 25%;">Tanggal Diterima</th>
+                                    <th style="width: 10%;">Dokumen</th>
+                                    <th style="width: 10%;">Aksi</th>
+                                </tr>
+                                <!-- Add filter row -->
+                                <tr>
+                                    <th><input type="text" id="filterNoSurat" class="form-control"></th>
+                                    <th><input type="text" id="filterIndeksSurat" class="form-control"></th>
+                                    <th><input type="text" id="filterAsalSurat" class="form-control"></th>
+                                    <th><input type="text" id="filterPerihal" class="form-control"></th>
+                                    <th><input type="text" id="filterPenerima" class="form-control"></th>
+                                    <th><label for="startDate"></label>
+                                        <input type="date" id="startDate" class="form-control d-inline-block" style="width: auto;">
+
+                                        <label for="endDate">To:</label>
+                                        <input type="date" id="endDate" class="form-control d-inline-block" style="width: auto;"></th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -195,18 +404,18 @@
                                             <td>{{ $item->tanggal_diterima }}</td>
                                             <td>
                                                 @php
-                                                    $filePath = asset('storage/' . $item->dokumen); // Path untuk file PDF
-                                                    $fileName = basename($filePath); // Menampilkan nama file
+                                                    $filePath = asset('storage/' . $item->dokumen);
+                                                    $fileName = basename($filePath);
                                                 @endphp
-
-                                                <!-- Tampilkan link untuk download dan preview -->
                                                 <a href="{{ $filePath }}" target="_blank">{{ $fileName }}</a>
-
                                             </td>
                                             <td>
                                                 @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
                                                 <a href="{{ route('suratmasuk.edit', $item->suratmasuk_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{{ route('balas_surat', $item->suratmasuk_id) }}" class="btn btn-primary btn-sm" title="Balas Surat">
+                                                    <i class="fas fa-reply"></i>
                                                 </a>
                                                 @endif
 
@@ -226,12 +435,12 @@
                     </div>
                 </div>
                  <!-- Links Pagination -->
-                <div class="mt-3">
+                 <div class="mt-3">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             {{-- Previous Button --}}
                             <li class="page-item {{ $suratMasuk->onFirstPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $suratMasuk->previousPageUrl() }}" aria-label="Previous">
+                                <a class="page-link" href="{{ $suratMasuk->previousPageUrl() }}&limit={{ $suratMasuk->perPage() }}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                     <span class="sr-only">Previous</span>
                                 </a>
@@ -240,69 +449,26 @@
                             {{-- Page Numbers --}}
                             @for ($i = 1; $i <= $suratMasuk->lastPage(); $i++)
                                 <li class="page-item {{ $i == $suratMasuk->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ $suratMasuk->url($i) }}">{{ $i }}</a>
+                                    <a class="page-link" href="{{ $suratMasuk->url($i) }}&limit={{ $suratMasuk->perPage() }}">{{ $i }}</a>
                                 </li>
                             @endfor
 
                             {{-- Next Button --}}
                             <li class="page-item {{ $suratMasuk->hasMorePages() ? '' : 'disabled' }}">
-                                <a class="page-link" href="{{ $suratMasuk->nextPageUrl() }}" aria-label="Next">
+                                <a class="page-link" href="{{ $suratMasuk->nextPageUrl() }}&limit={{ $suratMasuk->perPage() }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                     <span class="sr-only">Next</span>
                                 </a>
                             </li>
                         </ul>
                     </nav>
+
                 </div>
             </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-        function confirmDelete(suratmasukId) {
-            Swal.fire({
-                title: "Apa kamu yakin?",
-                text: "Data ini tidak dapat dikembalikan",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "##28a745",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, hapus ini!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Temukan form dengan ID yang sesuai dan submit
-                    document.getElementById("delete-form-" + suratmasukId).submit();
-                }
-            });
-        }
-
-        function showDocument(filePath, extension) {
-        let previewHTML = '';
-
-        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension.toLowerCase())) {
-            // Preview gambar
-            previewHTML = `<img src="${filePath}" alt="Preview Gambar" style="max-width: 100%; height: auto;">`;
-        } else if (extension.toLowerCase() === 'pdf') {
-            // Preview PDF
-            previewHTML = `<iframe src="${filePath}" width="100%" height="600px"></iframe>`;
-        } else if (['doc', 'docx', 'xls', 'xlsx'].includes(extension.toLowerCase())) {
-            // Preview Word/Excel dengan Google Docs Viewer
-            previewHTML = `<iframe src="https://docs.google.com/gview?url=${filePath}&embedded=true" width="100%" height="600px"></iframe>`;
-        } else {
-            previewHTML = `<p>Dokumen tidak dapat ditampilkan. <a href="${filePath}" target="_blank">Download file</a></p>`;
-        }
-
-        // Masukkan konten preview ke dalam modal
-        document.getElementById('documentPreview').innerHTML = previewHTML;
-
-        // Tampilkan modal
-        $('#documentModal').modal('show');
-        }
-        </script>
-
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        </div>
     </div>
 </body>
 </html>

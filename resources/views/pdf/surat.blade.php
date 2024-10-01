@@ -20,9 +20,6 @@
 <body>
     <div class="header">
         <img src="/path/to/logo.png" alt="Logo">
-        <h2>RADAR BOGOR</h2>
-        <p>Jl. KH. R. Abdullah Bin Muhammad Nuh No. 30, Taman Yasmin, Bogor</p>
-        <p>Tel. 0251-7544001, Fax. 0251-7544009</p>
     </div>
 
     <div class="content">

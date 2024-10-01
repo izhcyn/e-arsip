@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Indeks</title>
+    <title>Template</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
     <link rel="stylesheet" href="/css/user.css">
@@ -99,7 +99,7 @@
 
             <div class="container mt-5">
                 <div class="d-flex justify-content-between">
-                    <h1 class="heading-daftar-pengguna">Daftar Template Surat</h1>
+                    <h3 class="heading-daftar-pengguna" style="color: #00689d">Daftar Template Surat</h3>
                 </div>
 
                 <!-- Form toggle button -->
@@ -126,14 +126,23 @@
                         </form>
                     </div>
                 </div>
+                <div class="container mt-5">
+                                    <label for="recordsPerPage">Show records:</label>
+                <select id="recordsPerPage" class="form-control small-select" style="width: auto; display: inline-block;">
+                    <option value="5" {{ request('limit') == 5 ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ request('limit') == 10 ? 'selected' : '' }}>10</option>
+                    <option value="20" {{ request('limit') == 20 ? 'selected' : '' }}>20</option>
+                </select>
+                </div>
+
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
 
                 <!-- Tabel template surat -->
                 <div class="card card-table mt-4">
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
 
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -152,14 +161,18 @@
                                 <th>Isi Surat</th>
                                 <th>Aksi</th>
                             </tr>
+                            <tr>
+                                <th><input type="text" id="filterJudul" class="form-control" placeholder="Filter Judul"></th>
+                                <th><input type="text" id="filterIsi" class="form-control" placeholder="Filter Isi"></th>
+                                <th></th>
+                            </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="templateTableBody">
                             @foreach ($templates as $template)
                                 <tr>
                                     <td>{{ $template->judul_template }}</td>
                                     <td>{{ Str::limit(strip_tags($template->isi_surat), 50) }}</td>
                                     <td>
-                                        <a href="javascript:void(0)" class="btn btn-info btn-sm" onclick="showDetail('{{ $template->judul_template }}', '{{ $template->isi_surat }}')">Detail</a>
                                         <a href="{{ route('template.edit', $template->id) }}" class="btn btn-warning btn-sm">Edit</a>
                                         <form action="{{ route('template.destroy', $template->id) }}" method="POST" id="delete-form-{{ $template->id }}" style="display:inline;">
                                             @csrf
@@ -172,25 +185,32 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- Tombol Detail -->
+                <!-- Pagination -->
+                <div class="mt-3">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <!-- Previous Button -->
+                            <li class="page-item {{ $templates->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $templates->previousPageUrl() }}&limit={{ $templates->perPage() }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <!-- Page Numbers -->
+                            @for ($i = 1; $i <= $templates->lastPage(); $i++)
+                                <li class="page-item {{ $i == $templates->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $templates->url($i) }}&limit={{ $templates->perPage() }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+                            <!-- Next Button -->
+                            <li class="page-item {{ $templates->hasMorePages() ? '' : 'disabled' }}">
+                                <a class="page-link" href="{{ $templates->nextPageUrl() }}&limit={{ $templates->perPage() }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
 
-                <!-- Modal -->
-                <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Detail Surat</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="modalBody">
-                    <!-- Konten detail surat akan di sini -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-                </div>
-                </div>
-                </div>
 
 
                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -244,9 +264,31 @@
                         detailModal.show();
                     }
 
+                    $(document).ready(function () {
+    // Filter function
+                        $("#filterJudul, #filterIsi").on("keyup", function () {
+                            var filterJudul = $("#filterJudul").val().toLowerCase();
+                            var filterIsi = $("#filterIsi").val().toLowerCase();
+
+                            $("#templateTableBody tr").filter(function () {
+                                $(this).toggle(
+                                    $(this).find('td:eq(0)').text().toLowerCase().indexOf(filterJudul) > -1 &&
+                                    $(this).find('td:eq(1)').text().toLowerCase().indexOf(filterIsi) > -1
+                                );
+                            });
+                        });
+                    });
+
+                    $('#recordsPerPage').change(function() {
+                        var limit = $(this).val();
+                        var url = new URL(window.location.href);
+                        url.searchParams.set('limit', limit);
+                        window.location.href = url.href;
+                    });
 
                                         // Toggling form visibility
                 </script>
+
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
         </div>

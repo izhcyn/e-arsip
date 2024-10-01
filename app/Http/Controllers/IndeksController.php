@@ -8,12 +8,36 @@ use Carbon\Carbon;
 
  class IndeksController extends Controller
  {
-     public function index()
-     {
-        $indeks = Indeks::all(); // Mengambil semua data dari tabel 'indeks'
-        // Kirimkan data ke view
+    public function index(Request $request)
+    {
+        // Get the number of records to display per page, default to 5
+        $perPage = $request->get('limit', 5);
+
+        // Initialize the query
+        $query = Indeks::query();
+
+        // Apply filters if present
+        if ($request->has('kode_indeks')) {
+            $query->where('kode_indeks', 'like', '%' . $request->input('kode_indeks') . '%');
+        }
+
+        if ($request->has('kode_surat')) {
+            $query->where('kode_surat', 'like', '%' . $request->input('kode_surat') . '%');
+        }
+
+        if ($request->has('judul_indeks')) {
+            $query->where('judul_indeks', 'like', '%' . $request->input('judul_indeks') . '%');
+        }
+
+        if ($request->has('detail_indeks')) {
+            $query->where('detail_indeks', 'like', '%' . $request->input('detail_indeks') . '%');
+        }
+
+        // Paginate the results
+        $indeks = $query->paginate($perPage);
+
         return view('super_admin.indeks', compact('indeks'));
-     }
+    }
 
      public function create()
      {

@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Storage;
 
 class SuratKeluarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Ambil semua data dari tabel surat_masuk
-        $suratKeluar = SuratKeluar::orderBy('created_at', 'desc')->paginate(10);
+        $perPage = $request->get('limit', 5); // Default to 5 records per page if not set
+        $suratKeluar = SuratKeluar::orderBy('created_at', 'desc')->paginate($perPage);
         $indeks = Indeks::all();
 
         // Kirim data ke view

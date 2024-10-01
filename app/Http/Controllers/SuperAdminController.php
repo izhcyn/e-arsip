@@ -29,11 +29,37 @@ class SuperAdminController extends Controller
         ]);
     }
     // Metode untuk menampilkan daftar pengguna
-    public function showUsers()
-    {
-        $users = User::paginate(5);
-        return view('super_admin.users', compact('users'));
+   // In your Controller
+public function showUsers(Request $request)
+{
+    // Get the number of records to display per page from the request, default to 5
+    $perPage = $request->get('limit', 5);
+
+    // Apply filtering based on input values
+    $query = User::query();
+
+    if ($request->has('name')) {
+        $query->where('name', 'like', '%' . $request->input('name') . '%');
     }
+
+    if ($request->has('email')) {
+        $query->where('email', 'like', '%' . $request->input('email') . '%');
+    }
+
+    if ($request->has('username')) {
+        $query->where('username', 'like', '%' . $request->input('username') . '%');
+    }
+
+    if ($request->has('role')) {
+        $query->where('role', 'like', '%' . $request->input('role') . '%');
+    }
+
+    // Fetch users with pagination based on the selected limit
+    $users = $query->paginate($perPage);
+
+    return view('super_admin.users', compact('users'));
+}
+
     // Metode untuk membuat pengguna baru
     public function create()
     {

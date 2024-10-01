@@ -135,56 +135,103 @@
                         </form>
                     </div>
                 </div>
+                <div class="mt-3">
+                    <label for="recordsPerPage">Show records:</label>
+                    <select id="recordsPerPage" class="form-control small-select" style="width: auto; display: inline-block;">
+                        <option value="5" {{ request('limit') == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ request('limit') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="20" {{ request('limit') == 20 ? 'selected' : '' }}>20</option>
+                    </select>
+                </div>
 
-                <!-- Tabel pengguna -->
                 <div class="card card-table mt-4">
-
                     @if (session('success'))
                     <div class="alert alert-success">
                         {{ session('success') }}
                     </div>
-                @endif
+                    @endif
 
-                @if ($errors->any())
+                    @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
                             @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                            <li>{{ $error }}</li>
                             @endforeach
                         </ul>
                     </div>
-                @endif
+                    @endif
 
                     <table class="table">
                         <thead class="thead-light">
                             <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>username</th>
-                                <th>password</th>
-                                <th>role</th>
-                                <th>Aksi</th>
+                                <th style="width: 20%">Name</th>
+                                <th style="width: 20%">Email</th>
+                                <th style="width: 10%">Username</th>
+                                <th style="width: 15%">Password</th>
+                                <th style="width: 10%">Role</th>
+                                <th style="width: 15%">Aksi</th>
                             </tr>
                             <tr>
-                                @foreach ($users as $user)
-                                <tr>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->username }}</td>
-                                    <td>{{ $user->password }}</td>
-                                    <td>{{ $user->role }}</td>
-                                    <td>
-                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" id="delete-form-{{ $user->id }}" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $user->id }})">Hapus</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
+                                <th><input type="text" id="filterName" class="form-control" value="{{ request('name') }}"></th>
+                                <th><input type="text" id="filterEmail" class="form-control" value="{{ request('email') }}"></th>
+                                <th><input type="text" id="filterUsername" class="form-control" value="{{ request('username') }}"></th>
+                                <th></th>
+                                <th><input type="text" id="filterRole" class="form-control" value="{{ request('role') }}"></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($users as $user)
+                            <tr>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->username }}</td>
+                                <td>{{ $user->password }}</td>
+                                <td>{{ $user->role }}</td>
+                                <td>
+                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" id="delete-form-{{ $user->id }}" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $user->id }})">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div> <!-- End of table container -->
 
-            </div>
+                <!-- Pagination Section (Move this outside of the table container) -->
+                <div class="mt-3">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {{-- Previous Button --}}
+                            <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
+                                <a class="page-link" href="{{ $users->appends(request()->input())->previousPageUrl() }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+
+                            {{-- Page Numbers --}}
+                            @for ($i = 1; $i <= $users->lastPage(); $i++)
+                            <li class="page-item {{ $i == $users->currentPage() ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $users->appends(request()->input())->url($i) }}">{{ $i }}</a>
+                            </li>
+                            @endfor
+
+                            {{-- Next Button --}}
+                            <li class="page-item {{ $users->hasMorePages() ? '' : 'disabled' }}">
+                                <a class="page-link" href="{{ $users->appends(request()->input())->nextPageUrl() }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -206,9 +253,32 @@
                 });
             }
             </script>
+            <script>
+                $(document).ready(function() {
+                    // Handle limit change
+                    $('#recordsPerPage').change(function() {
+                        var limit = $(this).val(); // Get the selected limit value
+                        var url = new URL(window.location.href); // Get the current URL
+                        url.searchParams.set('limit', limit); // Set the limit parameter
+                        window.location.href = url.href; // Reload the page with the new limit
+                    });
+
+                    // Handle filtering
+                    $('#filterName, #filterEmail, #filterUsername, #filterRole').on('keyup change', function() {
+                        var url = new URL(window.location.href);
+                        url.searchParams.set('name', $('#filterName').val());
+                        url.searchParams.set('email', $('#filterEmail').val());
+                        url.searchParams.set('username', $('#filterUsername').val());
+                        url.searchParams.set('role', $('#filterRole').val());
+                        window.location.href = url.href;
+                    });
+                });
+            </script>
 
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         </div>
     </div>
+    </div>
+
 </body>
 </html>

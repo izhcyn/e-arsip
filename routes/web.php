@@ -53,6 +53,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/super_admin/buatsurat', [SuratController::class, 'create'])->name('super_admin.buatsurat');
     Route::post('/super_admin/store', [SuratController::class, 'store'])->name('super_admin.store');
+    Route::get('/balas_surat/{id}', [SuratController::class, 'balasSurat'])->name('balas_surat');
+    Route::post('/suratmasuk/balas/{id}', [SuratController::class, 'storeBalasSurat'])->name('suratmasuk.balas');
+
 
 
     Route::resource('super_admin/template', TemplateSuratController::class);
@@ -83,6 +86,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/suratkeluar/{id}', [SuratKeluarController::class, 'update'])->name('suratkeluar.update');
     Route::delete('/super_admin/suratkeluar/{id}', [SuratKeluarController::class, 'destroy'])->name('suratkeluar.destroy');
     Route::resource('suratkeluar', SuratKeluarController::class);
+
+
 });
 
 

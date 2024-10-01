@@ -10,17 +10,21 @@ use Illuminate\Support\Facades\Storage;
 
 class SuratMasukController extends Controller
 {
-    public function index()
-    {
-        // Fetch all data from the surat_masuk table
-        $suratMasuk = SuratMasuk::orderBy('created_at', 'desc')->paginate(10);
+    public function index(Request $request)
+{
+    // Get the number of records to display per page from the request, default to 10
+    $perPage = $request->get('limit', 5);
 
-        // Fetch data from the indeks table
-        $indeks = Indeks::all();
+    // Fetch the records with pagination based on the selected limit
+    $suratMasuk = SuratMasuk::orderBy('created_at', 'desc')->paginate($perPage);
 
-        // Send both variables to the view
-        return view('super_admin.suratmasuk', compact('suratMasuk', 'indeks'));
-    }
+    $indeks = Indeks::all();
+
+    return view('super_admin.suratmasuk', compact('suratMasuk', 'indeks'));
+}
+
+
+
 
     public function store(Request $request)
     {
