@@ -153,11 +153,11 @@
                                     <td>{{ $indek->judul_indeks }}</td>
                                     <td>{{ $indek->detail_indeks }}</td>
                                     <td>
-                                        <a href="{{ route('indeks.edit', $indek->indeks_id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{{ route('indeks.edit', $indek->indeks_id) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                                         <form action="{{ route('indeks.destroy', $indek->indeks_id) }}" method="POST" id="delete-form-{{ $indek->indeks_id }}" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $indek->indeks_id }})">Hapus</button>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $indek->indeks_id }})"><i class="fa fa-trash" aria-hidden="true"></button>
                                         </form>
                                     </td>
                                 </tr>

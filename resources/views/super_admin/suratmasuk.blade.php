@@ -14,7 +14,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
         .table th, .table td {
-            padding: 8px;
+            padding: 5px;
             text-align: left;
             vertical-align: middle;
         }
@@ -368,7 +368,7 @@
                                     <th style="width: 15%;">Asal Surat</th>
                                     <th style="width: 10%;">Perihal</th>
                                     <th style="width: 15%;">Penerima</th>
-                                    <th style="width: 25%;">Tanggal Diterima</th>
+                                    <th style="width: 15%;">Tanggal Diterima</th>
                                     <th style="width: 10%;">Dokumen</th>
                                     <th style="width: 10%;">Aksi</th>
                                 </tr>
@@ -380,11 +380,9 @@
                                     <th><input type="text" id="filterPerihal" class="form-control"></th>
                                     <th><input type="text" id="filterPenerima" class="form-control"></th>
                                     <th><label for="startDate"></label>
-                                        <input type="date" id="startDate" class="form-control d-inline-block" style="width: auto;">
-
-                                        <label for="endDate">To:</label>
-                                        <input type="date" id="endDate" class="form-control d-inline-block" style="width: auto;"></th>
-                                    <th></th>
+                                        <input type="date" id="startDate" class="form-control d-inline-block" style="width: 40%;">
+                                        <label for="endDate">-</label><input type="date" id="endDate" class="form-control d-inline-block" style="width: 40%;"></th>
+                                        <th></th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -413,10 +411,10 @@
                                                 @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
                                                 <a href="{{ route('suratmasuk.edit', $item->suratmasuk_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
-                                                </a>
+                                                </a><br />
                                                 <a href="{{ route('balas_surat', $item->suratmasuk_id) }}" class="btn btn-primary btn-sm" title="Balas Surat">
                                                     <i class="fas fa-reply"></i>
-                                                </a>
+                                                </a><br />
                                                 @endif
 
                                                 @if(auth()->user()->role == 'super_admin')

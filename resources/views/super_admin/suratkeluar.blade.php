@@ -20,7 +20,7 @@
         }
 
         .table th input {
-            width: 100%;
+            width: 90%;
             box-sizing: border-box;
         }
 
@@ -94,6 +94,128 @@
                 $(this).text($(this).text() == 'Minimize Form' ? 'Tambah User Baru' : 'Minimize Form');
             });
         });
+
+        $(document).ready(function() {
+        // Load filter values from URL on page load
+        loadFiltersFromURL();
+
+        // Show records per page change event
+        $('#recordsPerPage').change(function() {
+            updateFiltersInURL();
+        });
+
+        // Text filters change event
+        $("#filterNoSurat, #filterIndeksSurat, #filterAsalSurat, #filterPerihal, #filterPenerima").on("keyup change", function() {
+            applyFilters();
+            updateFiltersInURL();
+        });
+
+        // Date filter logic
+        $("#startDate, #endDate").on("change", function() {
+            applyDateFilter();
+            updateFiltersInURL();
+        });
+
+        // Apply text filters
+        function applyFilters() {
+            var noSurat = $("#filterNoSurat").val().toLowerCase();
+            var indeksSurat = $("#filterIndeksSurat").val().toLowerCase();
+            var asalSurat = $("#filterAsalSurat").val().toLowerCase();
+            var perihal = $("#filterPerihal").val().toLowerCase();
+            var penerima = $("#filterPenerima").val().toLowerCase();
+
+            $("table tbody tr").filter(function() {
+                $(this).toggle(
+                    $(this).find('td:eq(0)').text().toLowerCase().indexOf(noSurat) > -1 &&
+                    $(this).find('td:eq(1)').text().toLowerCase().indexOf(indeksSurat) > -1 &&
+                    $(this).find('td:eq(2)').text().toLowerCase().indexOf(asalSurat) > -1 &&
+                    $(this).find('td:eq(3)').text().toLowerCase().indexOf(perihal) > -1 &&
+                    $(this).find('td:eq(4)').text().toLowerCase().indexOf(penerima) > -1
+                );
+            });
+        }
+
+        // Apply date filters
+        function applyDateFilter() {
+            var startDate = $("#startDate").val() ? new Date($("#startDate").val()) : null;
+            var endDate = $("#endDate").val() ? new Date($("#endDate").val()) : null;
+
+            $("table tbody tr").each(function() {
+                var rowDateStr = $(this).find('td:eq(5)').text().trim(); // Assuming date is in the 6th column (index 5)
+                var rowDate = new Date(rowDateStr);
+
+                // Check if the row date is a valid date
+                if (rowDateStr && !isNaN(rowDate.getTime())) {
+                    var visible = true;
+
+                    // Compare with start date if it's set
+                    if (startDate && rowDate < startDate) {
+                        visible = false;
+                    }
+
+                    // Compare with end date if it's set
+                    if (endDate && rowDate > endDate) {
+                        visible = false;
+                    }
+
+                    // Toggle row visibility
+                    $(this).toggle(visible);
+                } else {
+                    // If rowDate is not valid, hide the row
+                    $(this).toggle(false);
+                }
+            });
+        }
+
+        // Update URL with filter values
+        function updateFiltersInURL() {
+            var url = new URL(window.location.href);
+            url.searchParams.set('noSurat', $("#filterNoSurat").val());
+            url.searchParams.set('indeksSurat', $("#filterIndeksSurat").val());
+            url.searchParams.set('asalSurat', $("#filterAsalSurat").val());
+            url.searchParams.set('perihal', $("#filterPerihal").val());
+            url.searchParams.set('penerima', $("#filterPenerima").val());
+            url.searchParams.set('startDate', $("#startDate").val());
+            url.searchParams.set('endDate', $("#endDate").val());
+            url.searchParams.set('limit', $('#recordsPerPage').val());
+
+            // Update the page URL without reloading
+            window.history.replaceState(null, null, url.href);
+        }
+
+        // Load filter values from the URL
+        function loadFiltersFromURL() {
+            var urlParams = new URLSearchParams(window.location.search);
+            $("#filterNoSurat").val(urlParams.get('noSurat') || '');
+            $("#filterIndeksSurat").val(urlParams.get('indeksSurat') || '');
+            $("#filterAsalSurat").val(urlParams.get('asalSurat') || '');
+            $("#filterPerihal").val(urlParams.get('perihal') || '');
+            $("#filterPenerima").val(urlParams.get('penerima') || '');
+            $("#startDate").val(urlParams.get('startDate') || '');
+            $("#endDate").val(urlParams.get('endDate') || '');
+            $('#recordsPerPage').val(urlParams.get('limit') || '5');
+
+            // Apply filters after setting the values
+            applyFilters();
+            applyDateFilter();
+        }
+    });
+
+    function confirmDelete(suratmasukId) {
+        Swal.fire({
+            title: "Apa kamu yakin?",
+            text: "Data ini tidak dapat dikembalikan",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, hapus ini!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("delete-form-" + suratmasukId).submit();
+            }
+        });
+    }
     </script>
 </head>
 <body>
@@ -243,12 +365,12 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th style="width: 10%">No. Surat</th>
-                                <th style="width: 15%">Indeks Surat</th>
-                                <th style="width: 20%">Perihal</th>
+                                <th style="width: 8%">No. Surat</th>
+                                <th style="width: 8%">Indeks Surat</th>
+                                <th style="width: 10%">Perihal</th>
                                 <th style="width: 15%">Penulis</th>
                                 <th style="width: 15%">Penerima</th>
-                                <th style="width: 10%">Tanggal Keluar</th>
+                                <th style="width: 15%">Tanggal Keluar</th>
                                 <th style="width: 10%">Dokumen</th>
                                 <th style="width: 10%">Aksi</th>
                             </tr>
@@ -259,7 +381,9 @@
                                 <th><input type="text" id="filterPerihal" class="form-control"></th>
                                 <th><input type="text" id="filterPenulis" class="form-control"></th>
                                 <th><input type="text" id="filterPenerima" class="form-control"></th>
-                                <th><input type="date" id="filterTanggalKeluar" class="form-control"></th>
+                                <th><label for="startDate"></label>
+                                <input type="date" id="startDate" class="form-control d-inline-block" style="width: 40%">
+                                <label for="endDate">-</label><input type="date" id="endDate" class="form-control d-inline-block" style="width: 40%"></th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -331,54 +455,6 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        function confirmDelete(suratkeluarId) {
-            Swal.fire({
-                title: "Apa kamu yakin?",
-                text: "Data ini tidak dapat dikembalikan",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "##28a745",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, hapus ini!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById("delete-form-" + suratkeluarId).submit();
-                }
-            });
-        }
-
-        $(document).ready(function () {
-            // Correct filtering logic
-            $("#filterNoSurat, #filterIndeksSurat, #filterPerihal, #filterPenulis, #filterPenerima, #filterTanggalKeluar").on("keyup change", function () {
-                var noSurat = $("#filterNoSurat").val().toLowerCase();
-                var indeksSurat = $("#filterIndeksSurat").val().toLowerCase();
-                var perihal = $("#filterPerihal").val().toLowerCase();
-                var penulis = $("#filterPenulis").val().toLowerCase();
-                var penerima = $("#filterPenerima").val().toLowerCase();
-                var tanggalKeluar = $("#filterTanggalKeluar").val();
-
-                $("table tbody tr").filter(function () {
-                    $(this).toggle(
-                        $(this).find('td:eq(0)').text().toLowerCase().indexOf(noSurat) > -1 &&
-                        $(this).find('td:eq(1)').text().toLowerCase().indexOf(indeksSurat) > -1 &&
-                        $(this).find('td:eq(2)').text().toLowerCase().indexOf(perihal) > -1 &&
-                        $(this).find('td:eq(3)').text().toLowerCase().indexOf(penulis) > -1 &&
-                        $(this).find('td:eq(4)').text().toLowerCase().indexOf(penerima) > -1 &&
-                        $(this).find('td:eq(5)').text().indexOf(tanggalKeluar) > -1
-                    );
-                });
-            });
-
-            // Update limit (records per page)
-            $('#recordsPerPage').change(function() {
-                var limit = $(this).val();
-                var url = new URL(window.location.href);
-                url.searchParams.set('limit', limit);
-                window.location.href = url.href;
-            });
-        });
-    </script>
     </div>
 </body>
 </html>

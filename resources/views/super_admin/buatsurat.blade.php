@@ -116,7 +116,7 @@
                 <label for="indeks">Indeks<span class="star">*</span></label>
                 <select id="indeks" name="indeks" class="form-control" required>
                     @foreach ($indeks as $indek)
-                        <option value="{{ $indek->judul_indeks }}">{{ $indek->judul_indeks }}</option>
+                        <option value="{{ $indek->kode_indeks }}/{{ $indek->kode_surat }}">{{ $indek->kode_indeks }}-{{ $indek->kode_surat }}-{{ $indek->judul_indeks }}</option>
                     @endforeach
                 </select>
 
@@ -133,7 +133,7 @@
                 </select>
 
                 <br /><label for="lampiran">Lampiran<span class="star">*</span></label>
-                <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran" name="lampiran" required>
+                <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran" name="lampiran" value="{{ old('lampiran')}}">
 
                 <label for="kepada">Kepada<span class="star">*</span></label>
                 <input type="text" id="kepada" name="kepada" value="{{ old('kepada') }}" required>
@@ -142,7 +142,7 @@
                 <input type="text" id="alamat" name="alamat" value="{{ old('alamat') }}" required>
 
                 <label for="isiSurat">Isi Surat<span class="star">*</span></label>
-                <textarea id="isiSurat" name="isi_surat" class="form-control">{{ old('isi_surat') }} @required(true)</textarea>
+                <textarea id="isiSurat" name="isi_surat" class="form-control">{{ old('isi_surat') }}</textarea>
 
                 <label for="penulis">Penulis<Span class="star">*</Span></label>
                 <input type="text" id="penulis" name="penulis" value="{{ old('penulis') }}" required>
@@ -151,7 +151,7 @@
                 <input type="text" id="jabatan" name="jabatan" value="{{ old('jabatan') }}" required>
 
                 <label for="notes">Notes (optional) :</label>
-                <textarea id="notes" name="notes">{{ old('notes') }}</textarea>
+                <textarea id="notes" name="notes" class="form-control">{{ old('notes') }}</textarea>
 
                 <!-- Input file tanda tangan -->
                 <label for="signature">Upload Tanda Tangan (optional) :</label>
@@ -168,11 +168,11 @@
 
         <script>
             tinymce.init({
-                selector: '#isiSurat',  // Menggunakan textarea dengan id "isiSurat"
+                selector: '#isiSurat, #notes',  // Menggunakan textarea dengan id "isiSurat"
                 plugins: 'table lists',  // Menambahkan plugin tabel dan list
                 toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
                 menubar: 'file edit view insert format table tools help',  // Menambahkan menu insert untuk table
-                height: 500,  // Mengatur tinggi editor
+                height: 200,  // Mengatur tinggi editor
                 setup: function (editor) {
                     editor.on('init', function () {
                         this.getContainer().style.transition = 'border-color 0.15s ease-in-out';

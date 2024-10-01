@@ -105,7 +105,7 @@
             @endif
 
             <img src="/assets/heading_surat.png" alt="heading">
-            <form action="{{ route('suratmasuk.balas', $suratMasuk->id) }}" method="POST">
+            <form action="{{ route('suratmasuk.balas', $suratMasuk->suratmasuk_id) }}" method="POST">
                 @csrf
                 <label for="tanggal">Tanggal<span class="star">*</span></label>
                 <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal') }}" required>
