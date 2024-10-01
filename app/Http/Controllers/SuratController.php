@@ -31,52 +31,100 @@ class SuratController extends Controller
         $request->validate([
             'tanggal' => 'required|date',
             'no_surat' => 'required|string',
+            'indeks' => 'required|string',
             'perihal' => 'required|string',
             'kepada' => 'required|string',
             'alamat' => 'required|string',
             'isi_surat' => 'required|string',
             'penulis' => 'required|string',
             'jabatan' => 'required|string',
+            'signature' => 'nullable|file|mimes:png',
+            'lampiranUpload' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png',
         ]);
 
-        // Simpan surat ke database
-        $suratKeluar = new SuratKeluar();
-        $suratKeluar->no_surat = $request->no_surat;
-        $suratKeluar->tanggal = $request->tanggal;
-        $suratKeluar->kode_indeks = $request->indeks;
-        $suratKeluar->asal_surat = 'RADAR BOGOR';
-        $suratKeluar->perihal = $request->perihal;
-        $suratKeluar->penerima = $request->kepada;
-        $suratKeluar->alamat = $request->alamat;
-        $suratKeluar->isi_surat = $request->isi_surat;
-        $suratKeluar->save();  // Simpan ke database
+        // Simpan data ke tabel 'surats'
+        $surat = new Surat();
+        $surat->tanggal = $request->tanggal;
+        $surat->no_surat = $request->no_surat;
+        $surat->indeks = $request->indeks;
+        $surat->perihal = $request->perihal;
+        $surat->kepada = $request->kepada;
+        $surat->alamat = $request->alamat;
+        $surat->isi_surat = $request->isi_surat;
+        $surat->penulis = $request->penulis;
+        $surat->jabatan = $request->jabatan;
+        $surat->notes = $request->notes;
+        $surat->template_surat = $request->templateSurat;
 
-        // Data yang akan dipassing ke view PDF
+        // Simpan tanda tangan (jika ada)
+        if ($request->hasFile('signature')) {
+            $signaturePath = $request->file('signature')->store('signatures', 'public');
+            $surat->signature = $signaturePath;
+        }
+
+        // Simpan lampiran (jika ada)
+        if ($request->hasFile('lampiranUpload')) {
+            $lampiranPath = $request->file('lampiranUpload')->store('lampiran', 'public');
+            $surat->lampiran = $lampiranPath;
+        }
+
+        $surat->save();  // Simpan ke tabel 'surats'
+
+        // Simpan ke tabel 'surat_keluar' dengan mengonversi `tanggal` ke `tanggal_keluar`
+        $suratKeluar = new SuratKeluar();
+        $suratKeluar->no_surat = $surat->no_surat;
+        $suratKeluar->kode_indeks = $surat->indeks;
+        $suratKeluar->perihal = $surat->perihal;
+        $suratKeluar->penerima = $surat->kepada;
+        $suratKeluar->penulis = $surat->penulis;
+        $suratKeluar->tanggal_keluar = $surat->tanggal; // Menggunakan tanggal dari input
+        $suratKeluar->dokumen = $this->generatePdf($surat);
+        $suratKeluar->save();  // Simpan ke tabel 'surat_keluar'
+
+        return $this->downloadPdf($surat);
+    }
+
+    private function generatePdf($surat)
+    {
+        // Data untuk PDF
         $data = [
-            'tanggal' => $request->tanggal,
-            'no_surat' => $request->no_surat,
-            'perihal' => $request->perihal,
-            'kepada' => $request->kepada,
-            'alamat' => $request->alamat,
-            'isi_surat' => $request->isi_surat,
-            'penulis' => $request->penulis,
-            'jabatan' => $request->jabatan,
+            'tanggal' => $surat->tanggal,
+            'no_surat' => $surat->no_surat,
+            'perihal' => $surat->perihal,
+            'kepada' => $surat->kepada,
+            'alamat' => $surat->alamat,
+            'isi_surat' => $surat->isi_surat,
+            'penulis' => $surat->penulis,
+            'jabatan' => $surat->jabatan,
         ];
 
-        // Generate PDF dari view 'pdf.surat'
+        // Generate PDF
         $pdf = PDF::loadView('pdf.surat', $data);
-
-        // Simpan PDF ke storage
-        $pdfPath = 'surat_keluar/surat_' . $request->no_surat . '.pdf';
+        $pdfPath = 'surat_keluar/surat_' . $surat->no_surat . '.pdf';
         \Storage::put($pdfPath, $pdf->output());
 
-        // Update path PDF di database
-        $suratKeluar->dokumen = $pdfPath;
-        $suratKeluar->save();
-
-        // Return download file
-        return $pdf->download('surat_' . $request->no_surat . '.pdf');
+        return $pdfPath;
     }
+
+    private function downloadPdf($surat)
+    {
+        // Data untuk PDF
+        $data = [
+            'tanggal' => $surat->tanggal,
+            'no_surat' => $surat->no_surat,
+            'perihal' => $surat->perihal,
+            'kepada' => $surat->kepada,
+            'alamat' => $surat->alamat,
+            'isi_surat' => $surat->isi_surat,
+            'penulis' => $surat->penulis,
+            'jabatan' => $surat->jabatan,
+        ];
+
+        // Generate PDF untuk di-download
+        $pdf = PDF::loadView('pdf.surat', $data);
+        return $pdf->download('surat_' . $surat->no_surat . '.pdf');
+    }
+
 
     public function balasSurat($id)
     {
