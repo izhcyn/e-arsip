@@ -34,6 +34,7 @@ class SuratController extends Controller
         $request->validate([
             'tanggal' => 'required|date',
             'no_surat' => 'required|string',
+            'indeks' => 'required|string',
             'perihal' => 'required|string',
             'lampiran' => 'required|string',
             'kepada' => 'required|string',
@@ -41,6 +42,8 @@ class SuratController extends Controller
             'isi_surat' => 'required|string',
             'penulis' => 'required|string',
             'jabatan' => 'required|string',
+            'signature' => 'nullable|file|mimes:png',
+            'lampiranUpload' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png',
         ]);
 
         // Handle signature upload if present
@@ -66,6 +69,7 @@ class SuratController extends Controller
         ];
 
         // Generate PDF
+        // Generate PDF
         $pdf = PDF::loadView('pdf.surat', $data);
 
         // Save PDF to storage
@@ -78,6 +82,7 @@ class SuratController extends Controller
         // Return download response
         return $pdf->download('surat_' . $request->no_surat . '.pdf');
     }
+
 
 
     public function balasSurat($id)
