@@ -22,46 +22,63 @@ class SuratKeluarController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input dari form
+        // Validate input
         $request->validate([
-            'no_surat' => 'required|string|max:255',
-            'kode_indeks' => 'required|string|max:50',
-            'perihal' => 'required|string|max:255',
-            'penulis' => 'required|string|max:255',
-            'penerima' => 'required|string|max:255',
-            'tanggal_keluar' => 'required|date',
-            'dokumen' => 'required|file|mimes:pdf,doc,docx,jpg,png|max:15360',  // Batas ukuran file maksimal 15MB
+            'tanggal' => 'required|date',
+            'no_surat' => 'required|string',
+            'indeks' => 'required|string',
+            'perihal' => 'required|string',
+            'lampiran' => 'required|string',
+            'kepada' => 'required|string',
+            'alamat' => 'required|string',
+            'isi_surat' => 'required|string',
+            'penulis' => 'required|string',
+            'jabatan' => 'required|string',
+            'signature' => 'nullable|file|mimes:png',
+            'lampiranUpload' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png',
         ]);
 
-        // Proses upload file
-        if ($request->hasFile('dokumen')) {
-            // Set zona waktu ke Indonesia (Waktu Indonesia Barat)
-            date_default_timezone_set('Asia/Jakarta');
-
-            // Mengambil file dari request
-            $file = $request->file('dokumen');
-
-            // Membuat nama file yang unik dengan menambahkan timestamp (format: dmyHis)
-            $fileName = date('dmyHis') . '_' . $file->getClientOriginalName();
-
-            // Menyimpan file ke storage dengan folder 'uploads'
-            $path = $file->storeAs('uploads', $fileName, 'public');
-        } else {
-            return redirect()->back()->with('error', 'Dokumen tidak ditemukan. Pastikan Anda mengunggah file.');
+        // Handle signature upload if present
+        $signaturePath = null;
+        if ($request->hasFile('signature')) {
+            $signaturePath = $request->file('signature')->store('signatures', 'public');
         }
 
-        // Menyimpan data surat keluar ke database
+        // Data for the PDF view
+        $data = [
+            'tanggal' => $request->tanggal,
+            'no_surat' => $request->no_surat,
+            'kode_indeks' => $request->indeks,
+            'perihal' => $request->perihal,
+            'lampiran' => $request->lampiran,
+            'kepada' => $request->kepada,
+            'alamat' => $request->alamat,
+            'isi_surat' => $request->isi_surat,
+            'penulis' => $request->penulis,
+            'jabatan' => $request->jabatan,
+            'signature' => $signaturePath,
+        ];
+
+        // Generate PDF
+        $pdf = PDF::loadView('pdf.surat', $data);
+
+        // Save PDF to storage
+        $pdfPath = 'surat_keluar/surat_' . $request->no_surat . '.pdf';
+        Storage::put('public/' . $pdfPath, $pdf->output());
+
+        // Store surat keluar in the database
         SuratKeluar::create([
             'no_surat' => $request->no_surat,
-            'kode_indeks' => $request->kode_indeks,
+            'kode_indeks' => $request->indeks,
             'perihal' => $request->perihal,
             'penulis' => $request->penulis,
-            'penerima' => $request->penerima,
-            'tanggal_keluar' => $request->tanggal_keluar,
-            'dokumen' => $path,  // Menyimpan path file dokumen
+            'penerima' => $request->kepada,
+            'tanggal_keluar' => $request->tanggal,
+            'dokumen' => $pdfPath,  // Path to the stored PDF
         ]);
 
-        return redirect()->route('suratkeluar.index')->with('success', 'Surat keluar berhasil ditambahkan.');
+        // Return download response
+        return $pdf->download('surat_' . $request->no_surat . '.pdf');
     }
 
 

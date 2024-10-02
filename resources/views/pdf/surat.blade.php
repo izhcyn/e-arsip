@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
-            margin: 20px;
+            margin: 20px 20px 20px 30px;
         }
         .header {
             text-align: left;
@@ -38,13 +38,17 @@
             text-align: left;
         }
         footer {
-            margin-bottom: 0px;
             text-align: center;
-            font-size: 12px;
+            bottom: 0;
+            position: fixed;
+            font-size: 14px;
             color: #000080;
-            border-top: 2px solid #000080; /* Blue line */
-            padding-top: 10px;
             width: 100%;
+        }
+
+        footer p{
+            margin: 0;
+            padding-right: 60px;
         }
     </style>
 </head>
@@ -99,9 +103,10 @@
 
     <!-- Footer Section -->
     <footer>
-        <p>GRAHA PENA: Jl. KH. R. Abdullah Bin Muhammad Nuh No. 30, Taman Yasmin, Bogor</p>
-        <p>Tel. 0251-7544001 (Hunting), Fax. 0251-7544009</p>
-        <p>e-Mail: redaksi@radar-bogor.com, iklan@radar-bogor.com, promosi@radar-bogor.com</p>
+            <hr style="width: 90%; margin-left: 0; background-color: #000080;">
+            <p>GRAHA PENA: Jl. KH. R. Abdullah Bin Muhammad Nuh No. 30, Taman Yasmin, Bogor</p>
+            <p>Tel. 0251-7544001 (Hunting), Fax. 0251-7544009</p>
+            <p>e-Mail: redaksi@radar-bogor.com, iklan@radar-bogor.com, promosi@radar-bogor.com</p>
     </footer>
 </body>
 </html>

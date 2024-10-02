@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('super_admin/indeks/{id}', [IndeksController::class, 'destroy'])->name('indeks.destroy');
 
 
+    Route::get('/suratkeluar/{id}/download', [SuratController::class, 'downloadPdf'])->name('suratkeluar.download');
     Route::get('/super_admin/buatsurat', [SuratController::class, 'create'])->name('super_admin.buatsurat');
     Route::post('/super_admin/store', [SuratController::class, 'store'])->name('super_admin.store');
     Route::get('/balas_surat/{id}', [SuratController::class, 'balasSurat'])->name('balas_surat');

@@ -56,8 +56,8 @@ class SuratController extends Controller
         $data = [
             'tanggal' => $request->tanggal,
             'no_surat' => $request->no_surat,
-            'kode_indeks' => $request->indeks, // Pass kode_indeks
-            'kode_surat' => $request->kode_surat, // Assume kode_surat is provided
+            'kode_indeks' => $request->kode_indeks,
+            'kode_surat' => $request->kode_surat,
             'perihal' => $request->perihal,
             'lampiran' => $request->lampiran,
             'kepada' => $request->kepada,
@@ -65,10 +65,9 @@ class SuratController extends Controller
             'isi_surat' => $request->isi_surat,
             'penulis' => $request->penulis,
             'jabatan' => $request->jabatan,
-            'signature' => $signaturePath, // Pass signature path to the view
+            'signature' => $signaturePath,
         ];
 
-        // Generate PDF
         // Generate PDF
         $pdf = PDF::loadView('pdf.surat', $data);
 
@@ -76,12 +75,21 @@ class SuratController extends Controller
         $pdfPath = 'surat_keluar/surat_' . $request->no_surat . '.pdf';
         Storage::put('public/' . $pdfPath, $pdf->output());
 
-        // Store to database (optional)
-        // ...
+        // Store to database
+        $suratKeluar = new SuratKeluar();
+        $suratKeluar->no_surat = $request->no_surat;
+        $suratKeluar->kode_indeks = $request->indeks;
+        $suratKeluar->perihal = $request->perihal;
+        $suratKeluar->penerima = $request->kepada;
+        $suratKeluar->penulis = $request->penulis;
+        $suratKeluar->tanggal_keluar = $request->tanggal;
+        $suratKeluar->dokumen = $pdfPath; // Save the path to the PDF file
+        $suratKeluar->save();
 
         // Return download response
         return $pdf->download('surat_' . $request->no_surat . '.pdf');
     }
+
 
 
 
