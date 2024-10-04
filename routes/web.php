@@ -21,6 +21,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
     // Super Admin Routes
     Route::get('super_admin/dashboard', [SuperAdminController::class, 'index'])->name('superadmin.dashboard');
+    Route::get('super_admin/laporan', [LaporanController::class, 'index'])->name('laporan.index')
     // Routes untuk menampilkan dan mengelola pengguna
     Route::get('super_admin/user', [SuperAdminController::class, 'showUsers'])->name('users.index'); // Tampilkan daftar user
     Route::get('super_admin/user/create', [SuperAdminController::class, 'create'])->name('users.create'); // Form tambah user
