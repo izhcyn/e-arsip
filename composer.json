@@ -9,6 +9,8 @@
         "barryvdh/laravel-dompdf": "^3.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi": "^2.6",
         "tinymce/tinymce": "^7.3"
     },
     "require-dev": {

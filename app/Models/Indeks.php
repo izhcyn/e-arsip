@@ -21,6 +21,6 @@ class Indeks extends Model
         'kode_indeks',
         'kode_surat',
         'judul_indeks',
-        'detail_indeks',
+        'last_number',
     ];
 }

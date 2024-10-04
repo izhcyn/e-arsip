@@ -90,7 +90,7 @@
                     <i class="fas fa-bars"></i>
                 </div>
                 <div class="logo">
-                    <a href="#">USERS</a>
+                    <a href="#">Indeks</a>
                 </div>
                 <div class="user_info">
                     <i class="fas fa-user-circle"></i>
@@ -122,8 +122,8 @@
             </div>
 
             <div class="form-group">
-                <label for="detail_indeks">Detail Indeks</label>
-                <input type="detail_indeks" class="form-control" id="detail_indeks" name="detail_indeks" value="{{ old('detail_indeks', $indeks->detail_indeks) }}" required>
+                <label for="last_number">No.Surat Terakhir</label>
+                <input type="last_number" class="form-control" id="last_number" name="last_number" value="{{ old('last_number', $indeks->last_number) }}" required>
             </div>
             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </form>

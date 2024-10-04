@@ -28,6 +28,7 @@ return new class extends Migration
                 $table->text('notes')->nullable();
                 $table->string('template_surat', 255)->nullable();
                 $table->string('signature', 255)->nullable();
+                $table->string('file_lampiran', 255)->nullable();
                 $table->timestamps();
             });
         }

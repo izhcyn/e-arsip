@@ -36,12 +36,12 @@
             });
 
             // Handle filtering
-            $('#filterKodeIndeks, #filterKodeSurat, #filterJudulIndeks, #filterDetailIndeks').on('keyup change', function() {
+            $('#filterKodeIndeks, #filterKodeSurat, #filterJudulIndeks, #filterLastNumber').on('keyup change', function() {
                 var url = new URL(window.location.href);
                 url.searchParams.set('kode_indeks', $('#filterKodeIndeks').val());
                 url.searchParams.set('kode_surat', $('#filterKodeSurat').val());
                 url.searchParams.set('judul_indeks', $('#filterJudulIndeks').val());
-                url.searchParams.set('detail_indeks', $('#filterDetailIndeks').val());
+                url.searchParams.set('detail_indeks', $('#filterLastNumber').val());
                 window.location.href = url.href;
             });
         });
@@ -118,7 +118,32 @@
 
                     <!-- Form toggle button -->
                     <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Indeks Baru</button>
-                    <!-- Form for adding new indeks (omitted for brevity) -->
+                    <div class="card mt-4 user-form" style="display: none;">
+                        <div class="card-header">Tambah Indeks Baru</div>
+                        <div class="card-body">
+                            <form action="{{ route('indeks.store') }}" method="POST">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="kode_indeks">Kode Indeks</label>
+                                    <input type="text" class="form-control" id="kode_indeks" name="kode_indeks" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="kode_surat">Kode Surat</label>
+                                    <input type="text" class="form-control" id="kode_surat" name="kode_surat" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="judul_indeks">Judul Indeks</label>
+                                    <input type="text" class="form-control" id="judul_indeks" name="judul_indeks" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="detail_indeks">No.Surat Terakhir</label>
+                                    <input type="text" class="form-control" id="last_number" name="last_number" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Indeks</button>
+                            </form>
+                        </div>
+                    </div>
+
 
                     <div class="mt-3">
                         <label for="recordsPerPage">Show records:</label>
@@ -138,11 +163,11 @@
                         <table class="table">
                             <thead class="thead-light">
                                 <tr>
-                                    <th>Kode Indeks <input type="text" id="filterKodeIndeks" class="form-control" value="{{ request('kode_indeks') }}"></th>
-                                    <th>Kode Surat <input type="text" id="filterKodeSurat" class="form-control" value="{{ request('kode_surat') }}"></th>
-                                    <th>Judul Indeks <input type="text" id="filterJudulIndeks" class="form-control" value="{{ request('judul_indeks') }}"></th>
-                                    <th>Detail Indeks <input type="text" id="filterDetailIndeks" class="form-control" value="{{ request('detail_indeks') }}"></th>
-                                    <th>Aksi</th>
+                                    <th style="width: 10%">Kode Indeks <input type="text" id="filterKodeIndeks" class="form-control" value="{{ request('kode_indeks') }}"></th>
+                                    <th style="width: 10%">Kode Surat <input type="text" id="filterKodeSurat" class="form-control" value="{{ request('kode_surat') }}"></th>
+                                    <th style="width: 20%">Judul Indeks <input type="text" id="filterJudulIndeks" class="form-control" value="{{ request('judul_indeks') }}"></th>
+                                    <th style="width: 15%">No.Surat Terakhir <input type="text" id="filterLastNumber" class="form-control" value="{{ request('last_number') }}"></th>
+                                    <th style="width: 10%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -151,13 +176,13 @@
                                     <td>{{ $indek->kode_indeks }}</td>
                                     <td>{{ $indek->kode_surat }}</td>
                                     <td>{{ $indek->judul_indeks }}</td>
-                                    <td>{{ $indek->detail_indeks }}</td>
+                                    <td>{{ $indek->last_number }}</td>
                                     <td>
                                         <a href="{{ route('indeks.edit', $indek->indeks_id) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                                         <form action="{{ route('indeks.destroy', $indek->indeks_id) }}" method="POST" id="delete-form-{{ $indek->indeks_id }}" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $indek->indeks_id }})"><i class="fa fa-trash" aria-hidden="true"></button>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $indek->indeks_id }})">Hapus</button>
                                         </form>
                                     </td>
                                 </tr>

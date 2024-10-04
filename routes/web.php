@@ -53,6 +53,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/suratkeluar/{id}/download', [SuratController::class, 'downloadPdf'])->name('suratkeluar.download');
     Route::get('/super_admin/buatsurat', [SuratController::class, 'create'])->name('super_admin.buatsurat');
+    Route::get('/get-last-number/{indeks}', [SuratController::class, 'getLastNumber']);
+
     Route::post('/super_admin/store', [SuratController::class, 'store'])->name('super_admin.store');
     Route::get('/balas_surat/{id}', [SuratController::class, 'balasSurat'])->name('balas_surat');
     Route::post('/suratmasuk/balas/{id}', [SuratController::class, 'storeBalasSurat'])->name('suratmasuk.balas');

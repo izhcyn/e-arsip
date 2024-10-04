@@ -177,7 +177,7 @@
                                         <form action="{{ route('template.destroy', $template->id) }}" method="POST" id="delete-form-{{ $template->id }}" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $template->id }})"><i class="fa fa-trash" aria-hidden="true"></button>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $template->id }})">Hapus</button>
                                         </form>
                                     </td>
                                 </tr>

@@ -29,8 +29,8 @@ use Carbon\Carbon;
             $query->where('judul_indeks', 'like', '%' . $request->input('judul_indeks') . '%');
         }
 
-        if ($request->has('detail_indeks')) {
-            $query->where('detail_indeks', 'like', '%' . $request->input('detail_indeks') . '%');
+        if ($request->has('last_number')) {
+            $query->where('last_number', 'like', '%' . $request->input('detail_indeks') . '%');
         }
 
         // Paginate the results
@@ -50,7 +50,7 @@ use Carbon\Carbon;
             'kode_indeks' => 'required|string|max:50|unique:indeks,kode_indeks',
             'kode_surat' => 'required|string|max:50',
             'judul_indeks' => 'required|string|max:255',
-            'detail_indeks' => 'required|string|max:255',
+            'last_number' => 'required|string|max:50',
         ]);
 
 
@@ -59,7 +59,7 @@ use Carbon\Carbon;
              'kode_indeks' => $request->kode_indeks,
              'kode_surat' => $request->kode_surat,
              'judul_indeks' => $request->judul_indeks,
-             'detail_indeks' => $request->detail_indeks,
+             'last_number' => $request->last_number,
          ]);
 
          return redirect()->route('indeks.index')->with('success', 'Indeks berhasil ditambahkan');
@@ -85,14 +85,14 @@ use Carbon\Carbon;
             'kode_indeks' => 'required|string|max:50|unique:indeks,kode_indeks,' . $id . ',indeks_id',
             'kode_surat' => 'required|string|max:50',
             'judul_indeks' => 'required|string|max:255',
-            'detail_indeks' => 'required|string|max:255',
+            'last_number' => 'required|string|max:50',
         ]);
 
         // Update data
         $indeks->kode_indeks = $request->kode_indeks;
         $indeks->kode_surat = $request->kode_surat;
         $indeks->judul_indeks = $request->judul_indeks;
-        $indeks->detail_indeks = $request->detail_indeks;
+        $indeks->last_number = $request->last_number;
 
         $indeks->save(); // Simpan perubahan
 

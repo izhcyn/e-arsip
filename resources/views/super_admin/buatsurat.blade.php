@@ -110,19 +110,33 @@
                 <label for="tanggal">Tanggal<span class="star">*</span></label>
                 <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal') }}" required>
 
-                <label for="noSurat">No. Surat<span class="star">*</span></label>
-                <input type="text" id="noSurat" name="no_surat" value="{{ old('no_surat') }}" required>
-
                 <label for="indeks">Indeks<span class="star">*</span></label>
                 <select id="indeks" name="indeks" class="form-control" required>
+                    <option value="">-- Pilih Indeks --</option>
                     @foreach ($indeks as $indek)
-                        <option value="{{ $indek->kode_indeks }}/{{ $indek->kode_surat }}">{{ $indek->kode_indeks }}-{{ $indek->kode_surat }}-{{ $indek->judul_indeks }}</option>
+                        <option value="{{ $indek->kode_indeks }}">{{ $indek->kode_indeks }} - {{ $indek->judul_indeks }}</option>
                     @endforeach
                 </select>
 
+                <label for="noSurat">No. Surat<span class="star">*</span></label>
+                <input type="text" id="noSurat" name="no_surat" value="{{ old('no_surat') }}" readonly required>
 
                 <label for="perihal">Perihal<span class="star">*</span></label>
                 <input type="text" id="perihal" name="perihal" value="{{ old('perihal') }}" required>
+
+
+                <br /><label for="lampiran">Lampiran<span class="star">*</span></label>
+                <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran" name="lampiran" value="{{ old('lampiran')}}">
+
+                <label for="file_lampiran">Upload Lampiran (optional) :</label>
+                <input type="file" id="file_lampiran" name="file_lampiran" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png">
+                <p class="file-upload-note">*File bisa berupa pdf, jpg, png, jpeg</p>
+
+                <label for="kepada">Kepada<span class="star">*</span></label>
+                <textarea id="kepada" name="kepada" class="form-control" required>{{ old('kepada') }}</textarea>
+
+                <label for="alamat">Alamat<span class="star">*</span></label>
+                <textarea id="alamat" name="alamat" class="form-control" required>{{ old('alamat') }}</textarea>
 
                 <label for="templateSurat">Template (Optional):</label><br />
                 <select id="templateSurat" name="templateSurat" class="form-control">
@@ -132,17 +146,8 @@
                     @endforeach
                 </select>
 
-                <br /><label for="lampiran">Lampiran<span class="star">*</span></label>
-                <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran" name="lampiran" value="{{ old('lampiran')}}">
-
-                <label for="kepada">Kepada<span class="star">*</span></label>
-                <input type="text" id="kepada" name="kepada" value="{{ old('kepada') }}" required>
-
-                <label for="alamat">Alamat<span class="star">*</span></label>
-                <input type="text" id="alamat" name="alamat" value="{{ old('alamat') }}" required>
-
                 <label for="isiSurat">Isi Surat<span class="star">*</span></label>
-                <textarea id="isiSurat" name="isi_surat" class="form-control">{{ old('isi_surat') }}</textarea>
+                <textarea id="isiSurat" name="isi_surat" class="form-control" required>{{ old('isi_surat') }}</textarea>
 
                 <label for="penulis">Penulis<Span class="star">*</Span></label>
                 <input type="text" id="penulis" name="penulis" value="{{ old('penulis') }}" required>
@@ -158,17 +163,13 @@
                 <input type="file" id="signature" name="signature" class="file-upload-input" accept="image/png">
                 <p class="file-upload-note">*File harus berformat .png</p>
 
-                <label for="lampiranUpload">Upload Lampiran (optional) :</label>
-                <input type="file" id="lampiranUpload" name="lampiranUpload" class="file-upload-input" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                <p class="file-upload-note">*File bisa berupa pdf, doc, docx, jpg, png, jpeg</p>
-
                 <button type="submit">Download  dan Simpan Surat</button>
             </form>
         </div>
 
         <script>
             tinymce.init({
-                selector: '#isiSurat, #notes',  // Menggunakan textarea dengan id "isiSurat"
+                selector: '#isiSurat, #notes, #alamat',  // Menggunakan textarea dengan id "isiSurat"
                 plugins: 'table lists',  // Menambahkan plugin tabel dan list
                 toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
                 menubar: 'file edit view insert format table tools help',  // Menambahkan menu insert untuk table
@@ -204,6 +205,33 @@
                 tinymce.get('isiSurat').setContent(''); // Clear the field if no template is selected
             }
         });
+
+        $(document).ready(function() {
+        // When the user selects an index
+        $('#indeks').on('change', function() {
+            var selectedIndeks = $(this).val();
+
+            // If an index is selected, fetch the last number via AJAX
+            if (selectedIndeks) {
+                $.ajax({
+                    url: '/get-last-number/' + selectedIndeks,
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.nextNumber) {
+                            // Set the no_surat input with the new auto-incremented number
+                            var noSurat = selectedIndeks + '/' + String(response.nextNumber).padStart(3, '0');
+                            $('#noSurat').val(noSurat);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching last number');
+                    }
+                });
+            } else {
+                $('#noSurat').val(''); // Clear the no_surat input if no index is selected
+            }
+        });
+    });
 
         </script>
 

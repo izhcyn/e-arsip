@@ -18,7 +18,7 @@ class CreateIndeksTable extends Migration
             $table->string('kode_indeks', 50);   // VARCHAR(50)
             $table->string('kode_surat', 50);    // VARCHAR(50)
             $table->string('judul_indeks', 255); // VARCHAR(255)
-            $table->string('detail_indeks', 255)->nullable(); // VARCHAR(255) NULL
+            $table->string('last_number', 50); // VARCHAR(255) NULL
 
             $table->collation = 'utf8mb4_general_ci'; // Setting collation as per the screenshot
         });

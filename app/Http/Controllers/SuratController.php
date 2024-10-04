@@ -14,6 +14,8 @@ use App\Models\Indeks;
 use App\Models\TemplateSurat;
 use Illuminate\Support\Facades\Storage;
 use PDF;
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\PdfReader;
 
 class SuratController extends Controller
 {
@@ -30,10 +32,8 @@ class SuratController extends Controller
 
     public function store(Request $request)
     {
-        // Validate input
         $request->validate([
             'tanggal' => 'required|date',
-            'no_surat' => 'required|string',
             'indeks' => 'required|string',
             'perihal' => 'required|string',
             'lampiran' => 'required|string',
@@ -43,8 +43,21 @@ class SuratController extends Controller
             'penulis' => 'required|string',
             'jabatan' => 'required|string',
             'signature' => 'nullable|file|mimes:png',
-            'lampiranUpload' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png',
+            'notes' => 'nullable|string',
+            'file_lampiran' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png',
         ]);
+
+        $indeksData = Indeks::where('kode_indeks', $request->indeks)->first();
+
+        if (!$indeksData) {
+            return redirect()->back()->with('error', 'Indeks not found.');
+        }
+
+        // Increment the last number
+        $newSuratNumber = (int)$indeksData->last_number + 1;
+
+        // Generate no_surat by only using the new number
+        $noSurat = str_pad($newSuratNumber, 3, '0', STR_PAD_LEFT);
 
         // Handle signature upload if present
         $signaturePath = null;
@@ -52,11 +65,17 @@ class SuratController extends Controller
             $signaturePath = $request->file('signature')->store('signatures', 'public');
         }
 
+        // Handle attachment upload if present
+        $lampiranPath = null;
+        if ($request->hasFile('file_lampiran')) {
+            $lampiranPath = $request->file('file_lampiran')->store('file_lampirans', 'public');
+        }
+
         // Data for the PDF view
         $data = [
             'tanggal' => $request->tanggal,
-            'no_surat' => $request->no_surat,
-            'kode_indeks' => $request->kode_indeks,
+            'no_surat' => $noSurat,
+            'kode_indeks' => $request->indeks,
             'kode_surat' => $request->kode_surat,
             'perihal' => $request->perihal,
             'lampiran' => $request->lampiran,
@@ -66,31 +85,98 @@ class SuratController extends Controller
             'penulis' => $request->penulis,
             'jabatan' => $request->jabatan,
             'signature' => $signaturePath,
+            'notes' => $request->notes,
+            'file_lampiran' => $lampiranPath,
         ];
 
-        // Generate PDF
+        // Generate the main PDF
         $pdf = PDF::loadView('pdf.surat', $data);
+        $pdfFileName = $request->kode_surat . 'surat ' . $request->perihal . '.pdf';
+        $pdfPath = storage_path('app/public/surat_keluar/' . $pdfFileName);
+        Storage::put('public/surat_keluar' . $pdfFileName, $pdf->output());
 
-        // Save PDF to storage
-        $pdfPath = 'surat_keluar/surat_' . $request->no_surat . '.pdf';
-        Storage::put('public/' . $pdfPath, $pdf->output());
+        // Check if the attachment is a PDF
+        if ($lampiranPath && pathinfo($lampiranPath, PATHINFO_EXTENSION) === 'pdf') {
+            $fullPdfPath = storage_path('app/public/' . $pdfPath);
+            $attachmentPdfPath = storage_path('app/public/' . $lampiranPath);
+
+            // Create a new FPDI instance
+            $pdfMerger = new Fpdi();
+            $pageCount = $pdfMerger->setSourceFile($fullPdfPath);
+
+            // Add pages from the main PDF
+            for ($i = 1; $i <= $pageCount; $i++) {
+                $templateId = $pdfMerger->importPage($i);
+                $pdfMerger->AddPage();
+                $pdfMerger->useTemplate($templateId);
+            }
+
+            // Add pages from the attachment PDF
+            $attachmentPageCount = $pdfMerger->setSourceFile($attachmentPdfPath);
+            for ($i = 1; $i <= $attachmentPageCount; $i++) {
+                $templateId = $pdfMerger->importPage($i);
+                $pdfMerger->AddPage();
+                $pdfMerger->useTemplate($templateId);
+            }
+
+            // Save the merged PDF
+            $pdfMerger->Output($fullPdfPath, 'F');
+        }
+
+        // If the attachment is an image
+        if ($lampiranPath && in_array(pathinfo($lampiranPath, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])) {
+            $fullPdfPath = storage_path('app/public/' . $pdfPath);
+
+            // Create a new PDF instance with the existing PDF and add a new page for the image
+            $pdfMerger = new Fpdi();
+            $pageCount = $pdfMerger->setSourceFile($fullPdfPath);
+
+            // Add pages from the main PDF
+            for ($i = 1; $i <= $pageCount; $i++) {
+                $templateId = $pdfMerger->importPage($i);
+                $pdfMerger->AddPage();
+                $pdfMerger->useTemplate($templateId);
+            }
+
+            // Add a new page for the image attachment
+            $pdfMerger->AddPage();
+            $pdfMerger->Image(storage_path('app/public/' . $lampiranPath), 10, 10, 190); // Adjust image size and position as needed
+
+            // Save the merged PDF
+            $pdfMerger->Output($fullPdfPath, 'F');
+        }
+
+        $indeksData->last_number = $newSuratNumber;
+        $indeksData->save();
 
         // Store to database
         $suratKeluar = new SuratKeluar();
-        $suratKeluar->no_surat = $request->no_surat;
+        $suratKeluar->no_surat = $noSurat;
         $suratKeluar->kode_indeks = $request->indeks;
         $suratKeluar->perihal = $request->perihal;
         $suratKeluar->penerima = $request->kepada;
         $suratKeluar->penulis = $request->penulis;
         $suratKeluar->tanggal_keluar = $request->tanggal;
-        $suratKeluar->dokumen = $pdfPath; // Save the path to the PDF file
+        $suratKeluar->dokumen = $pdfPath;
         $suratKeluar->save();
-
         // Return download response
-        return $pdf->download('surat_' . $request->no_surat . '.pdf');
+        return response()->download(storage_path('app/public/' . $pdfPath));
     }
 
+    public function getLastNumber($indeks)
+    {
+        // Find the index by kode_indeks
+        $indeksData = Indeks::where('kode_indeks', $indeks)->first();
 
+        if (!$indeksData) {
+            return response()->json(['error' => 'Indeks not found'], 404);
+        }
+
+        // Return the last number incremented by 1
+        $nextNumber = (int)$indeksData->last_number + 1;
+
+        return response()->json(['nextNumber' => $nextNumber]);
+    }
 
 
     public function balasSurat($id)
