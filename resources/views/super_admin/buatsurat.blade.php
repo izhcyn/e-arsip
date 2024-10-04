@@ -12,22 +12,22 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.tiny.cloud/1/zgev9qnaivedr9z3cynwqe34owhimfprefdpid7lnhlfdpy1/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-	<script>
-		$(document).ready(function(){
-			$(".siderbar_menu li").click(function(){
-			  $(".siderbar_menu li").removeClass("active");
-			  $(this).addClass("active");
-			});
+    <script>
+        $(document).ready(function(){
+            $(".siderbar_menu li").click(function(){
+              $(".siderbar_menu li").removeClass("active");
+              $(this).addClass("active");
+            });
 
-			$(".hamburger").click(function(){
-			  $(".wrapper").addClass("active");
-			});
+            $(".hamburger").click(function(){
+              $(".wrapper").addClass("active");
+            });
 
-			$(".close, .bg_shadow").click(function(){
-			  $(".wrapper").removeClass("active");
-			});
-		});
-	</script>
+            $(".close, .bg_shadow").click(function(){
+              $(".wrapper").removeClass("active");
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="wrapper">
@@ -48,7 +48,7 @@
               </div>
 
               <ul class="siderbar_menu">
-                  <li class="active"><a href="/super_admin/dashboard">
+                  <li class="active"><a href="{{ route('superadmin.dashboard')}}">
                     <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
                     <div class="title">DASHBOARD</div>
                     </a>
@@ -59,10 +59,11 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="/super_admin/buatsurat" class="active">Buat Surat</a></li>
+                       <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
                        <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
-                       <li><a href="/super_admin/suratmasuk" class="active">Surat Masuk</a></li>
-                       <li><a href="/super_admin/suratkeluar" class="active">Surat Keluar</a></li>
+                       <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
+                       <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
+                       <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
                     </ul>
                 </li>
                 <li><a href="#">
@@ -71,9 +72,9 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="/super_admin/template" class="active">Template Surat</a></li>
-                       <li><a href="/super_admin/indeks" class="active">indeks</a></li>
-                       <li><a href="{{ route('user.index') }}" class="active">User</a></li>
+                       <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
+                       <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
+                       <li><a href="{{ route('users.index') }}" class="active">User</a></li>
                        <li><a href="#" class="active">Change Password</a></li>
                     </ul>
                 </li>
@@ -90,7 +91,7 @@
                <i class="fas fa-bars"></i>
              </div>
              <div class="logo">
-               <a href="#">BUAT SURAT</a>
+               <a href="#">Buat Surat</a>
             </div>
             <div class="user_info">
                 <i class="fas fa-user-circle"></i>
@@ -105,7 +106,7 @@
             @endif
 
             <img src="/assets/heading_surat.png" alt="heading">
-            <form action="{{ route('super_admin.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="buatSuratForm" action="{{ route('super_admin.store') }}" method="POST" enctype="multipart/form-data">
                  @csrf
                 <label for="tanggal">Tanggal<span class="star">*</span></label>
                 <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal') }}" required>
@@ -136,7 +137,7 @@
                 <textarea id="kepada" name="kepada" class="form-control" required>{{ old('kepada') }}</textarea>
 
                 <label for="alamat">Alamat<span class="star">*</span></label>
-                <textarea id="alamat" name="alamat" class="form-control" required>{{ old('alamat') }}</textarea>
+                <textarea id="alamat" name="alamat" required>{{ old('alamat') }}</textarea>
 
                 <label for="templateSurat">Template (Optional):</label><br />
                 <select id="templateSurat" name="templateSurat" class="form-control">
@@ -147,7 +148,7 @@
                 </select>
 
                 <label for="isiSurat">Isi Surat<span class="star">*</span></label>
-                <textarea id="isiSurat" name="isi_surat" class="form-control" required>{{ old('isi_surat') }}</textarea>
+                <textarea id="isiSurat" name="isi_surat" required>{{ old('isi_surat') }}</textarea>
 
                 <label for="penulis">Penulis<Span class="star">*</Span></label>
                 <input type="text" id="penulis" name="penulis" value="{{ old('penulis') }}" required>
@@ -169,7 +170,7 @@
 
         <script>
             tinymce.init({
-                selector: '#isiSurat, #notes, #alamat',  // Menggunakan textarea dengan id "isiSurat"
+                selector: '#isiSurat',  // Menggunakan textarea dengan id "isiSurat"
                 plugins: 'table lists',  // Menambahkan plugin tabel dan list
                 toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
                 menubar: 'file edit view insert format table tools help',  // Menambahkan menu insert untuk table
@@ -181,61 +182,65 @@
                 }
             });
 
-            document.getElementById('signature').addEventListener('change', function () {
-                        const file = this.files[0];
-                        const errorMsg = document.getElementById('error-msg');
+            // Sinkronisasi konten TinyMCE sebelum form di-submit
+            $('#buatSuratForm').on('submit', function(e) {
+                tinymce.triggerSave();  // Sinkronisasi konten editor TinyMCE dengan textarea
+            });
 
-                        if (file && file.type !== 'image/png') {
-                            errorMsg.style.display = 'block';
-                            this.value = ''; // Reset input jika file bukan PNG
-                        } else {
-                            errorMsg.style.display = 'none';
-                        }
-                    });
+            document.getElementById('signature').addEventListener('change', function () {
+                const file = this.files[0];
+                const errorMsg = document.getElementById('error-msg');
+
+                if (file && file.type !== 'image/png') {
+                    errorMsg.style.display = 'block';
+                    this.value = ''; // Reset input jika file bukan PNG
+                } else {
+                    errorMsg.style.display = 'none';
+                }
+            });
 
             // Using jQuery to handle template selection
-        $('#templateSurat').on('change', function () {
-            // Get the selected template's content
-            var selectedContent = $(this).find(':selected').data('content');
+            $('#templateSurat').on('change', function () {
+                // Get the selected template's content
+                var selectedContent = $(this).find(':selected').data('content');
 
-            // If a template is selected, fill the "Isi Surat" field with the template content
-            if (selectedContent) {
-                tinymce.get('isiSurat').setContent(selectedContent); // Using TinyMCE to set content
-            } else {
-                tinymce.get('isiSurat').setContent(''); // Clear the field if no template is selected
-            }
-        });
+                // If a template is selected, fill the "Isi Surat" field with the template content
+                if (selectedContent) {
+                    tinymce.get('isiSurat').setContent(selectedContent); // Using TinyMCE to set content
+                } else {
+                    tinymce.get('isiSurat').setContent(''); // Clear the field if no template is selected
+                }
+            });
 
-        $(document).ready(function() {
-        // When the user selects an index
-        $('#indeks').on('change', function() {
-            var selectedIndeks = $(this).val();
+            $(document).ready(function() {
+                // When the user selects an index
+                $('#indeks').on('change', function() {
+                    var selectedIndeks = $(this).val();
 
-            // If an index is selected, fetch the last number via AJAX
-            if (selectedIndeks) {
-                $.ajax({
-                    url: '/get-last-number/' + selectedIndeks,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.nextNumber) {
-                            // Set the no_surat input with the new auto-incremented number
-                            var noSurat = selectedIndeks + '/' + String(response.nextNumber).padStart(3, '0');
-                            $('#noSurat').val(noSurat);
-                        }
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching last number');
+                    // If an index is selected, fetch the last number via AJAX
+                    if (selectedIndeks) {
+                        $.ajax({
+                            url: '/get-last-number/' + selectedIndeks,
+                            method: 'GET',
+                            success: function(response) {
+                                if (response.nextNumber) {
+                                    // Set the no_surat input with the new auto-incremented number
+                                    var noSurat = selectedIndeks + '/' + String(response.nextNumber).padStart(3, '0');
+                                    $('#noSurat').val(noSurat);
+                                }
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching last number');
+                            }
+                        });
+                    } else {
+                        $('#noSurat').val(''); // Clear the no_surat input if no index is selected
                     }
                 });
-            } else {
-                $('#noSurat').val(''); // Clear the no_surat input if no index is selected
-            }
-        });
-    });
+            });
 
         </script>
 
-
-
-        </body>
+    </div>
+</body>
 </html>

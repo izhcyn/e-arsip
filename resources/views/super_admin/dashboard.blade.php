@@ -61,6 +61,7 @@
                        <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
+                       <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
                     </ul>
                 </li>
                 <li><a href="#">

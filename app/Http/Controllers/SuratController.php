@@ -93,7 +93,7 @@ class SuratController extends Controller
         $pdf = PDF::loadView('pdf.surat', $data);
         $pdfFileName = $request->kode_surat . 'surat ' . $request->perihal . '.pdf';
         $pdfPath = storage_path('app/public/surat_keluar/' . $pdfFileName);
-        Storage::put('public/surat_keluar' . $pdfFileName, $pdf->output());
+        Storage::put('public/surat_keluar/' . $pdfFileName, $pdf->output());
 
         // Check if the attachment is a PDF
         if ($lampiranPath && pathinfo($lampiranPath, PATHINFO_EXTENSION) === 'pdf') {
@@ -160,7 +160,7 @@ class SuratController extends Controller
         $suratKeluar->dokumen = $pdfPath;
         $suratKeluar->save();
         // Return download response
-        return response()->download(storage_path('app/public/' . $pdfPath));
+        return response()->download(storage_path('app/public/surat_keluar/' . $pdfFileName));
     }
 
     public function getLastNumber($indeks)

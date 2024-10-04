@@ -50,67 +50,71 @@
 <body>
     <div class="wrapper">
         <div class="sidebar">
-            <div class="bg_shadow"></div>
-            <div class="sidebar_inner">
-                <div class="close">
-                    <i class="fas fa-times"></i>
-                </div>
-                <div class="arsip_info">
-                    <div class="logo_img">
-                        <img src="/assets/Logo_bulat.png" alt="logo_RB">
-                    </div>
-                    <div class="arsip_data">
-                        <p class="arsip">E-ARSIP<br /> RADAR BOGOR</p>
-                    </div>
-                </div>
-                <ul class="siderbar_menu">
-                    <li class="active"><a href="/super_admin/dashboard">
-                        <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
-                        <div class="title">DASHBOARD</div>
-                        </a>
-                    </li>
-                    <li><a href="#">
-                        <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
-                        <div class="title">SURAT</div>
-                        <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                        </a>
-                        <ul class="accordion">
-                            <li><a href="/super_admin/buatsurat" class="active">Buat Surat</a></li>
-                            <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
-                            <li><a href="/super_admin/suratmasuk" class="active">Surat Masuk</a></li>
-                            <li><a href="/super_admin/suratkeluar" class="active">Surat Keluar</a></li>
-                         </ul>
-                     </li>
-                     <li><a href="#">
-                         <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
-                         <div class="title">PENGATURAN</div>
-                         <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                         </a>
-                       <ul class="accordion">
-                            <li><a href="/super_admin/indeks" class="active">indeks</a></li>
-                            <li><a href="/super_admin/template" class="active">Template Surat</a></li>
-                            <li><a href="{{ route('user.index') }}" class="active">User</a></li>
-                            <li><a href="#" class="active">Change Password</a></li>
-                         </ul>
-                    </li>
-                </ul>
-                <div class="logout_btn">
-                    <a href="/">Logout</a>
-                </div>
-            </div>
+          <div class="bg_shadow"></div>
+          <div class="sidebar_inner">
+              <div class="close">
+                <i class="fas fa-times"></i>
+              </div>
+
+              <div class="arsip_info">
+                  <div class="logo_img">
+                    <img src="/assets/Logo_bulat.png" alt="logo_RB">
+                  </div>
+                  <div class="arsip_data">
+                      <p class="arsip">E-ARSIP<br /> RADAR BOGOR</p>
+                  </div>
+              </div>
+
+              <ul class="siderbar_menu">
+                  <li class="active"><a href="{{ route('superadmin.dashboard')}}">
+                    <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
+                    <div class="title">DASHBOARD</div>
+                    </a>
+                </li>
+                <li><a href="#">
+                    <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                    <div class="title">SURAT</div>
+                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                    </a>
+                  <ul class="accordion">
+                       <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
+                       <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
+                       <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
+                       <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
+                       <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">
+                    <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
+                    <div class="title">PENGATURAN</div>
+                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                    </a>
+                  <ul class="accordion">
+                       <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
+                       <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
+                       <li><a href="{{ route('users.index') }}" class="active">User</a></li>
+                       <li><a href="#" class="active">Change Password</a></li>
+                    </ul>
+                </li>
+              </ul>
+             <div class="logout_btn">
+                  <a href="/">Logout</a>
+              </div>
+
+          </div>
         </div>
         <div class="main_container">
-            <div class="navbar">
-                <div class="hamburger">
-                    <i class="fas fa-bars"></i>
-                </div>
-                <div class="logo">
-                    <a href="#">INDEKS</a>
-                </div>
-                <div class="user_info">
-                    <i class="fas fa-user-circle"></i>
-                    <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
-                </div>
+          <div class="navbar">
+             <div class="hamburger">
+               <i class="fas fa-bars"></i>
+             </div>
+             <div class="logo">
+               <a href="#">Indeks</a>
+            </div>
+            <div class="user_info">
+                <i class="fas fa-user-circle"></i>
+                <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+            </div>
             </div>
             <div class="main_container" style="margin-left: 50px">
                 <div class="container mt-5">
