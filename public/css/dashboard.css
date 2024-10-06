@@ -227,7 +227,7 @@ body {
 }
 
 .siderbar_menu > li.active .accordion {
-    height: 200px;
+    height: fit-content;
 }
 
 .siderbar_menu > li.active .arrow {

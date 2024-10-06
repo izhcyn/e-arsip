@@ -106,6 +106,16 @@
             @endif
 
             <img src="/assets/heading_surat.png" alt="heading">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form id="buatSuratForm" action="{{ route('super_admin.store') }}" method="POST" enctype="multipart/form-data">
                  @csrf
                 <label for="tanggal">Tanggal<span class="star">*</span></label>
@@ -148,7 +158,7 @@
                 </select>
 
                 <label for="isiSurat">Isi Surat<span class="star">*</span></label>
-                <textarea id="isiSurat" name="isi_surat" required>{{ old('isi_surat') }}</textarea>
+                <textarea id="isiSurat" name="isi_surat">{{ old('isi_surat') }}</textarea>
 
                 <label for="penulis">Penulis<Span class="star">*</Span></label>
                 <input type="text" id="penulis" name="penulis" value="{{ old('penulis') }}" required>
@@ -164,7 +174,8 @@
                 <input type="file" id="signature" name="signature" class="file-upload-input" accept="image/png">
                 <p class="file-upload-note">*File harus berformat .png</p>
 
-                <button type="submit">Download  dan Simpan Surat</button>
+                <button type="submit" formtarget="_blank" id="downloadButton">Download dan Simpan Surat</button>
+
             </form>
         </div>
 
@@ -184,7 +195,14 @@
 
             // Sinkronisasi konten TinyMCE sebelum form di-submit
             $('#buatSuratForm').on('submit', function(e) {
-                tinymce.triggerSave();  // Sinkronisasi konten editor TinyMCE dengan textarea
+                var content = tinymce.get('isiSurat').getContent();
+
+                if (content === '') {
+                    e.preventDefault();
+                    alert('Isi Surat harus diisi.');
+                } else {
+                    tinymce.triggerSave();  // Sinkronkan konten TinyMCE dengan textarea
+                }
             });
 
             document.getElementById('signature').addEventListener('change', function () {
@@ -238,6 +256,20 @@
                     }
                 });
             });
+
+        document.getElementById('downloadButton').addEventListener('click', function(event) {
+        event.preventDefault();  // Mencegah form agar tidak langsung dikirim
+        var form = document.getElementById('buatSuratForm');
+
+        // Simpan form ke tab baru untuk download file
+        form.target = '_blank';
+        form.submit();
+
+        // Tunggu beberapa detik lalu redirect ke halaman suratkeluar
+        setTimeout(function(){
+                window.location.href = "/super_admin/suratkeluar";  // Redirect ke halaman suratkeluar
+            }, 2000);  // Set timeout 2 detik (sesuaikan jika perlu)
+        });
 
         </script>
 

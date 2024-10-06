@@ -11,6 +11,6 @@ class LaporanController extends Controller
     public function index(Request $request)
     {
         // Kirim data ke view
-        return view('super_admin.laporan', compact('laporan'));
+        return view('super_admin.laporan');
     }
 }
