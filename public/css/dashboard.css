@@ -527,6 +527,86 @@ table a:hover {
     box-shadow: 0 4px 15px rgba(0, 104, 157, 0.3);
 }
 
+.container-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.canvas-chart {
+    display: flex;
+    flex-direction: column;
+    color: #0077b6;
+}
+
+.canvas-chart canvas {
+    width: 700px;
+    height: auto;
+    margin: 0 auto;
+}
+.data-laporan {
+    width: 80%;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    color: #0077b6;
+    font-size: 18px;
+}
+
+/* CSS untuk container form */
+#filterForm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 700px;
+    margin: 10px auto;
+}
+
+/* Styling untuk select element */
+#filterForm select {
+    width: calc(30% - 10px); /* Menyesuaikan lebar berdasarkan flexbox */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 14px;
+    font-weight: 400;
+    color: #333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Styling untuk hover & focus pada select element */
+#filterForm select:focus,
+#filterForm select:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+/* Styling untuk h4 (judul form) */
+#filterForm h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #333;
+}
+
 @media (max-width: 1024px) {
     .content .dashboard-card {
         width: 47%;
