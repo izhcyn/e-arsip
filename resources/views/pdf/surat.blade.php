@@ -6,6 +6,7 @@
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
+            position: relative;
             margin: 20px 20px 20px 30px;
         }
         .header {
@@ -26,9 +27,8 @@
         }
         .signature {
             margin-top: 50px;
-            width: 100%;
+            width: 100px;
             text-align: left;
-            border: transparent;
         }
         .heading{
             border: transparent;
@@ -61,6 +61,17 @@
 
         .page-break {
             page-break-before: always;
+        }
+        .attachment {
+            page-break-before: always;
+            text-align: center
+        }
+        .attachment img {
+            max-width: 100%;
+            max-height: 800px;
+            object-fit: contain;
+            display: block;
+            margin: 20px 20px 20px 30px;
         }
     </style>
 </head>
@@ -130,31 +141,12 @@
     <!-- Signature Section -->
 <!-- Signature Section -->
     <div class="signature">
-        <table style="font-size:16px; margin: 0 auto;">
-            <tr>
-                <td style="text-align: center;">Hormat Kami</td>
-            </tr>
-            <tr>
-                <td style="text-align: center;">
-                    @if ($signature)
-                        <img src="{{ public_path('storage/' . $signature) }}" alt="Signature" style="width: 100px;">
-                    @else
-                    <br />
-                    <br />
-                        @endif
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align: center;">
-                    <p style="font-weight: bold; margin: 0;">{{ $penulis }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align: center;">
-                    <p style="margin: 0; margin-top: 2px;">{{ $jabatan }}</p> <!-- Adjust the `margin-top` value as needed -->
-                </td>
-            </tr>
-        </table>
+        <p style="text-align: center;">Hormat Kami</p>
+            @if ($signature)
+                <img src="{{ public_path('storage/' . $signature) }}" alt="Signature" style="width: 100px;">
+            @endif
+        <p style="font-weight: bold; text-align: center;">{{ $penulis }}</p>
+        <p style="text-align: center;">{{ $jabatan }}</p>
     </div>
 
 <!-- Notes Section -->
@@ -173,16 +165,11 @@
     </footer>
 
     @if ($file_lampiran)
-
-        <div class="attachment">
-            {{-- <div class="page-break"></div> --}}
-            {{-- <h2 style="font-size: 12px; align-items: center;">Lampiran</h2> --}}
-            @if (in_array(pathinfo($file_lampiran, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
-                <img src="{{ public_path('storage/' . $file_lampiran) }}" style="width: 100%; height: auto;">
-            @else
-
-            @endif
-        </div>
+        @if (in_array(pathinfo($file_lampiran, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
+            <div class="attachment">
+                <img src="{{ public_path('storage/' . $file_lampiran) }}" alt="Lampiran">
+            </div>
+        @endif
     @endif
 
 

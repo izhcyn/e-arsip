@@ -96,7 +96,79 @@
                 <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
             </div>
           </div>
+          <div class="container-chart">
+            <!-- Tempat grafik -->
+            <div class="canvas-chart mt-4">
+                <h4 style="font-weight: 700;">Grafik Surat Bulanan</h4>
+                        <!-- Form untuk memilih jenis data, bulan, dan tahun -->
+                        <form id="filterForm">
+                            <select name="jenis_data" required>
+                                <option value="surat_masuk" {{ $jenisData == 'surat_masuk' ? 'selected' : '' }}>Surat Masuk</option>
+                                <option value="surat_keluar" {{ $jenisData == 'surat_keluar' ? 'selected' : '' }}>Surat Keluar</option>
+                                <option value="keseluruhan" {{ $jenisData == 'keseluruhan' ? 'selected' : '' }}>Keseluruhan</option>
+                            </select>
+
+                            <select name="bulan" required>
+                                @for ($i = 1; $i <= 12; $i++)
+                                    <option value="{{ $i }}" {{ $i == $bulan ? 'selected' : '' }}>{{ $bulanIndo[$i] }}</option>
+                                @endfor
+                            </select>
+
+                            <select name="tahun" required>
+                                @for ($i = 2020; $i <= date('Y'); $i++)
+                                    <option value="{{ $i }}" {{ $i == $tahun ? 'selected' : '' }}>{{ $i }}</option>
+                                @endfor
+                            </select>
+                        </form>
+                <canvas id="myChart"></canvas>
+            </div>
+            <!-- Bagian data laporan -->
+            <div class="data-laporan mt-4">
+                <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Hari Ini: <strong>{{ $totalSuratHariIni }}</strong></p>
+                <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Minggu Ini: <strong>{{ $totalSuratMingguIni }}</strong></p>
+                <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Bulan Ini: <strong>{{ $totalSuratBulanIni }}</strong></p>
+                <p>Total Data {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Bulan Ini: <strong>{{ array_sum($jumlahPerMinggu) }}</strong></p>
+            </div>
+
+
         </div>
-    </div>
-    </body>
+</body>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
+                datasets: [{
+                    label: 'Total {{ ucfirst($jenisData) }}',
+                    data: {!! json_encode($jumlahPerMinggu) !!}, // Data dari controller
+                    backgroundColor: '#0077B6',
+                    borderColor: '#0077B6',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        </script>
+
+        <script>
+            // Ambil elemen form
+            var filterForm = document.getElementById('filterForm');
+
+            // Tambahkan event listener untuk setiap elemen form
+            filterForm.querySelectorAll('select').forEach(function(selectElement) {
+                selectElement.addEventListener('change', function() {
+                    // Ketika ada perubahan, submit form secara otomatis
+                    filterForm.submit();
+                });
+            });
+        </script>
+
 </html>
