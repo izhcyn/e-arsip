@@ -170,7 +170,7 @@
 
         <script>
             tinymce.init({
-                selector: '#isiSurat',  // Menggunakan textarea dengan id "isiSurat"
+                selector: '#isiSurat, #notes, #alamat',  // Menggunakan textarea dengan id "isiSurat"
                 plugins: 'table lists',  // Menambahkan plugin tabel dan list
                 toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
                 menubar: 'file edit view insert format table tools help',  // Menambahkan menu insert untuk table
