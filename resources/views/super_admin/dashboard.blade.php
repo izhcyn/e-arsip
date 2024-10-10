@@ -58,7 +58,7 @@
                     </a>
                   <ul class="accordion">
                        <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
-                       <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
+                       <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -237,8 +237,8 @@
                         <td>{{ $item->no_surat }}</td>
                         <td>{{ $item->kode_indeks }}</td>
                         <td>{{ $item->perihal }}</td>
-                        <td>{{ $item->penulis }}</td>
-                        <td>{{ $item->penerima }}</td>
+                        <td>{{ strip_tags($item->penulis) }}</td>
+                        <td>{{ strip_tags($item->penerima) }}</td>
                         <td>{{ $item->tanggal_keluar }}</td>
                         <td><a href="{{ $item->dokumen }}">Lihat Dokumen</a></td>
                         <td>

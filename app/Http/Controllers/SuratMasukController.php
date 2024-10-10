@@ -11,17 +11,30 @@ use Illuminate\Support\Facades\Storage;
 class SuratMasukController extends Controller
 {
     public function index(Request $request)
-{
-    // Get the number of records to display per page from the request, default to 10
-    $perPage = $request->get('limit', 5);
+    {
+        // Get the number of records to display per page from the request, default to 5
+        $perPage = $request->get('limit', 5);
 
-    // Fetch the records with pagination based on the selected limit
-    $suratMasuk = SuratMasuk::orderBy('created_at', 'desc')->paginate($perPage);
+        // Fetch the records with pagination based on the selected limit
+        $suratMasuk = SuratMasuk::orderBy('created_at', 'desc')->paginate($perPage);
 
-    $indeks = Indeks::all();
+        // Fetch total surat masuk per month (group by month)
+        $totalSuratPerBulanMasuk = SuratMasuk::selectRaw('MONTH(tanggal_diterima) as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->pluck('total', 'month');
 
-    return view('super_admin.suratmasuk', compact('suratMasuk', 'indeks'));
-}
+        // Fetch index usage in Surat Masuk
+        $indeksUsageMasuk = SuratMasuk::selectRaw('kode_indeks, COUNT(*) as total')
+            ->groupBy('kode_indeks')
+            ->pluck('total', 'kode_indeks');
+
+        // Fetch indeks data for the form
+        $indeks = Indeks::all();
+
+        // Send the data to the view
+        return view('super_admin.suratmasuk', compact('suratMasuk', 'indeks', 'totalSuratPerBulanMasuk', 'indeksUsageMasuk'));
+    }
+
 
 
 

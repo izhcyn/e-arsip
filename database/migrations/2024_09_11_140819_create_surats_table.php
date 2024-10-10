@@ -12,8 +12,8 @@ return new class extends Migration
     // database/migrations/xxxx_xx_xx_create_surats_table.php
     public function up()
     {
-        if (!Schema::hasTable('surats')) {
-            Schema::create('surats', function (Blueprint $table) {
+        if (!Schema::hasTable('drafts')) {
+            Schema::create('drafts', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->date('tanggal');
                 $table->string('no_surat', 255);

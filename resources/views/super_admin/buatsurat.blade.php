@@ -60,7 +60,7 @@
                     </a>
                   <ul class="accordion">
                        <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
-                       <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
+                       <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -105,7 +105,7 @@
                 </div>
             @endif
 
-            <img src="/assets/heading_surat.png" alt="heading">
+            <img src="/assets/heading_surat2.png" alt="heading">
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -181,11 +181,24 @@
 
         <script>
             tinymce.init({
-                selector: '#isiSurat, #notes, #alamat',  // Menggunakan textarea dengan id "isiSurat"
+                selector: '#isiSurat',  // Menggunakan textarea dengan id "isiSurat"
                 plugins: 'table lists',  // Menambahkan plugin tabel dan list
-                toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
+                toolbar: 'undo redo | formatselect | bold italic underline| alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
                 menubar: 'file edit view insert format table tools help',  // Menambahkan menu insert untuk table
-                height: 200,  // Mengatur tinggi editor
+                height: 500,  // Mengatur tinggi editor
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        this.getContainer().style.transition = 'border-color 0.15s ease-in-out';
+                    });
+                }
+            });
+
+            tinymce.init({
+                selector: '#kepada, #alamat, #penulis, #notes',  // Menggunakan textarea dengan id "isiSurat"
+                plugins: 'table lists',  // Menambahkan plugin tabel dan list
+                toolbar: 'undo redo | formatselect | bold italic underline| alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
+                menubar: 'file edit view insert format tools help',  // Menambahkan menu insert untuk table
+                height: 180,  // Mengatur tinggi editor
                 setup: function (editor) {
                     editor.on('init', function () {
                         this.getContainer().style.transition = 'border-color 0.15s ease-in-out';

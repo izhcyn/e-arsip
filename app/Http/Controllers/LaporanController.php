@@ -98,10 +98,6 @@ class LaporanController extends Controller
         }
 
         // Kirim data ke view
-<<<<<<< HEAD
-        return view('super_admin.laporan');
-=======
         return view('super_admin.laporan', compact('jumlahPerMinggu', 'bulan', 'tahun', 'jenisData', 'totalSuratHariIni', 'totalSuratMingguIni', 'totalSuratBulanIni', 'bulanIndo'));
->>>>>>> b3b7006173b015be932d1c9f27dd83d746f844fe
     }
 }

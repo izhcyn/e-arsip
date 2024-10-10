@@ -11,6 +11,7 @@ use App\Http\Controllers\IndeksController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\TemplateSuratController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\Controller;
 
 Route::get('/', function () {
     return view('welcome');
@@ -60,7 +61,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/super_admin/store', [SuratController::class, 'store'])->name('super_admin.store');
     Route::get('/balas_surat/{id}', [SuratController::class, 'balasSurat'])->name('balas_surat');
     Route::post('/suratmasuk/balas/{id}', [SuratController::class, 'storeBalasSurat'])->name('suratmasuk.balas');
+    // Route untuk menampilkan form balasan surat
+    Route::get('/balas-surat/{id}', [SuratController::class, 'balasSurat'])->name('suratmasuk.balas');
 
+    // Route untuk menyimpan balasan surat
+    Route::post('/balas-surat/{id}', [SuratController::class, 'storeBalasSurat'])->name('suratmasuk.balas.store');
 
 
     Route::resource('super_admin/template', TemplateSuratController::class);
@@ -91,6 +96,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/suratkeluar/{id}', [SuratKeluarController::class, 'update'])->name('suratkeluar.update');
     Route::delete('/super_admin/suratkeluar/{id}', [SuratKeluarController::class, 'destroy'])->name('suratkeluar.destroy');
     Route::resource('suratkeluar', SuratKeluarController::class);
+    Route::get('/drafts', [SuratController::class, 'showDrafts'])->name('draft.index');
+    Route::post('/drafts/save', [SuratController::class, 'saveDraft'])->name('draft.save');
+    Route::post('/surat/store', [SuratController::class, 'storeSurat'])->name('surat.store');
+
 
 
 });

@@ -12,6 +12,7 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .table th, .table td {
             padding: 5px;
@@ -216,6 +217,104 @@
             }
         });
     }
+
+    function removeChart(chartId) {
+            document.getElementById(chartId).parentElement.parentElement.style.display = 'none';
+        }
+
+        // Function to minimize chart
+        function toggleChart(chartId) {
+            const chartContainer = document.getElementById(chartId).parentElement.parentElement;
+            const canvas = chartContainer.querySelector('canvas');
+            if (canvas.style.display === 'none') {
+                canvas.style.display = 'block';
+            } else {
+                canvas.style.display = 'none';
+            }
+        }
+
+    $(document).ready(function() {
+                    // Data for Surat Masuk per Month
+                    const ctxIncoming = document.getElementById('chartIncoming').getContext('2d');
+                    const totalSuratPerBulanMasuk = @json($totalSuratPerBulanMasuk);
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const totalSuratDataMasuk = new Array(12).fill(0); // Array for 12 months initialized with 0
+
+                    // Populate totalSuratDataMasuk with actual values
+                    Object.keys(totalSuratPerBulanMasuk).forEach(month => {
+                        totalSuratDataMasuk[month - 1] = totalSuratPerBulanMasuk[month]; // Fill data at appropriate index
+                    });
+
+                    // Render Chart for Surat Masuk per Month
+                    const chartIncoming = new Chart(ctxIncoming, {
+                        type: 'bar',
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                label: 'Total Surat Masuk',
+                                data: totalSuratDataMasuk,
+                                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                borderColor: 'rgba(153, 102, 255, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Jumlah Surat Masuk'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Bulan'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Data for Indeks Usage in Surat Masuk
+                    const ctxIndexMasuk = document.getElementById('chartIndexMasuk').getContext('2d');
+                    const indeksUsageMasuk = @json($indeksUsageMasuk);
+                    const indeksLabelsMasuk = Object.keys(indeksUsageMasuk);
+                    const indeksDataMasuk = Object.values(indeksUsageMasuk);
+
+                    // Render Chart for Indeks Usage in Surat Masuk
+                    const chartIndexMasuk = new Chart(ctxIndexMasuk, {
+                        type: 'bar',
+                        data: {
+                            labels: indeksLabelsMasuk,
+                            datasets: [{
+                                label: 'Jumlah Indeks Dipakai (Surat Masuk)',
+                                data: indeksDataMasuk,
+                                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                                borderColor: 'rgba(255, 159, 64, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Jumlah Indeks'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Indeks'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
     </script>
 </head>
 <body>
@@ -249,7 +348,7 @@
                     </a>
                   <ul class="accordion">
                        <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
-                       <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
+                       <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -286,6 +385,42 @@
                 <i class="fas fa-user-circle"></i>
                 <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
             </div>
+            </div>
+
+            <div class="container mt-5">
+                <div class="chart-container">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Surat Masuk Per Bulan
+                            <span class="minimize-btn" onclick="toggleChart('chartIncoming')">
+                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                            </span>
+                            <span class="close-btn" onclick="removeChart('chartIncoming')">
+                                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartIncoming" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="card">
+                        <div class="card-header">
+                            Grafik Total Indeks Dipakai
+                            <span class="minimize-btn" onclick="toggleChart('chartIndexMasuk')">
+                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                            </span>
+                            <span class="close-btn" onclick="removeChart('chartIndexMasuk')">
+                                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartIndexMasuk" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="container mt-5">

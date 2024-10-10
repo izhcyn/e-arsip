@@ -12,6 +12,8 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         .table th, .table td {
             padding: 8px;
@@ -102,6 +104,7 @@
         // Show records per page change event
         $('#recordsPerPage').change(function() {
             updateFiltersInURL();
+            location.reload(); // Reload page to apply changes in the backend
         });
 
         // Text filters change event
@@ -116,24 +119,25 @@
             updateFiltersInURL();
         });
 
-        // Apply text filters
+
         function applyFilters() {
             var noSurat = $("#filterNoSurat").val().toLowerCase();
             var indeksSurat = $("#filterIndeksSurat").val().toLowerCase();
-            var asalSurat = $("#filterAsalSurat").val().toLowerCase();
             var perihal = $("#filterPerihal").val().toLowerCase();
-            var penerima = $("#filterPenerima").val().toLowerCase();
+            var penulis = $("#filterPenulis").val().toLowerCase(); // Tambahkan untuk filter penulis
+            var penerima = $("#filterPenerima").val().toLowerCase(); // Tambahkan untuk filter penerima
 
             $("table tbody tr").filter(function() {
                 $(this).toggle(
                     $(this).find('td:eq(0)').text().toLowerCase().indexOf(noSurat) > -1 &&
                     $(this).find('td:eq(1)').text().toLowerCase().indexOf(indeksSurat) > -1 &&
-                    $(this).find('td:eq(2)').text().toLowerCase().indexOf(asalSurat) > -1 &&
-                    $(this).find('td:eq(3)').text().toLowerCase().indexOf(perihal) > -1 &&
+                    $(this).find('td:eq(2)').text().toLowerCase().indexOf(perihal) > -1 &&
+                    $(this).find('td:eq(3)').text().toLowerCase().indexOf(penulis) > -1 && // Pastikan sesuai urutan
                     $(this).find('td:eq(4)').text().toLowerCase().indexOf(penerima) > -1
                 );
             });
         }
+
 
         // Apply date filters
         function applyDateFilter() {
@@ -172,8 +176,8 @@
             var url = new URL(window.location.href);
             url.searchParams.set('noSurat', $("#filterNoSurat").val());
             url.searchParams.set('indeksSurat', $("#filterIndeksSurat").val());
-            url.searchParams.set('asalSurat', $("#filterAsalSurat").val());
             url.searchParams.set('perihal', $("#filterPerihal").val());
+            url.searchParams.set('penulis', $("#filterPenulis").val());
             url.searchParams.set('penerima', $("#filterPenerima").val());
             url.searchParams.set('startDate', $("#startDate").val());
             url.searchParams.set('endDate', $("#endDate").val());
@@ -216,6 +220,108 @@
             }
         });
     }
+
+    // Function to remove chart
+    function removeChart(chartId) {
+            document.getElementById(chartId).parentElement.parentElement.style.display = 'none';
+        }
+
+        // Function to minimize chart
+        function toggleChart(chartId) {
+            const chartContainer = document.getElementById(chartId).parentElement.parentElement;
+            const canvas = chartContainer.querySelector('canvas');
+            if (canvas.style.display === 'none') {
+                canvas.style.display = 'block';
+            } else {
+                canvas.style.display = 'none';
+            }
+        }
+
+        // Ensure charts are drawn after the page fully loads
+        $(document).ready(function() {
+        // Data for Outgoing Letters Per Month
+        const ctxOutgoing = document.getElementById('chartOutgoing').getContext('2d');
+
+        // Dynamically get the labels (months) and data (total surat) from PHP
+        const totalSuratPerBulan = @json($totalSuratPerBulan);
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const totalSuratData = new Array(12).fill(0); // Array for 12 months initialized with 0
+
+        // Populate totalSuratData with actual values
+        Object.keys(totalSuratPerBulan).forEach(month => {
+            totalSuratData[month - 1] = totalSuratPerBulan[month]; // Fill data at appropriate index
+        });
+
+        const chartOutgoing = new Chart(ctxOutgoing, {
+            type: 'bar',
+            data: {
+                labels: months,  // Display months as x-axis labels
+                datasets: [{
+                    label: 'Total Surat Keluar',
+                    data: totalSuratData,  // Use the dynamically created array
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Surat Keluar'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Bulan'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Data for Index Usage in Outgoing Letters
+        const ctxIndex = document.getElementById('chartIndex').getContext('2d');
+
+        // Dynamically get the indeks labels and data from PHP
+        const indeksUsage = @json($indeksUsage);
+        const indeksLabels = Object.keys(indeksUsage);
+        const indeksData = Object.values(indeksUsage);
+
+        const chartIndex = new Chart(ctxIndex, {
+            type: 'bar',
+            data: {
+                labels: indeksLabels,  // Display indeks codes as x-axis labels
+                datasets: [{
+                    label: 'Jumlah Indeks Dipakai',
+                    data: indeksData,  // Use the dynamically created array
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Indeks'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Indeks'
+                        }
+                    }
+                }
+            }
+        });
+    });
     </script>
 </head>
 <body>
@@ -249,7 +355,7 @@
                     </a>
                   <ul class="accordion">
                        <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
-                       <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
+                       <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -286,6 +392,44 @@
                 <i class="fas fa-user-circle"></i>
                 <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
             </div>
+            </div>
+
+            <div class="container mt-5">
+                <div class="chart-container">
+
+                    <div class="card">
+                        <div class="card-header">
+                            Total Surat Keluar Per Bulan
+                            <span class="minimize-btn" onclick="toggleChart('chartOutgoing')">
+                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                            </span>
+                            <span class="close-btn" onclick="removeChart('chartOutgoing')">
+                                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartOutgoing" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <!-- Chart for Index Usage in Outgoing Letters -->
+                    <div class="card">
+                        <div class="card-header">
+                            Grafik Total Indeks Dipakai
+                            <span class="minimize-btn" onclick="toggleChart('chartIndex')">
+                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                            </span>
+                            <span class="close-btn" onclick="removeChart('chartIndex')">
+                                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartIndex" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="container mt-5">
@@ -377,16 +521,16 @@
                                 <th style="width: 10%">Dokumen</th>
                                 <th style="width: 10%">Aksi</th>
                             </tr>
-                            <!-- Add filter row -->
                             <tr>
                                 <th><input type="text" id="filterNoSurat" class="form-control"></th>
                                 <th><input type="text" id="filterIndeksSurat" class="form-control"></th>
                                 <th><input type="text" id="filterPerihal" class="form-control"></th>
-                                <th><input type="text" id="filterPenulis" class="form-control"></th>
-                                <th><input type="text" id="filterPenerima" class="form-control"></th>
-                                <th><label for="startDate"></label>
-                                <input type="date" id="startDate" class="form-control d-inline-block" style="width: 40%">
-                                <label for="endDate">-</label><input type="date" id="endDate" class="form-control d-inline-block" style="width: 40%"></th>
+                                <th><input type="text" id="filterPenulis" class="form-control"></th> <!-- Pastikan ID sesuai -->
+                                <th><input type="text" id="filterPenerima" class="form-control"></th> <!-- Pastikan ID sesuai -->
+                                <th>
+                                    <input type="date" id="startDate" class="form-control d-inline-block" style="width: 45%;">
+                                    <input type="date" id="endDate" class="form-control d-inline-block" style="width: 45%;">
+                                </th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -402,8 +546,8 @@
                                         <td>{{ $item->no_surat }}</td>
                                         <td>{{ $item->kode_indeks }}</td>
                                         <td>{{ $item->perihal }}</td>
-                                        <td>{{ $item->penulis }}</td>
-                                        <td>{{ $item->penerima }}</td>
+                                        <td>{{ strip_tags($item->penulis) }}</td>
+                                        <td>{{ strip_tags($item->penerima) }}</td>
                                         <td>{{ $item->tanggal_keluar }}</td>
                                         <td><a href="{{ asset('storage/' . $item->dokumen) }}" target="_blank">{{ basename($item->dokumen) }}</a></td>
                                         <td>

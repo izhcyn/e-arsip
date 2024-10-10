@@ -20,29 +20,49 @@
         }
         .content {
             margin-top: 20px;
-            line-height: 1.5; /* Line spacing for the content */
+            line-height: 1.2; /* Adjust line spacing for the content */
         }
         .content p {
             margin: 0;
         }
         .signature {
-            margin-top: 50px;
+            margin-top: 20px;
             width: 100px;
-            text-align: left;
+            text-align: center; /* Perbaiki menjadi center */
         }
-        .heading{
-            border: transparent;
+
+        .signature p, .signature table {
+            margin: 0;
+            padding: 0;
+            line-height: 1; /* Mengurangi jarak antar teks */
+        }
+
+        .heading {
             width: 100%;
             text-align: left;
-            padding: 2px 5px;
-            line-height: 1.2;
+            line-height: 1.1; /* Adjust line spacing */
         }
         table {
             border-collapse: collapse;
             width: 100%;
         }
         table, th, td {
-            padding: 5px;
+            padding: 2px; /* Reduce padding */
+            vertical-align: top; /* Align text at the top */
+        }
+        td {
+            width: 1px; /* Shrink to minimum width */
+            white-space: nowrap; /* Keep text on one line */
+        }
+        .label {
+            width: 5%; /* Adjust width for labels */
+        }
+        .colon {
+            width: 1%; /* Narrow width for colon */
+            text-align: left;
+        }
+        .value {
+            width: 84%; /* Adjust width for values */
             text-align: left;
         }
         footer {
@@ -54,31 +74,17 @@
             width: 100%;
         }
 
-        footer p{
+        footer p {
             margin: 0;
             padding-right: 60px;
         }
-
-        .page-break {
-            page-break-before: always;
-        }
-        .attachment {
-            page-break-before: always;
-            text-align: center
-        }
-        .attachment img {
-            max-width: 100%;
-            max-height: 800px;
-            object-fit: contain;
-            display: block;
-            margin: 20px 20px 20px 30px;
-        }
     </style>
+
 </head>
 <body>
     <!-- Header Section with Logo -->
     <div class="header">
-        <img src="{{ public_path('assets/heading_surat.png') }}" alt="Radar Bogor Logo" style="width: 50%;">
+        <img src="{{ public_path('assets/heading_surat2.png') }}" alt="Radar Bogor Logo" style="width: 50%;">
         <br />
     </div>
 
@@ -99,33 +105,36 @@
         $month = \Carbon\Carbon::parse($tanggal)->format('n'); // Get the month number without leading zeros
         $roman_month = $roman_months[$month]; // Convert to Roman numeral
         ?>
-        <table class="heading" style="">
-            <tr padding: 2px 5px;>
-                <td style="width: 20%">Nomor</td>
-                <td style="width: 5%">:</td>
-                <td style="width: 75%">{{ $no_surat }}/{{ $kode_surat }}{{ $roman_month }}/{{ \Carbon\Carbon::parse($tanggal)->format('Y') }}</td>
-            </tr>
-            <tr>
-                <td style="width: 20%">Perihal</td>
-                <td style="width: 5%">:</td>
-                <td style="width: 75%">{{ $perihal }}</td>
-            </tr>
-            <tr>
-                <td style="width: 20%">Lampiran</td>
-                <td style="width: 5%">:</td>
-                <td style="width: 75%">{{ $lampiran }}</td>
-            </tr>
+        <table class="heading">
+                <tr>
+                    <td class="label">Nomor</td>
+                    <td class="colon">:</td>
+                    <td class="value">{{ $no_surat }}/{{ $kode_surat }}/{{ $roman_month }}/{{ \Carbon\Carbon::parse($tanggal)->format('Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Perihal</td>
+                    <td class="colon">:</td>
+                    <td class="value">{{ $perihal }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Lampiran</td>
+                    <td class="colon">:</td>
+                    <td class="value">{{ $lampiran }}</td>
+                </tr>
             <tr><td></td></tr>
             <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
             <tr>
-                <td>Kepada Yth:</td>
+                <td>Kepada Yth. :</td>
 
             </tr>
             <tr>
-                <td>{{ $kepada }}</td>
+                <td>{!! $kepada !!}</td>
             </tr>
             <tr>
-                <td style="width: 50%">{{ $alamat }}</td>
+                <td>{!! $alamat !!}</td>
             </tr>
             <tr><td></td></tr>
             <tr><td></td></tr>
@@ -138,16 +147,19 @@
         </div>
     </div>
 
-    <!-- Signature Section -->
-<!-- Signature Section -->
     <div class="signature">
-        <p style="text-align: center;">Hormat Kami</p>
-            @if ($signature)
-                <img src="{{ public_path('storage/' . $signature) }}" alt="Signature" style="width: 100px;">
-            @endif
-        <p style="font-weight: bold; text-align: center;">{{ $penulis }}</p>
-        <p style="text-align: center;">{{ $jabatan }}</p>
+        <p>Hormat Kami</p>
+        @if ($signature)
+            <img src="{{ public_path('storage/' . $signature) }}" alt="Signature" style="width: 100px;">
+        @else
+            <br />
+            <br />
+            <br />
+        @endif
+        <p><strong>{!! $penulis !!}</strong></p>
+        <p>{{ $jabatan }}</p>
     </div>
+
 
 <!-- Notes Section -->
     <div class="notes" style="margin-top: 20px;">

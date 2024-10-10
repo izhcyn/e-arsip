@@ -4,31 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Template</title>
+    <title>Draft Surat</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-    <link rel="stylesheet" href="/css/user.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.tiny.cloud/1/zgev9qnaivedr9z3cynwqe34owhimfprefdpid7lnhlfdpy1/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <link rel="stylesheet" href="/css/surat.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <script>
-        $(document).ready(function(){
-            $(".siderbar_menu li").click(function(){
-              $(".siderbar_menu li").removeClass("active");
-              $(this).addClass("active");
+	<script>
+		$(document).ready(function(){
+			$(".siderbar_menu li").click(function(){
+			  $(".siderbar_menu li").removeClass("active");
+			  $(this).addClass("active");
+			});
+
+			$(".hamburger").click(function(){
+			  $(".wrapper").addClass("active");
+			});
+
+			$(".close, .bg_shadow").click(function(){
+			  $(".wrapper").removeClass("active");
+			});
+		});
+
+        // Auto-save draft after user input
+
+        $(document).ready(function() {
+    let timeout;
+
+    $(document).ready(function() {
+            let timeout;
+
+            // Setiap kali ada perubahan pada form, tunggu 2 detik untuk menyimpan draft
+            $('#buatSuratForm').on('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    saveDraft();
+                }, 2000); // Simpan draft 2 detik setelah input berhenti
             });
-            $(".hamburger").click(function(){
-              $(".wrapper").addClass("active");
-            });
-            $(".close, .bg_shadow").click(function(){
-              $(".wrapper").removeClass("active");
-            });
-            $("#toggleForm").click(function() {
-                $(".user-form").slideToggle(); // Show/hide the form
-                $(this).text($(this).text() == 'Minimize Form' ? 'Tambah User Baru' : 'Minimize Form');
-            });
+
+            function saveDraft() {
+                const data = $('#buatSuratForm').serialize(); // Serialize form data
+
+                $.ajax({
+                    url: '/drafts/save',  // Endpoint untuk menyimpan draft
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        console.log(response.message);  // Tampilkan pesan sukses
+                    },
+                    error: function(xhr) {
+                        console.log('Error saving draft');
+                    }
+                });
+            }
         });
-    </script>
+        });
+	</script>
 </head>
 <body>
     <div class="wrapper">
@@ -86,62 +118,58 @@
 
           </div>
         </div>
-        <div class="main_container">
+        <div class="main_container" >
           <div class="navbar">
              <div class="hamburger">
                <i class="fas fa-bars"></i>
              </div>
              <div class="logo">
-               <a href="#">Template</a>
+               <a href="#">Draft Surat</a>
             </div>
             <div class="user_info">
                 <i class="fas fa-user-circle"></i>
                 <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
             </div>
-        </div>
-
-            <!-- Form untuk edit user -->
-<div class="card mt-4">
-    <div class="card-header">Edit Template</div>
-    <div class="card-body">
-        <form action="{{ route('template.update', $template->id) }}" method="POST">
-            @csrf
-            @method('PUT') <!-- Tambahkan method PUT untuk update -->
-
-            <div class="form-group">
-                <label for="judul_template">Judul</label>
-                <input type="text" class="form-control" id="judul_template" name="judul_template" value="{{ old('judul_template', $template->judul_template) }}" required>
             </div>
 
-            <div class="form-group">
-                <label for="isi_surat">Isi Surat</label>
-                <textarea class="form-control" id="isi_surat" name="isi_surat" required>{{ old('isi_surat', $template->isi_surat) }}</textarea>
+            <div class="container" style="margin-top: 5%">
+                <h2>Draft Surat</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>No. Surat</th>
+                            <th>Perihal</th>
+                            <th>Kepada</th>
+                            <th>Tanggal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if($drafts->isEmpty())
+                                    <tr>
+                                        <td colspan="5">Tidak ada Draft.</td>
+                                    </tr>
+                                @else
+                        @foreach($drafts as $draft)
+                        <tr>
+                            <td>{{ $draft->no_surat }}</td>
+                            <td>{{ $draft->perihal }}</td>
+                            <td>{{ $draft->kepada }}</td>
+                            <td>{{ $draft->tanggal }}</td>
+                            <td>
+                                <a href="{{ route('draft.edit', $draft->id) }}">Edit</a> |
+                                <form action="{{ route('draft.destroy', $draft->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+
+                        </tr>
+                        @endforeach
+                        @endif
+                    </tbody>
+                </table>
             </div>
-
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-        </form>
-    </div>
-</div>
-
-<script>
-    tinymce.init({
-        selector: '#isi_surat',  // Target the textarea with id "isi_surat"
-        plugins: 'table lists',  // Include the table and list plugins (or other plugins as needed)
-        toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Customize the toolbar
-        menubar: 'file edit view insert format table tools help',  // Add menubar with table options
-        height: 500,  // Set the height of the editor
-        setup: function (editor) {
-            editor.on('init', function () {
-                this.getContainer().style.transition = 'border-color 0.15s ease-in-out';
-            });
-        }
-    });
-</script>
-
-
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        </div>
-    </div>
 </body>
 </html>

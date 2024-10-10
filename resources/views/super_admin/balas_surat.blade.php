@@ -12,22 +12,22 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.tiny.cloud/1/zgev9qnaivedr9z3cynwqe34owhimfprefdpid7lnhlfdpy1/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-	<script>
-		$(document).ready(function(){
-			$(".siderbar_menu li").click(function(){
-			  $(".siderbar_menu li").removeClass("active");
-			  $(this).addClass("active");
-			});
+    <script>
+        $(document).ready(function(){
+            $(".siderbar_menu li").click(function(){
+              $(".siderbar_menu li").removeClass("active");
+              $(this).addClass("active");
+            });
 
-			$(".hamburger").click(function(){
-			  $(".wrapper").addClass("active");
-			});
+            $(".hamburger").click(function(){
+              $(".wrapper").addClass("active");
+            });
 
-			$(".close, .bg_shadow").click(function(){
-			  $(".wrapper").removeClass("active");
-			});
-		});
-	</script>
+            $(".close, .bg_shadow").click(function(){
+              $(".wrapper").removeClass("active");
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="wrapper">
@@ -60,7 +60,7 @@
                     </a>
                   <ul class="accordion">
                        <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
-                       <li><a href="/super_admin/draftsurat" class="active">Draft Surat</a></li>
+                       <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -105,73 +105,89 @@
                 </div>
             @endif
 
-            <img src="/assets/heading_surat.png" alt="heading">
-            <form action="{{ route('suratmasuk.balas', $suratMasuk->suratmasuk_id) }}" method="POST">
-                @csrf
-                <label for="tanggal">Tanggal<span class="star">*</span></label>
-                <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal') }}" required>
+            <img src="/assets/heading_surat2.png" alt="heading">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-                <label for="noSurat">No. Surat<span class="star">*</span></label>
-                <input type="text" id="noSurat" name="no_surat" value="{{ old('no_surat') }}" required>
+            <form id="buatSuratForm" action="{{ route('suratmasuk.balas.store', $suratMasuk->suratmasuk_id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <label for="tanggal">Tanggal<span class="star">*</span></label>
+                <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal', now()->format('Y-m-d')) }}" required>
 
                 <label for="indeks">Indeks<span class="star">*</span></label>
                 <select id="indeks" name="indeks" class="form-control" required>
+                    <option value="">-- Pilih Indeks --</option>
                     @foreach ($indeks as $indek)
-                        <option value="{{ $indek->judul_indeks }}">{{ $indek->judul_indeks }}</option>
+                        <option value="{{ $indek->kode_indeks }}"
+                            @if ($suratMasuk->kode_indeks == $indek->kode_indeks) selected @endif>
+                            {{ $indek->kode_indeks }} - {{ $indek->judul_indeks }}
+                        </option>
                     @endforeach
                 </select>
 
+                <label for="noSurat">No. Surat<span class="star">*</span></label>
+                <input type="text" id="noSurat" name="no_surat" value="{{ old('no_surat') }}" readonly required>
 
                 <label for="perihal">Perihal<span class="star">*</span></label>
-                <input type="text" id="perihal" name="perihal" value="{{ old('perihal') }}" required>
+                <input type="text" id="perihal" name="perihal" value="{{ old('perihal', $suratMasuk->perihal) }}" required>
+
+                <label for="lampiran">Lampiran<span class="star">*</span></label>
+                <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran" name="lampiran" value="{{ old('lampiran')}}">
+
+                <label for="file_lampiran">Upload Lampiran (optional) :</label>
+                <input type="file" id="file_lampiran" name="file_lampiran" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png">
+
+                <br /><label for="kepada">Kepada<span class="star">*</span></label>
+                <textarea id="kepada" name="kepada" class="form-control" required>{{ old('kepada', $suratMasuk->asal_surat) }}</textarea>
+
+                <label for="alamat">Alamat<span class="star">*</span></label>
+                <textarea id="alamat" name="alamat">{{ old('alamat', $suratMasuk->alamat_surat) }}</textarea>
 
                 <label for="templateSurat">Template (Optional):</label><br />
                 <select id="templateSurat" name="templateSurat" class="form-control">
                     <option value="">-- Pilih Template --</option>
                     @foreach ($templates as $template)
-                        <option value="{{ $template->id }}" data-content="{{ $template->isi_surat }}">{{ $template->judul_template }}</option>
+                        <option value="{{ $template->id }}" data-content="{{ $template->isi_surat }}">
+                            {{ $template->judul_template }}
+                        </option>
                     @endforeach
                 </select>
 
-                <br /><label for="lampiran">Lampiran<span class="star">*</span></label>
-                <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran" name="lampiran" required>
-
-                <label for="kepada">Kepada<span class="star">*</span></label>
-                <input type="text" id="kepada" name="kepada" value="{{ old('kepada') }}" required>
-
-                <label for="alamat">Alamat<span class="star">*</span></label>
-                <input type="text" id="alamat" name="alamat" value="{{ old('alamat') }}" required>
-
                 <label for="isiSurat">Isi Surat<span class="star">*</span></label>
-                <textarea id="isiSurat" name="isi_surat" class="form-control">{{ old('isi_surat') }} @required(true)</textarea>
+                <textarea id="isiSurat" name="isi_surat">{{ old('isi_surat') }}</textarea>
 
-                <label for="penulis">Penulis<Span class="star">*</Span></label>
-                <input type="text" id="penulis" name="penulis" value="{{ old('penulis') }}" required>
+                <label for="penulis">Penulis<span class="star">*</span></label>
+                <input type="text" id="penulis" name="penulis" value="{{ old('penulis', Auth::user()->name) }}" required>
 
                 <label for="jabatan">Jabatan<span class="star">*</span></label>
                 <input type="text" id="jabatan" name="jabatan" value="{{ old('jabatan') }}" required>
 
-                <label for="notes">Notes (optional) :</label>
-                <textarea id="notes" name="notes">{{ old('notes') }}</textarea>
+                <label for="notes">Notes (optional):</label>
+                <textarea id="notes" name="notes" class="form-control">{{ old('notes') }}</textarea>
 
                 <!-- Input file tanda tangan -->
                 <label for="signature">Upload Tanda Tangan (optional) :</label>
                 <input type="file" id="signature" name="signature" class="file-upload-input" accept="image/png">
                 <p class="file-upload-note">*File harus berformat .png</p>
 
-                <label for="lampiranUpload">Upload Lampiran (optional) :</label>
-                <input type="file" id="lampiranUpload" name="lampiranUpload" class="file-upload-input" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
-                <p class="file-upload-note">*File bisa berupa pdf, doc, docx, jpg, png, jpeg</p>
-
-                <button type="submit">Download  dan Simpan Surat</button>
+                <button type="submit">Kirim Balasan</button>
             </form>
+
         </div>
 
         <script>
             tinymce.init({
                 selector: '#isiSurat',  // Menggunakan textarea dengan id "isiSurat"
                 plugins: 'table lists',  // Menambahkan plugin tabel dan list
-                toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
+                toolbar: 'undo redo | formatselect | bold italic underline| alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
                 menubar: 'file edit view insert format table tools help',  // Menambahkan menu insert untuk table
                 height: 500,  // Mengatur tinggi editor
                 setup: function (editor) {
@@ -181,34 +197,99 @@
                 }
             });
 
-            document.getElementById('signature').addEventListener('change', function () {
-                        const file = this.files[0];
-                        const errorMsg = document.getElementById('error-msg');
-
-                        if (file && file.type !== 'image/png') {
-                            errorMsg.style.display = 'block';
-                            this.value = ''; // Reset input jika file bukan PNG
-                        } else {
-                            errorMsg.style.display = 'none';
-                        }
+            tinymce.init({
+                selector: '#kepada, #alamat, #penulis, #notes',  // Menggunakan textarea dengan id "isiSurat"
+                plugins: 'table lists',  // Menambahkan plugin tabel dan list
+                toolbar: 'undo redo | formatselect | bold italic underline| alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
+                menubar: 'file edit view insert format tools help',  // Menambahkan menu insert untuk table
+                height: 180,  // Mengatur tinggi editor
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        this.getContainer().style.transition = 'border-color 0.15s ease-in-out';
                     });
+                }
+            });
+
+            // Sinkronisasi konten TinyMCE sebelum form di-submit
+            $('#buatSuratForm').on('submit', function(e) {
+                var content = tinymce.get('isiSurat').getContent();
+
+                if (content === '') {
+                    e.preventDefault();
+                    alert('Isi Surat harus diisi.');
+                } else {
+                    tinymce.triggerSave();  // Sinkronkan konten TinyMCE dengan textarea
+                }
+            });
+
+            document.getElementById('signature').addEventListener('change', function () {
+                const file = this.files[0];
+                const errorMsg = document.getElementById('error-msg');
+
+                if (file && file.type !== 'image/png') {
+                    errorMsg.style.display = 'block';
+                    this.value = ''; // Reset input jika file bukan PNG
+                } else {
+                    errorMsg.style.display = 'none';
+                }
+            });
 
             // Using jQuery to handle template selection
-        $('#templateSurat').on('change', function () {
-            // Get the selected template's content
-            var selectedContent = $(this).find(':selected').data('content');
+            $('#templateSurat').on('change', function () {
+                // Get the selected template's content
+                var selectedContent = $(this).find(':selected').data('content');
 
-            // If a template is selected, fill the "Isi Surat" field with the template content
-            if (selectedContent) {
-                tinymce.get('isiSurat').setContent(selectedContent); // Using TinyMCE to set content
-            } else {
-                tinymce.get('isiSurat').setContent(''); // Clear the field if no template is selected
-            }
+                // If a template is selected, fill the "Isi Surat" field with the template content
+                if (selectedContent) {
+                    tinymce.get('isiSurat').setContent(selectedContent); // Using TinyMCE to set content
+                } else {
+                    tinymce.get('isiSurat').setContent(''); // Clear the field if no template is selected
+                }
+            });
+
+            $(document).ready(function() {
+                // When the user selects an index
+                $('#indeks').on('change', function() {
+                    var selectedIndeks = $(this).val();
+
+                    // If an index is selected, fetch the last number via AJAX
+                    if (selectedIndeks) {
+                        $.ajax({
+                            url: '/get-last-number/' + selectedIndeks,
+                            method: 'GET',
+                            success: function(response) {
+                                if (response.nextNumber) {
+                                    // Set the no_surat input with the new auto-incremented number
+                                    var noSurat = selectedIndeks + '/' + String(response.nextNumber).padStart(3, '0');
+                                    $('#noSurat').val(noSurat);
+                                }
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching last number');
+                            }
+                        });
+                    } else {
+                        $('#noSurat').val(''); // Clear the no_surat input if no index is selected
+                    }
+                });
+            });
+
+        document.getElementById('downloadButton').addEventListener('click', function(event) {
+        event.preventDefault();  // Mencegah form agar tidak langsung dikirim
+        var form = document.getElementById('buatSuratForm');
+
+        // Simpan form ke tab baru untuk download file
+        form.target = '_blank';
+        form.submit();
+
+        // Tunggu beberapa detik lalu redirect ke halaman suratkeluar
+        setTimeout(function(){
+                window.location.href = "/super_admin/suratkeluar";  // Redirect ke halaman suratkeluar
+            }, 2000);  // Set timeout 2 detik (sesuaikan jika perlu)
         });
 
         </script>
 
-
-
-        </body>
+    </div>
+</body>
 </html>

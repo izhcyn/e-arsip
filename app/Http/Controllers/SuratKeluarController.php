@@ -11,14 +11,63 @@ class SuratKeluarController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil semua data dari tabel surat_masuk
-        $perPage = $request->get('limit', 5); // Default to 5 records per page if not set
-        $suratKeluar = SuratKeluar::orderBy('created_at', 'desc')->paginate($perPage);
-        $indeks = Indeks::all();
+        // Ambil nilai filter dari request
+        $noSurat = $request->input('noSurat');
+        $indeksSurat = $request->input('indeksSurat');
+        $perihal = $request->input('perihal');
+        $penulis = $request->input('penulis');
+        $penerima = $request->input('penerima');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
 
-        // Kirim data ke view
-        return view('super_admin.suratkeluar', compact('suratKeluar', 'indeks'));
+        // Mulai query untuk surat keluar
+        $query = SuratKeluar::query();
+
+    // Terapkan filter jika ada
+    if ($noSurat) {
+        $query->where('no_surat', 'like', "%{$noSurat}%");
     }
+    if ($indeksSurat) {
+        $query->where('kode_indeks', 'like', "%{$indeksSurat}%");
+    }
+    if ($perihal) {
+        $query->where('perihal', 'like', "%{$perihal}%");
+    }
+    if ($penulis) {
+        $query->where('penulis', 'like', "%{$penulis}%");
+    }
+    if ($penerima) {
+        $query->where('penerima', 'like', "%{$penerima}%");
+    }
+    if ($startDate && $endDate) {
+        $query->whereBetween('tanggal_keluar', [$startDate, $endDate]);
+    } elseif ($startDate) {
+        $query->where('tanggal_keluar', '>=', $startDate);
+    } elseif ($endDate) {
+        $query->where('tanggal_keluar', '<=', $endDate);
+    }
+
+    // Pagination
+    $perPage = $request->get('limit', 5); // Default to 5 records per page if not set
+    $suratKeluar = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
+    // Fetch total surat keluar per month (group by month)
+    $totalSuratPerBulan = SuratKeluar::selectRaw('MONTH(tanggal_keluar) as month, COUNT(*) as total')
+        ->groupBy('month')
+        ->pluck('total', 'month');
+
+    // Fetch indeks usage counts (group by indeks)
+    $indeksUsage = SuratKeluar::selectRaw('kode_indeks, COUNT(*) as total')
+        ->groupBy('kode_indeks')
+        ->pluck('total', 'kode_indeks');
+
+    // Ambil semua indeks untuk dropdown di form tambah surat
+    $indeks = Indeks::all();
+
+    // Kirim data ke view
+    return view('super_admin.suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
+    }
+
 
     public function store(Request $request)
     {
