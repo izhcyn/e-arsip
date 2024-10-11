@@ -34,26 +34,19 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('super_admin/user/{id}', [SuperAdminController::class, 'destroy'])->name('users.destroy'); // Hapus user
     Route::post('/user/store', [SuperAdminController::class, 'store'])->name('users.store');
     Route::resource('user', SuperAdminController::class);
-
     Route::get('super_admin/suratmasuk', [SuratMasukController::class, 'index'])->name('suratmasuk.index');
     Route::get('super_admin/suratkeluar', [SuratKeluarController::class, 'index'])->name('suratkeluar.index');
     // Route untuk menampilkan daftar indeks
     Route::get('super_admin/indeks', [IndeksController::class, 'index'])->name('indeks.index');
-
     // Route untuk menampilkan form tambah indeks
     Route::get('super_admin/indeks/create', [IndeksController::class, 'create'])->name('indeks.create');
-
     // Route untuk menyimpan indeks baru
     Route::post('super_admin/indeks', [IndeksController::class, 'store'])->name('indeks.store');
-
     // Route untuk menampilkan form edit indeks
     Route::get('/super_admin/indeks/{id}/edit', [IndeksController::class, 'edit'])->name('indeks.edit');
     Route::put('/super_admin/indeks/{id}', [IndeksController::class, 'update'])->name('indeks.update');
-
     // Route untuk menghapus indeks
     Route::delete('super_admin/indeks/{id}', [IndeksController::class, 'destroy'])->name('indeks.destroy');
-
-
     Route::get('/suratkeluar/{id}/download', [SuratController::class, 'downloadPdf'])->name('suratkeluar.download');
     Route::get('/super_admin/buatsurat', [SuratController::class, 'create'])->name('super_admin.buatsurat');
     Route::get('/get-last-number/{indeks}', [SuratController::class, 'getLastNumber']);
@@ -63,11 +56,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/suratmasuk/balas/{id}', [SuratController::class, 'storeBalasSurat'])->name('suratmasuk.balas');
     // Route untuk menampilkan form balasan surat
     Route::get('/balas-surat/{id}', [SuratController::class, 'balasSurat'])->name('suratmasuk.balas');
-
     // Route untuk menyimpan balasan surat
     Route::post('/balas-surat/{id}', [SuratController::class, 'storeBalasSurat'])->name('suratmasuk.balas.store');
-
-
     Route::resource('super_admin/template', TemplateSuratController::class);
     Route::get('/super_admin/template', [TemplateSuratController::class, 'index'])->name('template.index');
     Route::get('/super_admin/template/create', [TemplateSuratController::class, 'create'])->name('template.create');
@@ -75,21 +65,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/super_admin/template/{id}/edit', [TemplateSuratController::class, 'edit'])->name('template.edit');
     Route::put('/super_admin/template/{id}', [TemplateSuratController::class, 'update'])->name('template.updtae');
     Route::delete('/super_admin/template/{id}', [TemplateSuratController::class, 'destroy'])->name('template.destroy');
-
-    // Admin dan User Dashboard
-    Route::get('admin/dashboard', [AdminController::class, 'index']);
-    Route::get('user/dashboard', [UserController::class, 'index']);
-
     //menyimpan surat masuk
     Route::post('super_admin/suratmasuk', [SuratMasukController::class, 'store'])->name('suratmasuk.store');
     Route::get('/surat/{id}', [SuratMasukController::class, 'show'])->name('surat.show');
     Route::get('/suratmasuk/{id}/edit', [SuratMasukController::class, 'edit'])->name('suratmasuk.edit');
-
     // Route to handle the update process
     Route::put('/suratmasuk/{id}', [SuratMasukController::class, 'update'])->name('suratmasuk.update');
     Route::delete('/super_admin/suratmasuk/{id}', [SuratMasukController::class, 'destroy'])->name('suratmasuk.destroy');
     Route::resource('suratmasuk', SuratMasukController::class);
-
     Route::post('super_admin/suratkeluar', [SuratKeluarController::class, 'store'])->name('suratkeluar.store');
     Route::get('/surat/{id}', [SuratKeluarController::class, 'show'])->name('surat.show');
     Route::get('/suratkeluar/{id}/edit', [SuratKeluarController::class, 'edit'])->name('suratkeluar.edit');
@@ -99,9 +82,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/drafts', [SuratController::class, 'showDrafts'])->name('draft.index');
     Route::post('/drafts/save', [SuratController::class, 'saveDraft'])->name('draft.save');
     Route::post('/surat/store', [SuratController::class, 'storeSurat'])->name('surat.store');
-
     Route::get('/super_admin/profile', [ProfileController::class, 'showProfile'])->name('superadmin.profile');
     Route::get('/super_admin/profile/edit', [ProfileController::class, 'editProfile'])->name('superadmin.profile.edit');
     Route::post('/super_admin/profile/update', [ProfileController::class, 'updateProfile'])->name('superadmin.profile.update');
+
+
+    Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('admin/buatsurat', [SuratController::class, 'create'])->name('admin.buatsurat');
+    Route::get('/admin/suratkeluar', [SuratKeluarController::class, 'index'])->name('admin.suratkeluar');
+    Route::get('/admin/indeks', [IndeksController::class, 'index'])->name('admin.indeks');
+
+    Route::get('user/dashboard', [UserController::class, 'index']);
 
 });

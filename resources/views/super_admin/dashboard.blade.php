@@ -125,8 +125,13 @@
                <a href="#">DASHBOARD</a>
             </div>
             <div class="user_info">
-                <i class="fas fa-user-circle"></i>
-                <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @if($user->profile_picture)
+                    <img src="{{ asset('uploads/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture">
+                    <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @else
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @endif
             </div>
           </div>
           <div class="content">
@@ -361,10 +366,6 @@
         }
     </script>
 <script>
-    @php
-    $totalSuratMasukBulan = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    $totalSuratKeluarBulan = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-@endphp
 
     // For Total Surat Masuk
     var ctxIncoming = document.getElementById('chartIncoming').getContext('2d');

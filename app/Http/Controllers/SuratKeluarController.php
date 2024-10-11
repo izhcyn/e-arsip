@@ -6,6 +6,7 @@ use App\Models\SuratKeluar; // Model SuratMasuk
 use Illuminate\Http\Request;
 use App\Models\Indeks;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class SuratKeluarController extends Controller
 {
@@ -52,9 +53,11 @@ class SuratKeluarController extends Controller
     $suratKeluar = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
     // Fetch total surat keluar per month (group by month)
-    $totalSuratPerBulan = SuratKeluar::selectRaw('MONTH(tanggal_keluar) as month, COUNT(*) as total')
-        ->groupBy('month')
-        ->pluck('total', 'month');
+// Fetch total surat keluar per bulan (group by month)
+$totalSuratPerBulan = SuratKeluar::selectRaw('MONTH(tanggal_keluar) as month, COUNT(*) as total')
+    ->groupBy('month')
+    ->pluck('total', 'month');
+
 
     // Fetch indeks usage counts (group by indeks)
     $indeksUsage = SuratKeluar::selectRaw('kode_indeks, COUNT(*) as total')
@@ -64,8 +67,18 @@ class SuratKeluarController extends Controller
     // Ambil semua indeks untuk dropdown di form tambah surat
     $indeks = Indeks::all();
 
+    $user = Auth::user();
+
+    if ($user->role == 'super_admin') {
+        return view('super_admin.suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
+    } elseif ($user->role == 'admin') {
+        return view('admin.suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
+    } elseif ($user->role == 'user') {
+        return view('user.suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
+    }
+
     // Kirim data ke view
-    return view('super_admin.suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
+    return view('suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
     }
 
 

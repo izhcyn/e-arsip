@@ -54,7 +54,7 @@ class ProfileController extends Controller
         }
 
         // Redirect ke halaman profil
-        return redirect()->route('super_admin.profile')->with('success', 'Profil berhasil diperbarui');
+        return redirect()->route('superadmin.profile')->with('success', 'Profil berhasil diperbarui');
     }
 
 }

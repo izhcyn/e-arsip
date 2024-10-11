@@ -15,7 +15,7 @@
             font-weight: bold;
         }
         .tgl {
-            text-align: right;
+            text-align: center;
             line-height: 1; /* Adjust line spacing for the date */
         }
         .content {
@@ -27,7 +27,7 @@
         }
         .signature {
             margin-top: 20px;
-            width: 100px;
+            width: 200px;
             text-align: center; /* Perbaiki menjadi center */
         }
 
@@ -89,13 +89,7 @@
     </div>
 
     <!-- Date Section -->
-    <div class="tgl">
-        <?php
-        // Set the locale to Indonesian
-        \Carbon\Carbon::setLocale('id');
-        ?>
-        <p>Bogor, {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</p>
-    </div>
+
 
     <!-- Content Section -->
     <div class="content">
@@ -148,10 +142,17 @@
     </div>
 
     <div class="signature">
-        <p>Hormat Kami</p>
+        <div class="tgl">
+            <?php
+            // Set the locale to Indonesian
+            \Carbon\Carbon::setLocale('id');
+            ?>
+            <p>Bogor, {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</p>
+        </div>
         @if ($signature)
             <img src="{{ public_path('storage/' . $signature) }}" alt="Signature" style="width: 100px;">
         @else
+            <br />
             <br />
             <br />
             <br />

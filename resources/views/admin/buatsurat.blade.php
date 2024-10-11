@@ -285,7 +285,7 @@
 
         // Tunggu beberapa detik lalu redirect ke halaman suratkeluar
         setTimeout(function(){
-                window.location.href = "/super_admin/suratkeluar";  // Redirect ke halaman suratkeluar
+                window.location.href = "/admin/suratkeluar";  // Redirect ke halaman suratkeluar
             }, 2000);  // Set timeout 2 detik (sesuaikan jika perlu)
         });
 

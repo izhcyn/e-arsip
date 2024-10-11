@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Indeks;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
  // Tambahkan ini di bagian atas file
 
  class IndeksController extends Controller
@@ -36,7 +38,15 @@ use Carbon\Carbon;
         // Paginate the results
         $indeks = $query->paginate($perPage);
 
-        return view('super_admin.indeks', compact('indeks'));
+        $user = Auth::user();
+
+        if ($user->role == 'super_admin') {
+            return view('super_admin.indeks', compact('indeks'));
+        } elseif ($user->role == 'admin') {
+            return view('admin.indeks', compact('indeks'));
+        }
+
+        return view('indeks', compact('indeks'));
     }
 
      public function create()

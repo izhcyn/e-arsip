@@ -9,7 +9,8 @@
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script>
 		$(document).ready(function(){
 			$(".siderbar_menu li").click(function(){
@@ -25,6 +26,38 @@
 			  $(".wrapper").removeClass("active");
 			});
 		});
+
+        function confirmDelete(suratmasukId) {
+        Swal.fire({
+            title: "Apa kamu yakin?",
+            text: "Data ini tidak dapat dikembalikan",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, hapus ini!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("delete-form-" + suratmasukId).submit();
+            }
+        });
+    }
+        function removeChart(chartId) {
+            document.getElementById(chartId).parentElement.parentElement.style.display = 'none';
+        }
+
+        // Function to minimize chart
+        function toggleChart(chartId) {
+            const chartContainer = document.getElementById(chartId).parentElement.parentElement;
+            const canvas = chartContainer.querySelector('canvas');
+            if (canvas.style.display === 'none') {
+                canvas.style.display = 'block';
+            } else {
+                canvas.style.display = 'none';
+            }
+        }
+
+
 	</script>
 </head>
 <body>
@@ -46,7 +79,7 @@
               </div>
 
               <ul class="siderbar_menu">
-                  <li class="active"><a href="#">
+                  <li class="active"><a href="{{ route('admin.dashboard')}}">
                     <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
                     <div class="title">DASHBOARD</div>
                     </a>
@@ -57,10 +90,10 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="#" class="active">Buat Surat</a></li>
-                       <li><a href="#" class="active">Draft Surat</a></li>
-                       <li><a href="#" class="active">Surat Masuk</a></li>
-                       <li><a href="#" class="active">Surat Keluar</a></li>
+                       <li><a href="{{ route('admin.buatsurat')}}" class="active">Buat Surat</a></li>
+                       <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
+                       <li><a href="{{ route('admin.suratkeluar')}}" class="active">Surat Keluar</a></li>
+                       <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
                     </ul>
                 </li>
                 <li><a href="#">
@@ -69,8 +102,9 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="#" class="active">indeks</a></li>
-                       <li><a href="#" class="active">Change Password</a></li>
+                       <li><a href="{{ route('admin.indeks')}}" class="active">indeks</a></li>
+                       <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
+                       <li><a href="{{ route('superadmin.profile') }}" class="active">Profile</a></li>
                     </ul>
                 </li>
               </ul>
@@ -89,8 +123,13 @@
                <a href="#">DASHBOARD</a>
             </div>
             <div class="user_info">
-                <i class="fas fa-user-circle"></i>
-                <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @if($user->profile_picture)
+                    <img src="{{ asset('uploads/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture">
+                    <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @else
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @endif
             </div>
           </div>
           <div class="content">
@@ -127,17 +166,30 @@
                 </div>
                 @endif
 
-                @if (isset($totalUsers))
-                <div class="dashboard-card">
-                    <div class="dashboard-icon">
-                        <img src="/assets/user.png" alt="Users">
-                    </div>
-                    <div class="dashboard-info">
-                        <h3>Users</h3>
-                        <span>{{ $totalUsers }}</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Surat Masuk
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartIncoming" width="400" height="200"></canvas>
+                        </div>
                     </div>
                 </div>
-                @endif
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Surat Keluar
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartOutgoing" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="surat-section">
@@ -170,31 +222,34 @@
                         <td>{{ $item->perihal }}</td>
                         <td>{{ $item->penerima }}</td>
                         <td>{{ $item->tanggal_diterima }}</td>
-                        <td><a href="{{ $item->dokumen }}">Lihat Dokumen</a></td>
-                        <td>
-                            <a href="{{ route('surat.show', $item->id) }}" class="btn btn-primary btn-sm" title="Lihat">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('surat.download', $item->id) }}" class="btn btn-info btn-sm" title="Download PDF">
-                                <i class="fas fa-print"></i>
-                            </a>
+                        <td>@php
+                            $filePath = asset('storage/' . $item->dokumen); // Path untuk file PDF
+                            $fileName = $item->dokumen; // Menampilkan nama file asli yang disimpan
+                        @endphp
 
+                        <!-- Tampilkan link untuk download dan preview -->
+                        <a href="{{ $filePath }}" target="_blank">{{ $fileName }}</a>
+                        </td>
+                        <td>
+                            <!-- Tombol untuk mengedit data -->
                             @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                            <a href="{{ route('surat.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                            <a href="{{ route('suratmasuk.edit', $item->suratmasuk_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
                             @endif
 
+                            <!-- Tombol untuk menghapus data -->
                             @if(auth()->user()->role == 'super_admin')
-                            <form action="{{ route('surat.destroy', $item->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('suratmasuk.destroy', $item->suratmasuk_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="confirmDeleteSM({{ $item->suratkeluar_id }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
                             @endif
                         </td>
+
                     </tr>
                     @endforeach
                     @endif
@@ -212,11 +267,10 @@
                     <tr>
                         <th>No. Surat</th>
                         <th>Indeks Surat</th>
-                        <th>Asal Surat</th>
                         <th>Perihal</th>
                         <th>Penulis</th>
                         <th>Penerima</th>
-                        <th>Tanggal Diterima</th>
+                        <th>Tanggal Keluar</th>
                         <th>Dokumen</th>
                         <th>Aksi</th>
                     </tr>
@@ -231,31 +285,23 @@
                     <tr>
                         <td>{{ $item->no_surat }}</td>
                         <td>{{ $item->kode_indeks }}</td>
-                        <td>{{ $item->asal_surat }}</td>
                         <td>{{ $item->perihal }}</td>
-                        <td>{{ $item->penulis }}</td>
-                        <td>{{ $item->penerima }}</td>
-                        <td>{{ $item->tanggal_diterima }}</td>
+                        <td>{{ strip_tags($item->penulis) }}</td>
+                        <td>{{ strip_tags($item->penerima) }}</td>
+                        <td>{{ $item->tanggal_keluar }}</td>
                         <td><a href="{{ $item->dokumen }}">Lihat Dokumen</a></td>
                         <td>
-                            <a href="{{ route('surat.show', $item->id) }}" class="btn btn-primary btn-sm" title="Lihat">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('surat.download', $item->id) }}" class="btn btn-info btn-sm" title="Download PDF">
-                                <i class="fas fa-print"></i>
-                            </a>
-
                             @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                            <a href="{{ route('surat.edit', $item->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                            <a href="{{ route('suratkeluar.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
                             @endif
 
                             @if(auth()->user()->role == 'super_admin')
-                            <form action="{{ route('surat.destroy', $item->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Hapus" onclick="confirmDeleteSK({{ $item->suratkeluar_id }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
@@ -272,5 +318,88 @@
         </div>
       </div>
     </div>
+    <script>
+        function confirmDeleteSM(suratmasukId) {
+            Swal.fire({
+                title: "Apa kamu yakin?",
+                text: "Data ini tidak dapat dikembalikan",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "##28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus ini!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Temukan form dengan ID yang sesuai dan submit
+                    document.getElementById("delete-form-" + suratmasukId).submit();
+                }
+            });
+        }
+        function confirmDeleteSK(suratkeluarId) {
+            Swal.fire({
+                title: "Apa kamu yakin?",
+                text: "Data ini tidak dapat dikembalikan",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "##28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, hapus ini!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Temukan form dengan ID yang sesuai dan submit
+                    document.getElementById("delete-form-" + suratkeluarId).submit();
+                }
+            });
+        }
+    </script>
+<script>
+    // For Total Surat Masuk
+    var ctxIncoming = document.getElementById('chartIncoming').getContext('2d');
+    var chartIncoming = new Chart(ctxIncoming, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Total Surat Masuk',
+                data: @json(array_values($totalSuratMasukBulan)), // This assumes the variable is passed from the controller
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // For Total Surat Keluar
+    var ctxOutgoing = document.getElementById('chartOutgoing').getContext('2d');
+    var chartOutgoing = new Chart(ctxOutgoing, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Total Surat Keluar',
+                data: @json(array_values($totalSuratKeluarBulan)), // This assumes the variable is passed from the controller
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+
 </body>
 </html>

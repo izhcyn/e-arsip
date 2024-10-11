@@ -182,6 +182,19 @@ body {
     color: #00689d;
 }
 
+.navbar .user_info img {
+    width: 40px;  /* Sesuaikan ukuran gambar */
+    height: 40px;  /* Sesuaikan ukuran gambar */
+    border-radius: 50%;  /* Buat gambar menjadi lingkaran */
+    object-fit: cover;  /* Pastikan gambar tidak terdistorsi */
+    margin-right: 10px;
+}
+
+.navbar .user_info i {
+    font-size: 40px;  /* Sesuaikan ukuran ikon FontAwesome */
+}
+
+
 .navbar .user_info i {
     font-size: 28px;
     margin-right: 8px;
@@ -347,6 +360,7 @@ body {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
 
 /* Modal */
 

@@ -94,8 +94,13 @@
                <a href="#">User</a>
             </div>
             <div class="user_info">
-                <i class="fas fa-user-circle"></i>
-                <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @if($user->profile_picture)
+                    <img src="{{ asset('uploads/profile_pictures/' . $user->profile_picture) }}" alt="Profile Picture">
+                    <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @else
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
+                @endif
             </div>
             </div>
             <div class="container mt-5">
