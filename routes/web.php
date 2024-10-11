@@ -11,7 +11,7 @@ use App\Http\Controllers\IndeksController;
 use App\Http\Controllers\SuratController;
 use App\Http\Controllers\TemplateSuratController;
 use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -100,6 +100,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/drafts/save', [SuratController::class, 'saveDraft'])->name('draft.save');
     Route::post('/surat/store', [SuratController::class, 'storeSurat'])->name('surat.store');
 
-
+    Route::get('/super_admin/profile', [ProfileController::class, 'showProfile'])->name('superadmin.profile');
+    Route::get('/super_admin/profile/edit', [ProfileController::class, 'editProfile'])->name('superadmin.profile.edit');
+    Route::post('/super_admin/profile/update', [ProfileController::class, 'updateProfile'])->name('superadmin.profile.update');
 
 });

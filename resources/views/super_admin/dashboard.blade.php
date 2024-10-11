@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script>
 		$(document).ready(function(){
 			$(".siderbar_menu li").click(function(){
@@ -25,6 +26,38 @@
 			  $(".wrapper").removeClass("active");
 			});
 		});
+
+        function confirmDelete(suratmasukId) {
+        Swal.fire({
+            title: "Apa kamu yakin?",
+            text: "Data ini tidak dapat dikembalikan",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Ya, hapus ini!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById("delete-form-" + suratmasukId).submit();
+            }
+        });
+    }
+        function removeChart(chartId) {
+            document.getElementById(chartId).parentElement.parentElement.style.display = 'none';
+        }
+
+        // Function to minimize chart
+        function toggleChart(chartId) {
+            const chartContainer = document.getElementById(chartId).parentElement.parentElement;
+            const canvas = chartContainer.querySelector('canvas');
+            if (canvas.style.display === 'none') {
+                canvas.style.display = 'block';
+            } else {
+                canvas.style.display = 'none';
+            }
+        }
+
+
 	</script>
 </head>
 <body>
@@ -73,7 +106,7 @@
                        <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
                        <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
                        <li><a href="{{ route('users.index') }}" class="active">User</a></li>
-                       <li><a href="#" class="active">Change Password</a></li>
+                       <li><a href="{{ route('superadmin.profile') }}" class="active">Profile</a></li>
                     </ul>
                 </li>
               </ul>
@@ -141,6 +174,30 @@
                     </div>
                 </div>
                 @endif
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Surat Masuk
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartIncoming" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            Total Surat Keluar
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartOutgoing" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="surat-section">
@@ -303,5 +360,59 @@
             });
         }
     </script>
+<script>
+    @php
+    $totalSuratMasukBulan = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    $totalSuratKeluarBulan = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+@endphp
+
+    // For Total Surat Masuk
+    var ctxIncoming = document.getElementById('chartIncoming').getContext('2d');
+    var chartIncoming = new Chart(ctxIncoming, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Total Surat Masuk',
+                data: @json(array_values($totalSuratMasukBulan)), // This assumes the variable is passed from the controller
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // For Total Surat Keluar
+    var ctxOutgoing = document.getElementById('chartOutgoing').getContext('2d');
+    var chartOutgoing = new Chart(ctxOutgoing, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Total Surat Keluar',
+                data: @json(array_values($totalSuratKeluarBulan)), // This assumes the variable is passed from the controller
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+
 </body>
 </html>

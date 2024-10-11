@@ -4,63 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Draft Surat</title>
+    <title>Profile Setting</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-    <link rel="stylesheet" href="/css/surat.css">
     <link rel="stylesheet" href="/css/dashboard.css">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-	<script>
-		$(document).ready(function(){
-			$(".siderbar_menu li").click(function(){
-			  $(".siderbar_menu li").removeClass("active");
-			  $(this).addClass("active");
-			});
+    <style>
+/* Contoh styling untuk profile dan form */
+.profile-edit-form {
+    width: 50%;
+    margin: auto;
+}
 
-			$(".hamburger").click(function(){
-			  $(".wrapper").addClass("active");
-			});
+.form-group {
+    margin-bottom: 1.5rem;
+}
 
-			$(".close, .bg_shadow").click(function(){
-			  $(".wrapper").removeClass("active");
-			});
-		});
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
 
-        // Auto-save draft after user input
+.form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
-        $(document).ready(function() {
-    let timeout;
-
-    $(document).ready(function() {
-            let timeout;
-
-            // Setiap kali ada perubahan pada form, tunggu 2 detik untuk menyimpan draft
-            $('#buatSuratForm').on('input', function() {
-                clearTimeout(timeout);
-                timeout = setTimeout(function() {
-                    saveDraft();
-                }, 2000); // Simpan draft 2 detik setelah input berhenti
+.btn-save {
+    padding: 0.7rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+    </style>
+    <script>
+        $(document).ready(function(){
+            $(".siderbar_menu li").click(function(){
+              $(".siderbar_menu li").removeClass("active");
+              $(this).addClass("active");
             });
-
-            function saveDraft() {
-                const data = $('#buatSuratForm').serialize(); // Serialize form data
-
-                $.ajax({
-                    url: '/drafts/save',  // Endpoint untuk menyimpan draft
-                    type: 'POST',
-                    data: data,
-                    success: function(response) {
-                        console.log(response.message);  // Tampilkan pesan sukses
-                    },
-                    error: function(xhr) {
-                        console.log('Error saving draft');
-                    }
-                });
-            }
+            $(".hamburger").click(function(){
+              $(".wrapper").addClass("active");
+            });
+            $(".close, .bg_shadow").click(function(){
+              $(".wrapper").removeClass("active");
+            });
+            $("#toggleForm").click(function() {
+                $(".user-form").slideToggle(); // Show/hide the form
+                $(this).text($(this).text() == 'Minimize Form' ? 'Tambah User Baru' : 'Minimize Form');
+            });
         });
-        });
-	</script>
+    </script>
 </head>
 <body>
     <div class="wrapper">
@@ -118,58 +118,60 @@
 
           </div>
         </div>
-        <div class="main_container" >
+        <div class="main_container">
           <div class="navbar">
              <div class="hamburger">
                <i class="fas fa-bars"></i>
              </div>
              <div class="logo">
-               <a href="#">Draft Surat</a>
+               <a href="#">User</a>
             </div>
             <div class="user_info">
                 <i class="fas fa-user-circle"></i>
                 <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
             </div>
             </div>
-
-            <div class="container" style="margin-top: 5%">
-                <h2>Draft Surat</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No. Surat</th>
-                            <th>Perihal</th>
-                            <th>Kepada</th>
-                            <th>Tanggal</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if($drafts->isEmpty())
-                                    <tr>
-                                        <td colspan="5">Tidak ada Draft.</td>
-                                    </tr>
-                                @else
-                        @foreach($drafts as $draft)
-                        <tr>
-                            <td>{{ $draft->no_surat }}</td>
-                            <td>{{ $draft->perihal }}</td>
-                            <td>{{ $draft->kepada }}</td>
-                            <td>{{ $draft->tanggal }}</td>
-                            <td>
-                                <a href="{{ route('draft.edit', $draft->id) }}">Edit</a> |
-                                <form action="{{ route('draft.destroy', $draft->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit">Delete</button>
-                                </form>
-                            </td>
-
-                        </tr>
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+        </div>
+    <div class="header-content">
+        <h1>Edit Profil</h1>
+    </div>
+</div>
+<form action="{{ route('superadmin.profile.update') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div class="profile-card">
+        <div class="profile-avatar">
+            @if($user->profile_picture)
+                <img src="{{ asset('uploads/profile_pictures/' . $user->profile_picture) }}" alt="Profile Avatar" />
+            @else
+            <i class="fas fa-user-circle"></i>
+            @endif
+        </div>
+        <div class="form-group">
+            <label for="profile_picture">Upload Foto Profil</label>
+            <input type="file" name="profile_picture" accept="image/*">
+        </div>
+        <div class="form-group">
+            <label for="name">Nama</label>
+            <input type="text" name="name" value="{{ $user->name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" value="{{ $user->email }}" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password (Opsional)</label>
+            <input type="password" name="password">
+        </div>
+        <div class="form-group">
+            <label for="password_confirmation">Konfirmasi Password</label>
+            <input type="password" name="password_confirmation">
+        </div>
+        <div class="profile-actions">
+            <button type="submit" class="action-btn edit">Simpan Perubahan</button>
+            <a href="{{ route('superadmin.profile') }}" class="action-btn cancel">Batal</a> <!-- Tambahkan button batal -->
+        </div>
+    </div>
+</form>
+</div>
 </body>
 </html>

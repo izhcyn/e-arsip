@@ -363,7 +363,7 @@
                        <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
                        <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
                        <li><a href="{{ route('users.index') }}" class="active">User</a></li>
-                       <li><a href="#" class="active">Change Password</a></li>
+                       <li><a href="{{ route('superadmin.profile') }}" class="active">Profile</a></li>
                     </ul>
                 </li>
               </ul>
@@ -385,42 +385,6 @@
                 <i class="fas fa-user-circle"></i>
                 <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
             </div>
-            </div>
-
-            <div class="container mt-5">
-                <div class="chart-container">
-                    <div class="card">
-                        <div class="card-header">
-                            Total Surat Masuk Per Bulan
-                            <span class="minimize-btn" onclick="toggleChart('chartIncoming')">
-                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                            </span>
-                            <span class="close-btn" onclick="removeChart('chartIncoming')">
-                                <i class="fa fa-times-circle" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="chartIncoming" width="400" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="card">
-                        <div class="card-header">
-                            Grafik Total Indeks Dipakai
-                            <span class="minimize-btn" onclick="toggleChart('chartIndexMasuk')">
-                                <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                            </span>
-                            <span class="close-btn" onclick="removeChart('chartIndexMasuk')">
-                                <i class="fa fa-times-circle" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="chartIndexMasuk" width="400" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="container mt-5">
@@ -598,6 +562,44 @@
                             </li>
                         </ul>
                     </nav>
+
+                </div>
+                <div class="container mt-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Total Surat Masuk Per Bulan
+                                    <span class="minimize-btn" onclick="toggleChart('chartIncoming')">
+                                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="close-btn" onclick="removeChart('chartIncoming')">
+                                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chartIncoming" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    Grafik Total Indeks Dipakai
+                                    <span class="minimize-btn" onclick="toggleChart('chartIndexMasuk')">
+                                        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="close-btn" onclick="removeChart('chartIndexMasuk')">
+                                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="chartIndexMasuk" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 </div>
             </div>

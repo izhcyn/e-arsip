@@ -249,12 +249,10 @@ body {
 .input-group .form-control {
     flex: 1;
 }
-
 .chart-container {
-    position: relative;
-    width: 80%;
-    margin: auto;
-    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .close-btn {

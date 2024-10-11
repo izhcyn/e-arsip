@@ -73,7 +73,7 @@
                        <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
                        <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
                        <li><a href="{{ route('users.index') }}" class="active">User</a></li>
-                       <li><a href="#" class="active">Change Password</a></li>
+                       <li><a href="{{ route('superadmin.profile') }}" class="active">Profile</a></li>
                     </ul>
                 </li>
               </ul>
