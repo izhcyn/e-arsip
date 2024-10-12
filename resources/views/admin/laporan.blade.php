@@ -46,7 +46,7 @@
               </div>
 
               <ul class="siderbar_menu">
-                  <li class="active"><a href="{{ route('superadmin.dashboard')}}">
+                  <li class="active"><a href="{{ route('admin.dashboard')}}">
                     <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
                     <div class="title">DASHBOARD</div>
                     </a>
@@ -57,8 +57,7 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
-                       <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
+                       <li><a href="{{ route('buatsurat.index')}}" class="active">Buat Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -72,8 +71,7 @@
                   <ul class="accordion">
                        <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
                        <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
-                       <li><a href="{{ route('users.index') }}" class="active">User</a></li>
-                       <li><a href="{{ route('superadmin.profile') }}" class="active">Profile</a></li>
+                       <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
                     </ul>
                 </li>
               </ul>
@@ -89,7 +87,7 @@
                <i class="fas fa-bars"></i>
              </div>
              <div class="logo">
-               <a href="#">Laporan</a>
+               <a href="#">DASHBOARD</a>
             </div>
             <div class="user_info">
                 @if($user->profile_picture)

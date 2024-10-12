@@ -52,7 +52,7 @@ class DashboardController extends Controller
                 'user'
             ));
         } elseif ($user->role == 'user') {
-            return view('user.dashboard', compact(
+            return view('users.dashboard', compact(
                 'suratMasukHariIni',
                 'suratKeluarHariIni',
                 'totalSuratMasuk',

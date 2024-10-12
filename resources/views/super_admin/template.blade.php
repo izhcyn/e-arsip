@@ -8,11 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
     <link rel="stylesheet" href="/css/user.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tiny.cloud/1/zgev9qnaivedr9z3cynwqe34owhimfprefdpid7lnhlfdpy1/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
-    <script>
+        <script>
         $(document).ready(function(){
             $(".siderbar_menu li").click(function(){
               $(".siderbar_menu li").removeClass("active");
@@ -61,8 +63,8 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
-                       <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
+                    <li><a href="{{ route('buatsurat.index')}}" class="active">Buat Surat</a></li>
+                    <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -77,7 +79,7 @@
                        <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
                        <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
                        <li><a href="{{ route('users.index') }}" class="active">User</a></li>
-                       <li><a href="{{ route('superadmin.profile') }}" class="active">Profile</a></li>
+                       <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
                     </ul>
                 </li>
               </ul>
@@ -180,7 +182,7 @@
                             @foreach ($templates as $template)
                                 <tr>
                                     <td>{{ $template->judul_template }}</td>
-                                    <td>{{ Str::limit(strip_tags($template->isi_surat), 50) }}</td>
+                                    <td>{!! Str::limit(strip_tags($template->isi_surat), 50) !!}</td>
                                     <td>
                                         <a href="{{ route('template.edit', $template->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
                                         <form action="{{ route('template.destroy', $template->id) }}" method="POST" id="delete-form-{{ $template->id }}" style="display:inline;">
@@ -246,7 +248,7 @@
                         plugins: 'table lists',  // Menambahkan plugin tabel dan list
                         toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | table',  // Toolbar dengan fitur table
                         menubar: 'file edit view insert format table tools help',  // Menambahkan menu insert untuk table
-                        height: 500,  // Mengatur tinggi editor
+                        height: 400,  // Mengatur tinggi editor
                         setup: function (editor) {
                             editor.on('init', function () {
                                 this.getContainer().style.transition = 'border-color 0.15s ease-in-out';

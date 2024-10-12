@@ -90,8 +90,8 @@
                     <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
                   <ul class="accordion">
-                       <li><a href="{{ route('super_admin.buatsurat')}}" class="active">Buat Surat</a></li>
-                       <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
+                    <li><a href="{{ route('buatsurat.index')}}" class="active">Buat Surat</a></li>
+                    <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -106,7 +106,7 @@
                        <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
                        <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
                        <li><a href="{{ route('users.index') }}" class="active">User</a></li>
-                       <li><a href="{{ route('superadmin.profile') }}" class="active">Profile</a></li>
+                       <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
                     </ul>
                 </li>
               </ul>

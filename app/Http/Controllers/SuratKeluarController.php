@@ -74,7 +74,7 @@ $totalSuratPerBulan = SuratKeluar::selectRaw('MONTH(tanggal_keluar) as month, CO
     } elseif ($user->role == 'admin') {
         return view('admin.suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
     } elseif ($user->role == 'user') {
-        return view('user.suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
+        return view('users.suratkeluar', compact('suratKeluar', 'indeks', 'totalSuratPerBulan', 'indeksUsage'));
     }
 
     // Kirim data ke view

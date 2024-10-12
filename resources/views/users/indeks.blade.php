@@ -66,35 +66,32 @@
               </div>
 
               <ul class="siderbar_menu">
-                  <li class="active"><a href="{{ route('admin.dashboard')}}">
-                    <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
-                    <div class="title">DASHBOARD</div>
-                    </a>
-                </li>
-                <li><a href="#">
-                    <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
-                    <div class="title">SURAT</div>
-                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                    </a>
-                  <ul class="accordion">
-                       <li><a href="{{ route('buatsurat.index')}}" class="active">Buat Surat</a></li>
-                       <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
-                       <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
-                       <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">
-                    <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
-                    <div class="title">PENGATURAN</div>
-                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                    </a>
-                  <ul class="accordion">
-                       <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
-                       <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
-                       <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
-                    </ul>
-                </li>
-              </ul>
+                <li class="active"><a href="{{ route('users.dashboard')}}">
+                  <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
+                  <div class="title">DASHBOARD</div>
+                  </a>
+              </li>
+              <li><a href="#">
+                  <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                  <div class="title">SURAT</div>
+                  <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                  </a>
+                <ul class="accordion">
+                     <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
+                     <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
+                  </ul>
+              </li>
+              <li><a href="#">
+                  <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
+                  <div class="title">PENGATURAN</div>
+                  <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                  </a>
+                <ul class="accordion">
+                     <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
+                     <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
+                  </ul>
+              </li>
+            </ul>
              <div class="logout_btn">
                   <a href="/">Logout</a>
               </div>
@@ -107,7 +104,7 @@
                <i class="fas fa-bars"></i>
              </div>
              <div class="logo">
-               <a href="#">DASHBOARD</a>
+               <a href="#">Indeks</a>
             </div>
             <div class="user_info">
                 @if($user->profile_picture)
@@ -121,37 +118,7 @@
           </div>
             <div class="main_container" style="margin-left: 50px">
                 <div class="container mt-5">
-                    <h1 class="heading-daftar-pengguna">Daftar Indeks</h1>
-
                     <!-- Form toggle button -->
-                    <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Indeks Baru</button>
-                    <div class="card mt-4 user-form" style="display: none;">
-                        <div class="card-header">Tambah Indeks Baru</div>
-                        <div class="card-body">
-                            <form action="{{ route('indeks.store') }}" method="POST">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="kode_indeks">Kode Indeks</label>
-                                    <input type="text" class="form-control" id="kode_indeks" name="kode_indeks" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="kode_surat">Kode Surat</label>
-                                    <input type="text" class="form-control" id="kode_surat" name="kode_surat" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="judul_indeks">Judul Indeks</label>
-                                    <input type="text" class="form-control" id="judul_indeks" name="judul_indeks" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="detail_indeks">No.Surat Terakhir</label>
-                                    <input type="text" class="form-control" id="last_number" name="last_number" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Update Indeks</button>
-                            </form>
-                        </div>
-                    </div>
-
-
                     <div class="mt-3">
                         <label for="recordsPerPage">Show records:</label>
                         <select id="recordsPerPage" class="form-control small-select" style="width: auto; display: inline-block;">
@@ -174,7 +141,6 @@
                                     <th style="width: 10%">Kode Surat <input type="text" id="filterKodeSurat" class="form-control" value="{{ request('kode_surat') }}"></th>
                                     <th style="width: 20%">Judul Indeks <input type="text" id="filterJudulIndeks" class="form-control" value="{{ request('judul_indeks') }}"></th>
                                     <th style="width: 15%">No.Surat Terakhir <input type="text" id="filterLastNumber" class="form-control" value="{{ request('last_number') }}"></th>
-                                    <th style="width: 10%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -184,9 +150,6 @@
                                     <td>{{ $indek->kode_surat }}</td>
                                     <td>{{ $indek->judul_indeks }}</td>
                                     <td>{{ $indek->last_number }}</td>
-                                    <td>
-                                        <a href="{{ route('indeks.edit', $indek->indeks_id) }}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>

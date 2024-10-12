@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TemplateSurat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TemplateSuratController extends Controller
 {
@@ -10,8 +11,19 @@ class TemplateSuratController extends Controller
     {
         $perPage = $request->get('limit', 5); // Default 5 records per page
         $templates = TemplateSurat::orderBy('created_at', 'desc')->paginate($perPage);
-        return view('super_admin.template', compact('templates'));
+
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Memeriksa role dan mengarahkan ke view yang sesuai
+        if ($user->role == 'super_admin') {
+            return view('super_admin.template', compact('templates'));
+        } elseif ($user->role == 'admin') {
+            return view('admin.template', compact('templates'));
+        }
+
     }
+
 
 
     public function create()
@@ -41,7 +53,16 @@ class TemplateSuratController extends Controller
     public function edit($id)
     {
         $template = TemplateSurat::findOrFail($id);
-        return view('super_admin.edit_template', compact('template'));
+
+        $user = Auth::user();
+
+        if ($user->role == 'super_admin') {
+            return view('super_admin.edit_template', compact('template'));
+        } elseif ($user->role == 'admin') {
+            return view('admin.edit_template', compact('template'));
+        }
+
+        return view('edit_template', compact('template'));
     }
 
     public function update(Request $request, $id)

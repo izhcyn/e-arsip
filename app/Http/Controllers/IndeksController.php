@@ -44,6 +44,8 @@ use Illuminate\Support\Facades\Auth;
             return view('super_admin.indeks', compact('indeks'));
         } elseif ($user->role == 'admin') {
             return view('admin.indeks', compact('indeks'));
+        } elseif ($user->role == 'user') {
+            return view('users.indeks', compact('indeks') );
         }
 
         return view('indeks', compact('indeks'));
@@ -51,7 +53,14 @@ use Illuminate\Support\Facades\Auth;
 
      public function create()
      {
-         return view('super_admin.create_indeks');
+        $user = Auth::user();
+
+        if ($user->role == 'super_admin') {
+            return view('super_admin.create_indeks');
+        } elseif ($user->role == 'admin') {
+            return view('admin.create_indeks');
+        }
+         return view('create_indeks');
      }
 
      public function store(Request $request)
@@ -80,8 +89,14 @@ use Illuminate\Support\Facades\Auth;
          // Temukan satu item berdasarkan primary key 'indeks_id'
          $indeks = Indeks::findOrFail($id);
 
+         $user = Auth::user();
+         if ($user->role == 'super_admin') {
+            return view('super_admin.edit_indeks', compact('indeks'));
+        } elseif ($user->role == 'admin') {
+            return view('admin.edit_indeks', compact('indeks'));
+        }
          // Kirimkan data single item ke view
-         return view('super_admin.edit_indeks', compact('indeks'));
+         return view('edit_indeks', compact('indeks'));
      }
 
 

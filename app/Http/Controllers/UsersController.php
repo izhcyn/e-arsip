@@ -11,7 +11,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
-class AdminController extends Controller
+class UsersController extends Controller
 {
     public function index()
     {
@@ -102,18 +102,47 @@ class AdminController extends Controller
             'totalUsers' => $totalUsers
         ]);
     }
+    public function showUsers(Request $request)
+{
+    // Get the number of records to display per page from the request, default to 5
+    $perPage = $request->get('limit', 5);
+
+    // Apply filtering based on input values
+    $query = User::query();
+
+    if ($request->has('name')) {
+        $query->where('name', 'like', '%' . $request->input('name') . '%');
+    }
+
+    if ($request->has('email')) {
+        $query->where('email', 'like', '%' . $request->input('email') . '%');
+    }
+
+    if ($request->has('username')) {
+        $query->where('username', 'like', '%' . $request->input('username') . '%');
+    }
+
+    if ($request->has('role')) {
+        $query->where('role', 'like', '%' . $request->input('role') . '%');
+    }
+
+    // Fetch users with pagination based on the selected limit
+    $users = $query->paginate($perPage);
+
+    return view('super_admin.users', compact('users'));
+}
 
     public function suratMasuk()
     {
         $suratMasuk = SuratMasuk::all();
 
-        return view('admin.surat_masuk', ['suratMasuk' => $suratMasuk]);
+        return view('user.surat_masuk', ['suratMasuk' => $suratMasuk]);
     }
 
     public function suratKeluar()
     {
         $suratKeluar = SuratKeluar::all();
 
-        return view('admin.surat_keluar', ['suratKeluar' => $suratKeluar]);
+        return view('user.surat_keluar', ['suratKeluar' => $suratKeluar]);
     }
 }

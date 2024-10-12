@@ -10,6 +10,7 @@ use App\Models\Indeks;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+
 class SuperAdminController extends Controller
 {
     // Metode untuk menampilkan dashboard
@@ -79,7 +80,7 @@ class SuperAdminController extends Controller
                     'totalUsers' => $totalUsers
                 ]);
             } elseif ($user->role == 'user') {
-                return view('user.dashboard', [
+                return view('users.dashboard', [
                     'totalSuratMasukBulan' => $totalSuratMasukBulan,
                     'totalSuratKeluarBulan' => $totalSuratKeluarBulan,
                     'suratMasukHariIni' => $suratMasukHariIni,

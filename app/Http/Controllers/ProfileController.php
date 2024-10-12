@@ -9,17 +9,31 @@ use App\Models\User; // Ini juga perlu jika menggunakan model User
 class ProfileController extends Controller
 {
     // Method untuk menampilkan profil user yang sedang login
-    public function showProfile()
+    public function index()
     {
-        $user = Auth::user(); // Ambil data user yang sedang login
-        return view('super_admin.profile', compact('user'));
+        $user = Auth::user();
+
+        if ($user->role == 'super_admin') {
+            return view('super_admin.profile', compact('user'));
+        } elseif ($user->role == 'admin') {
+            return view('admin.profile', compact('user'));
+        } elseif ($user->role == 'user'){
+        return view('users.profile', compact('user'));
+        }
     }
 
     // Method untuk menampilkan halaman edit profil
     public function editProfile()
     {
-        $user = Auth::user(); // Ambil data user yang sedang login
-        return view('super_admin.edit_profile', compact('user')); // Pastikan view-nya sesuai
+        $user = Auth::user();
+
+        if ($user->role == 'super_admin') {
+            return view('super_admin.edit_profile', compact('user')); // Pastikan view-nya sesuai
+        } elseif ($user->role == 'admin') {
+            return view('admin.edit_profile', compact('user')); // Pastikan view-nya sesuai
+        } elseif ($user->role == 'user'){
+            return view('users.edit_profile', compact('user')); // Pastikan view-nya sesuai
+        }
     }
 
     // Method untuk memperbarui profil
@@ -53,8 +67,9 @@ class ProfileController extends Controller
             $user->save();
         }
 
+
         // Redirect ke halaman profil
-        return redirect()->route('superadmin.profile')->with('success', 'Profil berhasil diperbarui');
+        return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui');
     }
 
 }

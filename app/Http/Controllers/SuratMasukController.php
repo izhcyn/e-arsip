@@ -6,6 +6,7 @@ use App\Models\SuratMasuk; // Model SuratMasuk
 use Illuminate\Http\Request;
 use App\Models\Indeks;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 
 class SuratMasukController extends Controller
@@ -31,6 +32,15 @@ class SuratMasukController extends Controller
         // Fetch indeks data for the form
         $indeks = Indeks::all();
 
+        $user = Auth::user();
+
+        if ($user->role == 'super_admin') {
+            return view('super_admin.suratmasuk', compact('suratMasuk', 'indeks', 'totalSuratPerBulanMasuk', 'indeksUsageMasuk'));
+        } elseif ($user->role == 'admin') {
+            return view('admin.suratmasuk', compact('suratMasuk', 'indeks', 'totalSuratPerBulanMasuk', 'indeksUsageMasuk'));
+        } elseif ($user->role == 'user') {
+            return view('users.suratmasuk', compact('suratMasuk', 'indeks', 'totalSuratPerBulanMasuk', 'indeksUsageMasuk'));
+        }
         // Send the data to the view
         return view('super_admin.suratmasuk', compact('suratMasuk', 'indeks', 'totalSuratPerBulanMasuk', 'indeksUsageMasuk'));
     }

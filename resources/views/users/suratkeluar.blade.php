@@ -343,35 +343,32 @@
               </div>
 
               <ul class="siderbar_menu">
-                  <li class="active"><a href="{{ route('admin.dashboard')}}">
-                    <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
-                    <div class="title">DASHBOARD</div>
-                    </a>
-                </li>
-                <li><a href="#">
-                    <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
-                    <div class="title">SURAT</div>
-                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                    </a>
-                  <ul class="accordion">
-                       <li><a href="{{ route('buatsurat.index')}}" class="active">Buat Surat</a></li>
-                       <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
-                       <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
-                       <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">
-                    <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
-                    <div class="title">PENGATURAN</div>
-                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                    </a>
-                  <ul class="accordion">
-                       <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
-                       <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
-                       <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
-                    </ul>
-                </li>
-              </ul>
+                <li class="active"><a href="{{ route('users.dashboard')}}">
+                  <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
+                  <div class="title">DASHBOARD</div>
+                  </a>
+              </li>
+              <li><a href="#">
+                  <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                  <div class="title">SURAT</div>
+                  <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                  </a>
+                <ul class="accordion">
+                     <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
+                     <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
+                  </ul>
+              </li>
+              <li><a href="#">
+                  <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
+                  <div class="title">PENGATURAN</div>
+                  <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                  </a>
+                <ul class="accordion">
+                     <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
+                     <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
+                  </ul>
+              </li>
+            </ul>
              <div class="logout_btn">
                   <a href="/">Logout</a>
               </div>
@@ -384,7 +381,7 @@
                <i class="fas fa-bars"></i>
              </div>
              <div class="logo">
-               <a href="#">DASHBOARD</a>
+               <a href="#">Surat Keluar</a>
             </div>
             <div class="user_info">
                 @if($user->profile_picture)
@@ -397,71 +394,6 @@
             </div>
           </div>
 
-            <div class="container mt-5">
-                <!-- Toggle Form Button -->
-                <button id="toggleForm" class="btn btn-secondary mt-3">Tambah Surat Keluar</button>
-                <!-- Form for Adding Surat Keluar -->
-                <div class="card mt-4 user-form" style="display: none;">
-                    <div class="card-header">Tambah Surat Keluar</div>
-                    <div class="card-body">
-                        <form action="{{ route('suratkeluar.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="form-group">
-                                <label for="no_surat">No Surat</label>
-                                <input type="text" class="form-control" id="no_surat" name="no_surat" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="kode_indeks">Kode Indeks</label>
-                                <select class="form-control" id="kode_indeks" name="kode_indeks" required>
-                                    <option value="" disabled selected>Pilih Kode Indeks</option>
-                                    @foreach ($indeks as $indek)
-                                        <option value="{{ $indek->kode_indeks }}">{{ $indek->kode_indeks }} - {{ $indek->judul_indeks }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="perihal">Perihal</label>
-                                <input type="text" class="form-control" id="perihal" name="perihal" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="penulis">Penulis</label>
-                                <input type="text" class="form-control" id="penulis" name="penulis" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="penerima">Penerima</label>
-                                <input type="text" class="form-control" id="penerima" name="penerima" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="tanggal_keluar">Tanggal Keluar</label>
-                                <input type="date" class="form-control" id="tanggal_keluar" name="tanggal_keluar" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="dokumen">Unggah Dokumen</label>
-                                <input type="file" class="form-control" id="dokumen" name="dokumen" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container mt-5">
-                @if (session('success'))
-                    <div class="alert alert-success mt-3">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
-            </div>
             <div class="container mt-5">
                 <label for="recordsPerPage">Show records:</label>
                 <select id="recordsPerPage" class="form-control small-select" style="width: auto; display: inline-block;">
@@ -484,7 +416,6 @@
                                 <th style="width: 15%">Penerima</th>
                                 <th style="width: 15%">Tanggal Keluar</th>
                                 <th style="width: 10%">Dokumen</th>
-                                <th style="width: 10%">Aksi</th>
                             </tr>
                             <tr>
                                 <th><input type="text" id="filterNoSurat" class="form-control"></th>
@@ -496,7 +427,6 @@
                                     <input type="date" id="startDate" class="form-control d-inline-block" style="width: 45%;">
                                     <input type="date" id="endDate" class="form-control d-inline-block" style="width: 45%;">
                                 </th>
-                                <th></th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -515,18 +445,6 @@
                                         <td>{{ strip_tags($item->penerima) }}</td>
                                         <td>{{ $item->tanggal_keluar }}</td>
                                         <td><a href="{{ asset('storage/' . $item->dokumen) }}" target="_blank">{{ basename($item->dokumen) }}</a></td>
-                                        <td>
-                                            @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
-                                            <a href="{{ route('suratkeluar.edit', $item->suratkeluar_id) }}" class="btn btn-warning btn-sm" title="Edit"><i class="fas fa-edit"></i></a>
-                                            @endif
-                                            @if(auth()->user()->role == 'super_admin')
-                                            <form action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}" method="POST" id="delete-form-{{ $item->suratkeluar_id }}" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $item->suratkeluar_id }})"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                                            </form>
-                                            @endif
-                                        </td>
                                     </tr>
                                 @endforeach
                             @endif

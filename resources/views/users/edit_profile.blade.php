@@ -170,35 +170,32 @@
               </div>
 
               <ul class="siderbar_menu">
-                  <li class="active"><a href="{{ route('admin.dashboard')}}">
-                    <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
-                    <div class="title">DASHBOARD</div>
-                    </a>
-                </li>
-                <li><a href="#">
-                    <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
-                    <div class="title">SURAT</div>
-                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                    </a>
-                  <ul class="accordion">
-                       <li><a href="{{ route('buatsurat.index')}}" class="active">Buat Surat</a></li>
-                       <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
-                       <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
-                       <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">
-                    <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
-                    <div class="title">PENGATURAN</div>
-                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
-                    </a>
-                  <ul class="accordion">
-                       <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
-                       <li><a href="{{ route('template.index')}}" class="active">Template Surat</a></li>
-                       <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
-                    </ul>
-                </li>
-              </ul>
+                <li class="active"><a href="{{ route('users.dashboard')}}">
+                  <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
+                  <div class="title">DASHBOARD</div>
+                  </a>
+              </li>
+              <li><a href="#">
+                  <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                  <div class="title">SURAT</div>
+                  <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                  </a>
+                <ul class="accordion">
+                     <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
+                     <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
+                  </ul>
+              </li>
+              <li><a href="#">
+                  <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
+                  <div class="title">PENGATURAN</div>
+                  <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                  </a>
+                <ul class="accordion">
+                     <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
+                     <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
+                  </ul>
+              </li>
+            </ul>
              <div class="logout_btn">
                   <a href="/">Logout</a>
               </div>
@@ -211,7 +208,7 @@
                <i class="fas fa-bars"></i>
              </div>
              <div class="logo">
-               <a href="#">DASHBOARD</a>
+               <a href="#">Profile Setting</a>
             </div>
             <div class="user_info">
                 @if($user->profile_picture)
@@ -222,7 +219,7 @@
                     <span>{{ Auth::user()->name }}<br />{{ Auth::user()->role }}</span>
                 @endif
             </div>
-          </div>
+            </div>
         </div>
 </div>
 <div class="profile-edit-container">

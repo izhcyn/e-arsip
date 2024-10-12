@@ -6,6 +6,7 @@ use App\Models\SuratMasuk;
 use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class LaporanController extends Controller
 {
@@ -97,7 +98,14 @@ class LaporanController extends Controller
             }
         }
 
+        $user = Auth::user();
+
+        if ($user->role == 'super_admin') {
+            return view('super_admin.laporan', compact('jumlahPerMinggu', 'bulan', 'tahun', 'jenisData', 'totalSuratHariIni', 'totalSuratMingguIni', 'totalSuratBulanIni', 'bulanIndo'));
+        } elseif ($user->role == 'admin') {
+            return view('admin.laporan', compact('jumlahPerMinggu', 'bulan', 'tahun', 'jenisData', 'totalSuratHariIni', 'totalSuratMingguIni', 'totalSuratBulanIni', 'bulanIndo'));
+        }
         // Kirim data ke view
-        return view('super_admin.laporan', compact('jumlahPerMinggu', 'bulan', 'tahun', 'jenisData', 'totalSuratHariIni', 'totalSuratMingguIni', 'totalSuratBulanIni', 'bulanIndo'));
+        return view('laporan', compact('jumlahPerMinggu', 'bulan', 'tahun', 'jenisData', 'totalSuratHariIni', 'totalSuratMingguIni', 'totalSuratBulanIni', 'bulanIndo'));
     }
 }
