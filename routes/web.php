@@ -78,16 +78,18 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/suratkeluar/{id}', [SuratKeluarController::class, 'update'])->name('suratkeluar.update');
     Route::delete('/suratkeluar/{id}', [SuratKeluarController::class, 'destroy'])->name('suratkeluar.destroy');
     Route::resource('suratkeluar', SuratKeluarController::class);
-    Route::get('/drafts', [SuratController::class, 'showDrafts'])->name('draft.index');
-    Route::post('/drafts/save', [SuratController::class, 'saveDraft'])->name('draft.save');
+    Route::get('/draft', [SuratController::class, 'showDrafts'])->name('draft.index');
+    Route::post('/draft/save', [SuratController::class, 'saveDraft'])->name('draft.save');
     Route::post('/surat/store', [SuratController::class, 'storeSurat'])->name('surat.store');
     Route::get('/profile', [ProfileController::class, 'showProfile'])->name('profile.index');
     Route::get('/profile/edit', [ProfileController::class, 'editProfile'])->name('profile.edit');
     Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
     Route::get('/surat/draft/{id}', [SuratController::class, 'loadDraftById'])->name('draft.loadById');
     Route::get('/surat-keluar/{id}', [SuratKeluarController::class, 'showDraft']);
-    Route::get('/surat/drafts', [SuratController::class, 'showDrafts'])->name('drafts.index');
+    Route::get('/surat/draft', [SuratController::class, 'showDrafts'])->name('drafts.index');
     Route::get('/surat/draft/{id}', [SuratController::class, 'loadDraftById'])->name('draft.loadById');
+    Route::get('/draft/load/{id}', [SuratController::class, 'loadDraftById'])->name('draft.loadById');
+    Route::delete('/draft/delete/{id}', [SuratController::class, 'deleteDraft'])->name('draft.delete');
 
     // Save draft logic remains the same
     Route::post('/draft/save', [SuratController::class, 'saveDraft'])->name('draft.save');

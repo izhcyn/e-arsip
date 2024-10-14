@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('surat_masuk', function (Blueprint $table) {
-            $table->string('dokumen')->nullable(); // Modify as needed based on file upload requirements
-        });
+        if (!Schema::hasColumn('surat_masuk', 'dokumen')) {
+            Schema::table('surat_masuk', function (Blueprint $table) {
+                $table->string('dokumen', 255)->nullable();
+            });
+        }
     }
-
 
     /**
      * Reverse the migrations.
@@ -26,5 +27,4 @@ return new class extends Migration
             $table->dropColumn('dokumen');
         });
     }
-
 };

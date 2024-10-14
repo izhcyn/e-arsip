@@ -166,7 +166,7 @@ class SuratController extends Controller
     }
 
     // Mengarahkan pengguna ke halaman sesuai role
-    return redirect()->route($route)->with('success', 'Surat berhasil disimpan');
+    return response()->json(['message' => 'Surat berhasil disimpan']);
 }
 
 public function suratKeluarAdmin()
@@ -322,61 +322,79 @@ public function suratKeluarAdmin()
     return response()->download(storage_path('app/public/surat_keluar/' . $pdfFileName));
 }
 
- // Function untuk menyimpan draft surat
- public function saveDraft(Request $request)
- {
-     // Handle file uploads (signature, attachments)
-     $signaturePath = $request->hasFile('signature')
-         ? $request->file('signature')->store('signatures', 'public')
-         : null;
+public function saveDraft(Request $request)
+{
+    try {
+        $draft = null;
 
-     $fileLampiranPath = $request->hasFile('file_lampiran')
-         ? $request->file('file_lampiran')->store('file_lampirans', 'public')
-         : null;
+        if ($request->has('draft_id') && !empty($request->draft_id)) {
+            // Temukan draft yang ada berdasarkan ID
+            $draft = Draft::find($request->draft_id);
 
-     // Save or update draft
-     Draft::updateOrCreate(
-         ['no_surat' => $request->no_surat],
-         [
-             'user_id' => auth()->id(),
-             'tanggal' => $request->tanggal,
-             'indeks' => $request->indeks,
-             'perihal' => $request->perihal,
-             'kepada' => $request->kepada,
-             'alamat' => $request->alamat,
-             'isi_surat' => $request->isi_surat,
-             'penulis' => $request->penulis,
-             'jabatan' => $request->jabatan,
-             'notes' => $request->notes,
-             'signature' => $signaturePath,
-             'file_lampiran' => $fileLampiranPath,
-             'status' => 'draft',
-         ]
-     );
+            if ($draft) {
+                // Update draft jika ditemukan
+                $draft->update([
+                    'tanggal' => $request->tanggal,
+                    'indeks' => $request->indeks,
+                    'perihal' => $request->perihal,
+                    'lampiran' => $request->lampiran,
+                    'kepada' => $request->kepada,
+                    'alamat' => $request->alamat,
+                    'isi_surat' => $request->isi_surat,
+                    'penulis' => $request->penulis,
+                    'jabatan' => $request->jabatan,
+                    'notes' => $request->notes,
+                    'user_id' => auth()->id(),
+                ]);
+            }
+        }
 
-     return response()->json(['message' => 'Draft saved successfully']);
- }
+        // Jika tidak ada draft_id atau draft tidak ditemukan, buat draft baru
+        if (!$draft) {
+            $draft = Draft::create([
+                'tanggal' => $request->tanggal,
+                'indeks' => $request->indeks,
+                'perihal' => $request->perihal,
+                'lampiran' => $request->lampiran,
+                'kepada' => $request->kepada,
+                'alamat' => $request->alamat,
+                'isi_surat' => $request->isi_surat,
+                'penulis' => $request->penulis,
+                'jabatan' => $request->jabatan,
+                'notes' => $request->notes,
+                'user_id' => auth()->id(),
+            ]);
+        }
+
+        return response()->json(['message' => 'Draft berhasil disimpan!', 'draft_id' => $draft->id]);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error menyimpan draft: ' . $e->getMessage()], 500);
+    }
+}
 
 
- public function loadDraftById($id)
- {
-     // Fetch the specific draft by ID
-     $draft = Draft::findOrFail($id);
 
-     // Fetch the indeks data
-     $indeks = Indeks::all();
-     $templates = TemplateSurat::all();
 
-     // Check user role and return appropriate view
-     if (auth()->user()->role == 'super_admin') {
-         return view('super_admin.buatsurat', compact('draft', 'indeks','templates'));
-     } elseif (auth()->user()->role == 'admin') {
-         return view('admin.buatsurat', compact('draft', 'indeks','templates'));
-     }
+public function loadDraftById($id)
+{
+    // Fetch the specific draft by ID
+    $draft = Draft::findOrFail($id);
 
-     // Default view if needed
-     return view('buatsurat.create', compact('draft', 'indeks'));
- }
+    // Fetch the indeks data
+    $indeks = Indeks::all();
+    $templates = TemplateSurat::all();
+
+    // Return view with draft data
+    if (auth()->user()->role == 'super_admin') {
+        return view('super_admin.buatsurat', compact('draft', 'indeks', 'templates'));
+    } elseif (auth()->user()->role == 'admin') {
+        return view('admin.buatsurat', compact('draft', 'indeks', 'templates'));
+    }
+
+    return view('buatsurat.create', compact('draft', 'indeks', 'templates'));
+}
+
+
  public function show($id)
  {
      $suratKeluar = SuratKeluar::find($id);
@@ -388,7 +406,18 @@ public function suratKeluarAdmin()
      return view('suratkeluar.show', compact('suratKeluar'));
  }
 
+ public function deleteDraft($id)
+ {
+     try {
+         // Temukan draft berdasarkan ID dan hapus
+         $draft = Draft::findOrFail($id);
+         $draft->delete();
 
+         return redirect()->route('draft.index')->with('success', 'Draft berhasil dihapus.');
+     } catch (\Exception $e) {
+         return redirect()->route('draft.index')->with('error', 'Error menghapus draft: ' . $e->getMessage());
+     }
+ }
 
 
 }
