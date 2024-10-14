@@ -48,7 +48,7 @@ class SuratController extends Controller
         if ($user->role == 'super_admin') {
             return view('super_admin.drafts', compact('drafts'));
         } elseif ($user->role == 'admin') {
-            return view('admin.draft', compact('drafts'));
+            return view('admin.drafts', compact('drafts'));
         }
     }
 

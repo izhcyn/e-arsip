@@ -355,6 +355,7 @@
                     </a>
                   <ul class="accordion">
                        <li><a href="{{ route('buatsurat.index')}}" class="active">Buat Surat</a></li>
+                       <li><a href="{{ route('drafts.index') }}" class="active">Draft Surat</a></li>
                        <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
                        <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
                        <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>

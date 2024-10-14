@@ -26,7 +26,7 @@
             margin: 0;
         }
         .signature {
-            margin-top: 20px;
+            margin-top: 25px;
             width: 200px;
             text-align: center; /* Perbaiki menjadi center */
         }
