@@ -178,12 +178,13 @@
     </footer>
 
     @if ($file_lampiran)
-        @if (in_array(pathinfo($file_lampiran, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
-            <div class="attachment">
-                <img src="{{ public_path('storage/' . $file_lampiran) }}" alt="Lampiran">
-            </div>
-        @endif
+    @if (in_array(pathinfo($file_lampiran, PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png']))
+        <div class="attachment">
+            <img src="{{ public_path('storage/' . $file_lampiran) }}" alt="Lampiran" style="max-width: 100%; height: auto;">
+        </div>
     @endif
+@endif
+
 
 
 

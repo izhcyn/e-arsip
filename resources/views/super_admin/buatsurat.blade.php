@@ -63,7 +63,7 @@
                         </a>
                         <ul class="accordion">
                             <li><a href="{{ route('buatsurat.index') }}" class="active">Buat Surat</a></li>
-                            <li><a href="{{ route('draft.index') }}" class="active">Draft Surat</a></li>
+                            <li><a href="{{ route('drafts.index') }}" class="active">Draft Surat</a></li>
                             <li><a href="{{ route('suratmasuk.index') }}" class="active">Surat Masuk</a></li>
                             <li><a href="{{ route('suratkeluar.index') }}" class="active">Surat Keluar</a></li>
                             <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
@@ -125,7 +125,7 @@
                     </div>
                 @endif
 
-                <form id="suratForm" action="{{ route('draft.save') }}" method="POST">
+                <form id="suratForm" action="{{ route('draft.save') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="draft_id" value="{{ $draft->id ?? '' }}">
                     <div class="form-group">
@@ -360,6 +360,7 @@
                 document.getElementById('saveDraftButton').addEventListener('click', function(event) {
                     event.preventDefault();
                     saveDraft();
+                    window.location.href = "{{ route('drafts.index') }}";
                 });
 
                 // Fungsi untuk menyimpan draft
@@ -388,6 +389,7 @@
                             if (!draftId && data.draft_id) {
                                 document.querySelector('input[name="draft_id"]').value = data.draft_id;
                             }
+
                         })
                         .catch(error => {
                             console.error('Error:', error);

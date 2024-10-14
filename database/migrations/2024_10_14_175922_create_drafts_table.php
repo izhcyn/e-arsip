@@ -14,6 +14,7 @@ return new class extends Migration
         if (!Schema::hasTable('drafts')) {
             Schema::create('drafts', function (Blueprint $table) {
                 $table->bigIncrements('id');
+                $table->unsignedBigInteger('user_id')->nullable(); // Jika ada user_id, tambahkan relasi
                 $table->date('tanggal')->nullable(); // Boleh kosong
                 $table->string('no_surat', 255)->nullable(); // Boleh kosong
                 $table->string('indeks', 255)->nullable(); // Boleh kosong

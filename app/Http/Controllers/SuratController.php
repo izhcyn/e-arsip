@@ -113,7 +113,7 @@ class SuratController extends Controller
     ];
 
     // Membuat PDF utama
-    $pdf = PDF::loadView('pdf.surat', $data);
+    $pdf = \PDF::loadView('pdf.surat', $data);
     $pdfFileName = $request->kode_indeks . 'surat ' . $request->perihal . '.pdf';
     $pdfPath = 'surat_keluar/' . $pdfFileName;
     $fullPdfPath = storage_path('app/public/' . $pdfPath);
@@ -166,7 +166,7 @@ class SuratController extends Controller
     }
 
     // Mengarahkan pengguna ke halaman sesuai role
-    return response()->json(['message' => 'Surat berhasil disimpan']);
+    return response()->download(storage_path('app/public/surat_keluar/' . $pdfFileName));
 }
 
 public function suratKeluarAdmin()
@@ -413,9 +413,9 @@ public function loadDraftById($id)
          $draft = Draft::findOrFail($id);
          $draft->delete();
 
-         return redirect()->route('draft.index')->with('success', 'Draft berhasil dihapus.');
+         return redirect()->route('drafts.index')->with('success', 'Draft berhasil dihapus.');
      } catch (\Exception $e) {
-         return redirect()->route('draft.index')->with('error', 'Error menghapus draft: ' . $e->getMessage());
+         return redirect()->route('drafts.index')->with('error', 'Error menghapus draft: ' . $e->getMessage());
      }
  }
 
