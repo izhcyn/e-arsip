@@ -84,7 +84,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'showProfile'])->name('profile.index');
     Route::get('/profile/edit', [ProfileController::class, 'editProfile'])->name('profile.edit');
     Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/surat/draft/{id}', [SuratController::class, 'loadDraftById'])->name('draft.loadById');
+    Route::get('/surat-keluar/{id}', [SuratKeluarController::class, 'showDraft']);
+    Route::get('/surat/drafts', [SuratController::class, 'showDrafts'])->name('drafts.index');
+    Route::get('/surat/draft/{id}', [SuratController::class, 'loadDraftById'])->name('draft.loadById');
 
+    // Save draft logic remains the same
+    Route::post('/draft/save', [SuratController::class, 'saveDraft'])->name('draft.save');
 
     Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/buatsurat', [SuratController::class, 'create'])->name('buatsurat.index');

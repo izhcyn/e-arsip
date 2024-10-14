@@ -213,5 +213,17 @@ $totalSuratPerBulan = SuratKeluar::selectRaw('MONTH(tanggal_keluar) as month, CO
         // Redirect ke halaman surat masuk dengan pesan sukses
         return redirect()->route('suratkeluar.index')->with('success', 'Surat keluar berhasil dihapus.');
     }
+
+    public function show($id)
+{
+    $suratKeluar = SuratKeluar::find($id);
+
+    if (!$suratKeluar) {
+        return redirect()->back()->with('error', 'Surat not found.');
+    }
+
+    return view('suratkeluar.show', compact('suratKeluar'));
+}
+
 }
 

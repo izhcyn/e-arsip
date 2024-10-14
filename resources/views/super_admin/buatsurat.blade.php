@@ -121,25 +121,32 @@
                 </div>
             @endif
 
-            <form id="buatSuratForm" action="{{ route('super_admin.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="suratForm" action="{{ route('draft.save') }}" method="POST">
                  @csrf
-                <label for="tanggal">Tanggal<span class="star">*</span></label>
-                <input type="date" id="tanggal" name="tanggal" value="{{ old('tanggal') }}" required>
-
-                <label for="indeks">Indeks<span class="star">*</span></label>
-                <select id="indeks" name="indeks" class="form-control" required>
-                    <option value="">-- Pilih Indeks --</option>
-                    @foreach ($indeks as $indek)
-                        <option value="{{ $indek->kode_indeks }}">{{ $indek->kode_indeks }} - {{ $indek->judul_indeks }}</option>
-                    @endforeach
-                </select>
+                 <div class="form-group">
+                    <label for="tanggal">Tanggal<span class="star">*</span></label>
+                    <input type="date" id="tanggal" name="tanggal" class="form-control" value="{{ $draft->tanggal ?? '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="indeks">Indeks<span class="star">*</span></label>
+                    <select id="indeks" name="indeks" class="form-control">
+                        <option value="">-- Pilih Indeks --</option>
+                        @foreach ($indeks as $index)
+                            <option value="{{ $index->kode_indeks }}"
+                                    {{ isset($draft) && $draft->indeks == $index->kode_indeks ? 'selected' : '' }}>
+                                {{ $index->kode_surat }} - {{ $index->judul_indeks }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <label for="noSurat">No. Surat<span class="star">*</span></label>
                 <input type="text" id="noSurat" name="no_surat" value="{{ old('no_surat') }}" readonly required>
 
-                <label for="perihal">Perihal<span class="star">*</span></label>
-                <input type="text" id="perihal" name="perihal" value="{{ old('perihal') }}" required>
-
+                <div class="form-group">
+                    <label for="perihal">Perihal</label>
+                    <input type="text" id="perihal" name="perihal" class="form-control" value="{{ $draft->perihal ?? '' }}">
+                </div>
 
                 <br /><label for="lampiran">Lampiran<span class="star">*</span></label>
                 <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran" name="lampiran" value="{{ old('lampiran')}}">
@@ -148,11 +155,15 @@
                 <input type="file" id="file_lampiran" name="file_lampiran" class="file-upload-input" accept=".pdf,.jpg,.jpeg,.png">
                 <p class="file-upload-note">*File bisa berupa pdf, jpg, png, jpeg</p>
 
-                <label for="kepada">Kepada<span class="star">*</span></label>
-                <textarea id="kepada" name="kepada" class="form-control" required>{{ old('kepada') }}</textarea>
+                <div class="form-group">
+                    <label for="kepada">Kepada</label>
+                    <textarea type="text" id="kepada" name="kepada" class="form-control"> {{ $draft->kepada ?? '' }}</textarea>
+                </div>
 
-                <label for="alamat">Alamat<span class="star">*</span></label>
-                <textarea id="alamat" name="alamat" required>{{ old('alamat') }}</textarea>
+                <div class="form-group">
+                    <label for="alamat">Alamat</label>
+                    <textarea id="alamat" name="alamat" class="form-control">{{ $draft->alamat ?? '' }}</textarea>
+                </div>
 
                 <label for="templateSurat">Template (Optional):</label><br />
                 <select id="templateSurat" name="templateSurat" class="form-control">
@@ -163,13 +174,13 @@
                 </select>
 
                 <label for="isiSurat">Isi Surat<span class="star">*</span></label>
-                <textarea id="isiSurat" name="isi_surat">{{ old('isi_surat') }}</textarea>
+                <textarea id="isiSurat" name="isi_surat" class="form-control">{{ $draft->isi_surat ?? '' }}</textarea>
 
                 <label for="penulis">Penulis<span class="star">*</span></label>
                 <input type="text" id="penulis" name="penulis" value="{{ old('penulis', Auth::user()->name) }}" required>
 
                 <label for="jabatan">Jabatan<span class="star">*</span></label>
-                <input type="text" id="jabatan" name="jabatan" value="{{ old('jabatan') }}" required>
+                <input type="text" id="jabatan" name="jabatan" value="{{ $draft->jabatan ?? '' }}" required>
 
                 <label for="notes">Notes (optional) :</label>
                 <textarea id="notes" name="notes" class="form-control">{{ old('notes') }}</textarea>
@@ -290,7 +301,32 @@
         });
 
         </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Save draft periodically or when the user types
+    setInterval(saveDraft, 10000); // Auto-save every 10 seconds
 
+    // Save draft before user leaves the page
+    window.addEventListener('beforeunload', saveDraft);
+
+    // Function to save the draft
+    function saveDraft() {
+        tinymce.triggerSave();  // Trigger save to sync TinyMCE content with the form
+        const formData = new FormData(document.getElementById('suratForm'));
+
+        fetch("{{ route('draft.save') }}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        }).then(response => response.json())
+          .then(data => console.log(data.message))
+          .catch(error => console.error('Error:', error));
+    }
+});
+
+</script>
     </div>
 </body>
 </html>
