@@ -47,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
     // Route untuk menghapus indeks
     Route::delete('/indeks/{id}', [IndeksController::class, 'destroy'])->name('indeks.destroy');
     Route::get('/suratkeluar/{id}/download', [SuratController::class, 'downloadPdf'])->name('suratkeluar.download');
-    Route::get('/super_admin/buatsurat', [SuratController::class, 'create'])->name('buatsurat.index');
+    Route::get('/buatsurat', [SuratController::class, 'create'])->name('buatsurat.index');
     Route::get('/get-last-number/{indeks}', [SuratController::class, 'getLastNumber']);
 
     Route::post('/super_admin/store', [SuratController::class, 'store'])->name('super_admin.store');

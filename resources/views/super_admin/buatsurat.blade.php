@@ -151,14 +151,14 @@
                         readonly required>
 
                     <div class="form-group">
-                        <label for="perihal">Perihal</label>
+                        <label for="perihal">Perihal<span class="star">*</span></label>
                         <input type="text" id="perihal" name="perihal" class="form-control"
                             value="{{ $draft->perihal ?? '' }}">
                     </div>
 
                     <br /><label for="lampiran">Lampiran<span class="star">*</span></label>
                     <input placeholder="isi dengan - jika tidak ada lampiran" type="text" id="lampiran"
-                        name="lampiran" value="{{ old('lampiran') }}">
+                        name="lampiran" value="{{ $draft->lampiran ?? '' }}">
 
                     <label for="file_lampiran">Upload Lampiran (optional) :</label>
                     <input type="file" id="file_lampiran" name="file_lampiran" class="file-upload-input"
@@ -166,12 +166,12 @@
                     <p class="file-upload-note">*File bisa berupa pdf, jpg, png, jpeg</p>
 
                     <div class="form-group">
-                        <label for="kepada">Kepada</label>
+                        <label for="kepada">Kepada<span class="star">*</span></label>
                         <textarea type="text" id="kepada" name="kepada" class="form-control"> {{ $draft->kepada ?? '' }}</textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="alamat">Alamat</label>
+                        <label for="alamat">Alamat<span class="star">*</span></label>
                         <textarea id="alamat" name="alamat" class="form-control">{{ $draft->alamat ?? '' }}</textarea>
                     </div>
 
@@ -397,7 +397,7 @@
                 }
 
                 // Auto-save setiap 10 detik
-                setInterval(saveDraft, 10000);
+                setInterval(saveDraft, 600000);
             </script>
         </div>
 </body>

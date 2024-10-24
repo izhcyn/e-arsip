@@ -54,29 +54,28 @@
             width: 1px; /* Shrink to minimum width */
             white-space: nowrap; /* Keep text on one line */
         }
-        .label {
-            width: 5%; /* Adjust width for labels */
-        }
+
         .colon {
             width: 1%; /* Narrow width for colon */
             text-align: left;
         }
         .value {
-            width: 84%; /* Adjust width for values */
+            width: 95%; /* Adjust width for values */
             text-align: left;
         }
         footer {
             text-align: center;
             bottom: 0;
             position: fixed;
-            font-size: 13px;
-            color: #000080;
+            font-size: 11px;
+            color: #2A4879;
             width: 100%;
         }
 
         footer p {
             margin: 0;
             padding-right: 60px;
+            font-weight: bold;
         }
     </style>
 
@@ -101,17 +100,17 @@
         ?>
         <table class="heading">
                 <tr>
-                    <td class="label">Nomor</td>
+                    <td class="label" style="width: 5%">Nomor</td>
                     <td class="colon">:</td>
                     <td class="value">{{ $no_surat }}/{{ $kode_surat }}/{{ $roman_month }}/{{ \Carbon\Carbon::parse($tanggal)->format('Y') }}</td>
                 </tr>
                 <tr>
-                    <td class="label">Perihal</td>
+                    <td class="label" style="width: 5%">Perihal</td>
                     <td class="colon">:</td>
                     <td class="value">{{ $perihal }}</td>
                 </tr>
                 <tr>
-                    <td class="label">Lampiran</td>
+                    <td class="label" style="width: 5%">Lampiran</td>
                     <td class="colon">:</td>
                     <td class="value">{{ $lampiran }}</td>
                 </tr>
@@ -171,10 +170,9 @@
 
     <!-- Footer Section -->
     <footer>
-            <hr style="width: 90%; margin-left: 0; background-color: #000080;">
-            <p>GRAHA PENA: Jl. KH. R. Abdullah Bin Muhammad Nuh No. 30, Taman Yasmin, Bogor</p>
-            <p>Tel. 0251-7544001 (Hunting), Fax. 0251-7544009</p>
-            <p>e-Mail: redaksi@radar-bogor.com, iklan@radar-bogor.com, promosi@radar-bogor.com</p>
+            <p>GRAHA PENA : Jl. KHR. Abdullah Bin M. Nuh No. 30 Taman Yasmin Bogor</p>
+            <p>(HUNTING) 0251-7544001-004, Fax. 0251-7544009</p>
+            <p>Email : <u>redaksi@radar-bogor.com</u>, <u>iklan@radar-bogor.com</u></p>
     </footer>
 
     @if ($file_lampiran)

@@ -12,8 +12,7 @@
     <link rel="stylesheet" href="/css/buatsurat.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.tiny.cloud/1/0viyhi5ifj209mzkb66rqkh4rluwncrzmqyioj0245xy5p2a/tinymce/7/tinymce.min.js"
-        referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/0viyhi5ifj209mzkb66rqkh4rluwncrzmqyioj0245xy5p2a/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         $(document).ready(function() {
             $(".siderbar_menu li").click(function() {
@@ -151,7 +150,7 @@
                         readonly required>
 
                     <div class="form-group">
-                        <label for="perihal">Perihal</label>
+                        <label for="perihal">Perihal<span class="star">*</span></label>
                         <input type="text" id="perihal" name="perihal" class="form-control"
                             value="{{ $draft->perihal ?? '' }}">
                     </div>
@@ -166,12 +165,12 @@
                     <p class="file-upload-note">*File bisa berupa pdf, jpg, png, jpeg</p>
 
                     <div class="form-group">
-                        <label for="kepada">Kepada</label>
+                        <label for="kepada">Kepada<span class="star">*</span></label>
                         <textarea type="text" id="kepada" name="kepada" class="form-control"> {{ $draft->kepada ?? '' }}</textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="alamat">Alamat</label>
+                        <label for="alamat">Alamat<span class="star">*</span></label>
                         <textarea id="alamat" name="alamat" class="form-control">{{ $draft->alamat ?? '' }}</textarea>
                     </div>
 

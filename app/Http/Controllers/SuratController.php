@@ -35,13 +35,14 @@ class SuratController extends Controller
         }
 
         // Mengirim data ke view
-        return view('buatsurat', compact('indeks', 'templates'));
     }
 
     public function showDrafts()
     {
-        // Fetch all drafts saved by the authenticated user
-        $drafts = Draft::where('user_id', auth()->id())->get();
+        // Fetch all drafts saved by the authenticated user, ordered by creation date (newest first)
+        $drafts = Draft::where('user_id', auth()->id())
+                       ->orderBy('created_at', 'desc') // Sort by 'created_at' column in descending order
+                       ->get();
 
         $user = Auth::user();
 
@@ -51,6 +52,7 @@ class SuratController extends Controller
             return view('admin.drafts', compact('drafts'));
         }
     }
+
 
     public function store(Request $request)
 {

@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="kode_surat">Kode Surat</label>
-                                    <input type="text" class="form-control" id="kode_surat" name="kode_surat" required>
+                                    <input placeholder="Contoh Format : RBR/KDS" type="text" class="form-control" id="kode_surat" name="kode_surat" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="judul_indeks">Judul Indeks</label>
@@ -148,7 +148,7 @@
                                     <label for="detail_indeks">No.Surat Terakhir</label>
                                     <input type="text" class="form-control" id="last_number" name="last_number" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Update Indeks</button>
+                                <button type="submit" class="btn btn-primary">Input Indeks</button>
                             </form>
                         </div>
                     </div>

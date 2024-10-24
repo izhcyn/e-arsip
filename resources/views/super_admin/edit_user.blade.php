@@ -129,7 +129,7 @@
             </div>
 
             <div class="form-group">
-                <label for="password">Password (leave blank if you do not want to change it)</label>
+                <label for="password">Password (optional)</label>
                 <input type="password" class="form-control" id="password" name="password">
             </div>
 

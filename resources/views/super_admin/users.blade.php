@@ -130,7 +130,16 @@
 
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-eye" id="toggle-password" style="cursor: pointer;"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
 
                                 <label for="role">Role</label>
                                 <select class="form-control" id="role" name="role" required>
@@ -144,7 +153,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="mt-3">
+                <div class="container mt-3">
                     <label for="recordsPerPage">Show records:</label>
                     <select id="recordsPerPage" class="form-control small-select" style="width: auto; display: inline-block;">
                         <option value="5" {{ request('limit') == 5 ? 'selected' : '' }}>5</option>
@@ -153,6 +162,7 @@
                     </select>
                 </div>
 
+                <div class="container">
                 <div class="card card-table mt-4">
                     @if (session('success'))
                     <div class="alert alert-success">
@@ -245,6 +255,22 @@
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
+                document.getElementById('toggle-password').addEventListener('click', function() {
+                    var passwordInput = document.getElementById('password');
+                    var icon = document.getElementById('toggle-password');
+
+                    // Toggle password visibility
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');  // Change icon to "eye slash" when showing password
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');  // Change icon back to "eye" when hiding password
+                    }
+                });
+
             function confirmDelete(userId) {
                 Swal.fire({
                     title: "Apa kamu yakin?",

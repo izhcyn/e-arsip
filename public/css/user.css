@@ -269,7 +269,7 @@ body {
 
 .table th:nth-child(4),
 .table td:nth-child(4) {
-    max-width: 100px; /* Membatasi lebar kolom password */
+    max-width: 90px; /* Membatasi lebar kolom password */
     overflow: hidden;
     text-overflow: ellipsis; /* Menambahkan elipsis (...) jika teks terlalu panjang */
     white-space: nowrap;
@@ -316,6 +316,11 @@ body {
     padding: 5px 10px;
 }
 
+.small-select {
+    width: 100px; /* Adjust width as needed */
+    display: inline-block;
+}
+
 /* Form */
 .user-form {
     margin-top: 20px;
@@ -331,7 +336,7 @@ body {
 
 /* Card */
 .card-table {
-    margin-left: -10%;
+    margin-left: 5%;
     padding: 1px;
     border-radius: 10px;
     background-color: white;

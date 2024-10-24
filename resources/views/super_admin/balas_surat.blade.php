@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/buatsurat.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.tiny.cloud/1/zgev9qnaivedr9z3cynwqe34owhimfprefdpid7lnhlfdpy1/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/0viyhi5ifj209mzkb66rqkh4rluwncrzmqyioj0245xy5p2a/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         $(document).ready(function(){
             $(".siderbar_menu li").click(function(){
@@ -183,7 +183,7 @@
                 <input type="file" id="signature" name="signature" class="file-upload-input" accept="image/png">
                 <p class="file-upload-note">*File harus berformat .png</p>
 
-                <button type="submit">Kirim Balasan</button>
+                <button type="button" id="downloadButton" class="btn btn-success">Download</button>
             </form>
 
         </div>
@@ -279,19 +279,21 @@
                 });
             });
 
-        document.getElementById('downloadButton').addEventListener('click', function(event) {
-        event.preventDefault();  // Mencegah form agar tidak langsung dikirim
-        var form = document.getElementById('buatSuratForm');
+            document.getElementById('downloadButton').addEventListener('click', function(event) {
+                var form = document.getElementById('buatSuratForm');
 
-        // Simpan form ke tab baru untuk download file
-        form.target = '_blank';
-        form.submit();
+                // Set target form ke tab baru untuk download file
+                form.target = '_blank';
 
-        // Tunggu beberapa detik lalu redirect ke halaman suratkeluar
-        setTimeout(function(){
-                window.location.href = "/super_admin/suratkeluar";  // Redirect ke halaman suratkeluar
-            }, 2000);  // Set timeout 2 detik (sesuaikan jika perlu)
-        });
+                // Submit form untuk download
+                form.submit();
+
+                // Setelah form disubmit, tunggu dan redirect
+                setTimeout(function() {
+                    window.location.href = "{{ route('suratkeluar.index') }}";  // Redirect ke halaman suratkeluar
+                }, 2000);  // Set timeout 2 detik
+            });
+
 
         </script>
 
