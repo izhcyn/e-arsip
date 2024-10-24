@@ -453,35 +453,65 @@
                         </table>
                     </div>
                 </div>
-                 <!-- Links Pagination -->
-                 <div class="mt-3">
+                <div class="mt-3">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             {{-- Previous Button --}}
                             <li class="page-item {{ $suratMasuk->onFirstPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $suratMasuk->previousPageUrl() }}&limit={{ $suratMasuk->perPage() }}" aria-label="Previous">
+                                <a class="page-link"
+                                   href="{{ $suratMasuk->previousPageUrl() }}&limit={{ $suratMasuk->perPage() }}"
+                                   aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                     <span class="sr-only">Previous</span>
                                 </a>
                             </li>
 
                             {{-- Page Numbers --}}
-                            @for ($i = 1; $i <= $suratMasuk->lastPage(); $i++)
-                                <li class="page-item {{ $i == $suratMasuk->currentPage() ? 'active' : '' }}">
+                            @php
+                                $currentPage = $suratMasuk->currentPage();
+                                $lastPage = $suratMasuk->lastPage();
+                                $startPage = max(1, $currentPage - 1);
+                                $endPage = min($lastPage, $currentPage + 1);
+                            @endphp
+
+                            {{-- First Page link --}}
+                            @if ($startPage > 1)
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $suratMasuk->url(1) }}&limit={{ $suratMasuk->perPage() }}">1</a>
+                                </li>
+                                @if ($startPage > 2)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
+                            @endif
+
+                            {{-- Page Range --}}
+                            @for ($i = $startPage; $i <= $endPage; $i++)
+                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
                                     <a class="page-link" href="{{ $suratMasuk->url($i) }}&limit={{ $suratMasuk->perPage() }}">{{ $i }}</a>
                                 </li>
                             @endfor
 
+                            {{-- Last Page link --}}
+                            @if ($endPage < $lastPage)
+                                @if ($endPage < $lastPage - 1)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $suratMasuk->url($lastPage) }}&limit={{ $suratMasuk->perPage() }}">{{ $lastPage }}</a>
+                                </li>
+                            @endif
+
                             {{-- Next Button --}}
                             <li class="page-item {{ $suratMasuk->hasMorePages() ? '' : 'disabled' }}">
-                                <a class="page-link" href="{{ $suratMasuk->nextPageUrl() }}&limit={{ $suratMasuk->perPage() }}" aria-label="Next">
+                                <a class="page-link"
+                                   href="{{ $suratMasuk->nextPageUrl() }}&limit={{ $suratMasuk->perPage() }}"
+                                   aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                     <span class="sr-only">Next</span>
                                 </a>
                             </li>
                         </ul>
                     </nav>
-
                 </div>
                 <div class="container mt-5">
                     <div class="row">

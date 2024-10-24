@@ -221,28 +221,59 @@
                     </table>
                 </div> <!-- End of table container -->
 
-                <!-- Pagination Section (Move this outside of the table container) -->
                 <div class="mt-3">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             {{-- Previous Button --}}
                             <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $users->appends(request()->input())->previousPageUrl() }}" aria-label="Previous">
+                                <a class="page-link"
+                                   href="{{ $users->previousPageUrl() }}&limit={{ $users->perPage() }}"
+                                   aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                     <span class="sr-only">Previous</span>
                                 </a>
                             </li>
 
                             {{-- Page Numbers --}}
-                            @for ($i = 1; $i <= $users->lastPage(); $i++)
-                            <li class="page-item {{ $i == $users->currentPage() ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $users->appends(request()->input())->url($i) }}">{{ $i }}</a>
-                            </li>
+                            @php
+                                $currentPage = $users->currentPage();
+                                $lastPage = $users->lastPage();
+                                $startPage = max(1, $currentPage - 1);
+                                $endPage = min($lastPage, $currentPage + 1);
+                            @endphp
+
+                            {{-- First Page link --}}
+                            @if ($startPage > 1)
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $users->url(1) }}&limit={{ $users->perPage() }}">1</a>
+                                </li>
+                                @if ($startPage > 2)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
+                            @endif
+
+                            {{-- Page Range --}}
+                            @for ($i = $startPage; $i <= $endPage; $i++)
+                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $users->url($i) }}&limit={{ $users->perPage() }}">{{ $i }}</a>
+                                </li>
                             @endfor
+
+                            {{-- Last Page link --}}
+                            @if ($endPage < $lastPage)
+                                @if ($endPage < $lastPage - 1)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $users->url($lastPage) }}&limit={{ $users->perPage() }}">{{ $lastPage }}</a>
+                                </li>
+                            @endif
 
                             {{-- Next Button --}}
                             <li class="page-item {{ $users->hasMorePages() ? '' : 'disabled' }}">
-                                <a class="page-link" href="{{ $users->appends(request()->input())->nextPageUrl() }}" aria-label="Next">
+                                <a class="page-link"
+                                   href="{{ $users->nextPageUrl() }}&limit={{ $users->perPage() }}"
+                                   aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                     <span class="sr-only">Next</span>
                                 </a>

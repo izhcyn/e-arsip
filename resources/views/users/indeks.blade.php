@@ -156,28 +156,59 @@
                         </table>
                     </div>
 
-                    <!-- Pagination -->
                     <div class="mt-3">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination">
                                 {{-- Previous Button --}}
                                 <li class="page-item {{ $indeks->onFirstPage() ? 'disabled' : '' }}">
-                                    <a class="page-link" href="{{ $indeks->appends(request()->input())->previousPageUrl() }}" aria-label="Previous">
+                                    <a class="page-link"
+                                       href="{{ $indeks->previousPageUrl() }}&limit={{ $indeks->perPage() }}"
+                                       aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                         <span class="sr-only">Previous</span>
                                     </a>
                                 </li>
 
                                 {{-- Page Numbers --}}
-                                @for ($i = 1; $i <= $indeks->lastPage(); $i++)
-                                <li class="page-item {{ $i == $indeks->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="{{ $indeks->appends(request()->input())->url($i) }}">{{ $i }}</a>
-                                </li>
+                                @php
+                                    $currentPage = $indeks->currentPage();
+                                    $lastPage = $indeks->lastPage();
+                                    $startPage = max(1, $currentPage - 1);
+                                    $endPage = min($lastPage, $currentPage + 1);
+                                @endphp
+
+                                {{-- First Page link --}}
+                                @if ($startPage > 1)
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $indeks->url(1) }}&limit={{ $indeks->perPage() }}">1</a>
+                                    </li>
+                                    @if ($startPage > 2)
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    @endif
+                                @endif
+
+                                {{-- Page Range --}}
+                                @for ($i = $startPage; $i <= $endPage; $i++)
+                                    <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                        <a class="page-link" href="{{ $indeks->url($i) }}&limit={{ $indeks->perPage() }}">{{ $i }}</a>
+                                    </li>
                                 @endfor
+
+                                {{-- Last Page link --}}
+                                @if ($endPage < $lastPage)
+                                    @if ($endPage < $lastPage - 1)
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    @endif
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ $indeks->url($lastPage) }}&limit={{ $indeks->perPage() }}">{{ $lastPage }}</a>
+                                    </li>
+                                @endif
 
                                 {{-- Next Button --}}
                                 <li class="page-item {{ $indeks->hasMorePages() ? '' : 'disabled' }}">
-                                    <a class="page-link" href="{{ $indeks->appends(request()->input())->nextPageUrl() }}" aria-label="Next">
+                                    <a class="page-link"
+                                       href="{{ $indeks->nextPageUrl() }}&limit={{ $indeks->perPage() }}"
+                                       aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                         <span class="sr-only">Next</span>
                                     </a>
@@ -185,8 +216,6 @@
                             </ul>
                         </nav>
                     </div>
-                </div>
-            </div>
 
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

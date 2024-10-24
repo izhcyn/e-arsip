@@ -571,24 +571,53 @@
                         {{-- Previous Button --}}
                         <li class="page-item {{ $suratKeluar->onFirstPage() ? 'disabled' : '' }}">
                             <a class="page-link"
-                                href="{{ $suratKeluar->previousPageUrl() }}&limit={{ $suratKeluar->perPage() }}"
-                                aria-label="Previous">
+                               href="{{ $suratKeluar->previousPageUrl() }}&limit={{ $suratKeluar->perPage() }}"
+                               aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                                 <span class="sr-only">Previous</span>
                             </a>
                         </li>
+
                         {{-- Page Numbers --}}
-                        @for ($i = 1; $i <= $suratKeluar->lastPage(); $i++)
-                            <li class="page-item {{ $i == $suratKeluar->currentPage() ? 'active' : '' }}">
-                                <a class="page-link"
-                                    href="{{ $suratKeluar->url($i) }}&limit={{ $suratKeluar->perPage() }}">{{ $i }}</a>
+                        @php
+                            $currentPage = $suratKeluar->currentPage();
+                            $lastPage = $suratKeluar->lastPage();
+                            $startPage = max(1, $currentPage - 1);
+                            $endPage = min($lastPage, $currentPage + 1);
+                        @endphp
+
+                        {{-- First Page link --}}
+                        @if ($startPage > 1)
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $suratKeluar->url(1) }}&limit={{ $suratKeluar->perPage() }}">1</a>
+                            </li>
+                            @if ($startPage > 2)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                        @endif
+
+                        {{-- Page Range --}}
+                        @for ($i = $startPage; $i <= $endPage; $i++)
+                            <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $suratKeluar->url($i) }}&limit={{ $suratKeluar->perPage() }}">{{ $i }}</a>
                             </li>
                         @endfor
+
+                        {{-- Last Page link --}}
+                        @if ($endPage < $lastPage)
+                            @if ($endPage < $lastPage - 1)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $suratKeluar->url($lastPage) }}&limit={{ $suratKeluar->perPage() }}">{{ $lastPage }}</a>
+                            </li>
+                        @endif
+
                         {{-- Next Button --}}
                         <li class="page-item {{ $suratKeluar->hasMorePages() ? '' : 'disabled' }}">
                             <a class="page-link"
-                                href="{{ $suratKeluar->nextPageUrl() }}&limit={{ $suratKeluar->perPage() }}"
-                                aria-label="Next">
+                               href="{{ $suratKeluar->nextPageUrl() }}&limit={{ $suratKeluar->perPage() }}"
+                               aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                                 <span class="sr-only">Next</span>
                             </a>
@@ -596,6 +625,7 @@
                     </ul>
                 </nav>
             </div>
+
             <div class="container mt-5">
                 <div class="row">
                     <div class="col-md-6">

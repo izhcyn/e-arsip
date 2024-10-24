@@ -190,26 +190,61 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- Pagination -->
                 <div class="mt-3">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
-                            <!-- Previous Button -->
+                            {{-- Previous Button --}}
                             <li class="page-item {{ $templates->onFirstPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $templates->previousPageUrl() }}&limit={{ $templates->perPage() }}" aria-label="Previous">
+                                <a class="page-link"
+                                   href="{{ $templates->previousPageUrl() }}&limit={{ $templates->perPage() }}"
+                                   aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
                                 </a>
                             </li>
-                            <!-- Page Numbers -->
-                            @for ($i = 1; $i <= $templates->lastPage(); $i++)
-                                <li class="page-item {{ $i == $templates->currentPage() ? 'active' : '' }}">
+
+                            {{-- Page Numbers --}}
+                            @php
+                                $currentPage = $templates->currentPage();
+                                $lastPage = $templates->lastPage();
+                                $startPage = max(1, $currentPage - 1);
+                                $endPage = min($lastPage, $currentPage + 1);
+                            @endphp
+
+                            {{-- First Page link --}}
+                            @if ($startPage > 1)
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $templates->url(1) }}&limit={{ $templates->perPage() }}">1</a>
+                                </li>
+                                @if ($startPage > 2)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
+                            @endif
+
+                            {{-- Page Range --}}
+                            @for ($i = $startPage; $i <= $endPage; $i++)
+                                <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
                                     <a class="page-link" href="{{ $templates->url($i) }}&limit={{ $templates->perPage() }}">{{ $i }}</a>
                                 </li>
                             @endfor
-                            <!-- Next Button -->
+
+                            {{-- Last Page link --}}
+                            @if ($endPage < $lastPage)
+                                @if ($endPage < $lastPage - 1)
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                @endif
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $templates->url($lastPage) }}&limit={{ $templates->perPage() }}">{{ $lastPage }}</a>
+                                </li>
+                            @endif
+
+                            {{-- Next Button --}}
                             <li class="page-item {{ $templates->hasMorePages() ? '' : 'disabled' }}">
-                                <a class="page-link" href="{{ $templates->nextPageUrl() }}&limit={{ $templates->perPage() }}" aria-label="Next">
+                                <a class="page-link"
+                                   href="{{ $templates->nextPageUrl() }}&limit={{ $templates->perPage() }}"
+                                   aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
                                 </a>
                             </li>
                         </ul>
