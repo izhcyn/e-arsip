@@ -112,6 +112,37 @@ body {
     transition: all 0.3s ease;
 }
 
+/* Atur accordion agar terlihat saat memiliki kelas 'show' */
+.siderbar_menu .accordion.show {
+    height: auto;
+    display: block !important;
+}
+
+.siderbar_menu > li.active .arrow {
+    transform: rotate(180deg);
+}
+
+
+/* Warna dropdown saat submenu aktif */
+.siderbar_menu > li.active .accordion li a.active {
+    background-color: #46475a;
+    color: #fff;
+}
+
+/* Aturan CSS untuk memutar panah */
+.siderbar_menu > li .arrow.rotate {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+
+/* Atur gaya submenu saat aktif */
+.accordion li a.active {
+    background-color: #46475a;
+    color: #fff;
+}
+
+
 .sidebar .logout_btn a {
     position: absolute;
     bottom: 20px;
@@ -231,6 +262,7 @@ body {
 
 .accordion li a:hover,
 .accordion li a.active {
+    background-color: #46475a;
     color: #fff;
 }
 

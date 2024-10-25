@@ -82,10 +82,10 @@
     </style>
     <script>
         $(document).ready(function() {
-            $(".siderbar_menu li").click(function() {
-                $(".siderbar_menu li").removeClass("active");
-                $(this).addClass("active");
-            });
+                $(".siderbar_menu li").click(function() {
+                    $(".siderbar_menu li").removeClass("active");
+                    $(this).addClass("active");
+                });
 
             $(".hamburger").click(function() {
                 $(".wrapper").addClass("active");
@@ -153,7 +153,7 @@
 
                 $("table tbody tr").each(function() {
                     var rowDateStr = $(this).find('td:eq(5)').text()
-                .trim(); // Assuming date is in the 6th column (index 5)
+                        .trim(); // Assuming date is in the 6th column (index 5)
                     var rowDate = new Date(rowDateStr);
 
                     // Check if the row date is a valid date
@@ -352,37 +352,55 @@
                 </div>
 
                 <ul class="siderbar_menu">
-                    <li class="active"><a href="{{ route('superadmin.dashboard') }}">
+                    <li class="{{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('superadmin.dashboard') }}">
                             <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
                             <div class="title">DASHBOARD</div>
                         </a>
                     </li>
-                    <li><a href="#">
+                    <li class="{{ request()->is('surat*') ? 'active' : '' }}">
+                        <a href="#">
                             <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
                             <div class="title">SURAT</div>
                             <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                         </a>
                         <ul class="accordion">
-                            <li><a href="{{ route('buatsurat.index') }}" class="active">Buat Surat</a></li>
-                            <li><a href="{{ route('drafts.index') }}" class="active">Draft Surat</a></li>
-                            <li><a href="{{ route('suratmasuk.index') }}" class="active">Surat Masuk</a></li>
-                            <li><a href="{{ route('suratkeluar.index') }}" class="active">Surat Keluar</a></li>
-                            <li><a href="{{ route('laporan.index') }}" class="active">Laporan</a></li>
+                            <li><a href="{{ route('buatsurat.index') }}"
+                                    class="{{ request()->routeIs('buatsurat.index') ? 'active' : '' }}">Buat Surat</a>
+                            </li>
+                            <li><a href="{{ route('drafts.index') }}"
+                                    class="{{ request()->routeIs('drafts.index') ? 'active' : '' }}">Draft Surat</a>
+                            </li>
+                            <li><a href="{{ route('suratmasuk.index') }}"
+                                    class="{{ request()->routeIs('suratmasuk.index') ? 'active' : '' }}">Surat Masuk</a>
+                            </li>
+                            <li><a href="{{ route('suratkeluar.index') }}"
+                                    class="{{ request()->routeIs('suratkeluar.index') ? 'active' : '' }}">Surat
+                                    Keluar</a></li>
+                            <li><a href="{{ route('laporan.index') }}"
+                                    class="{{ request()->routeIs('laporan.index') ? 'active' : '' }}">Laporan</a></li>
                         </ul>
                     </li>
-                    <li><a href="#">
+                    <li class="{{ request()->is('pengaturan*') ? 'active' : '' }}">
+                        <a href="#">
                             <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
                             <div class="title">PENGATURAN</div>
                             <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                         </a>
                         <ul class="accordion">
-                            <li><a href="{{ route('indeks.index') }}" class="active">indeks</a></li>
-                            <li><a href="{{ route('template.index') }}" class="active">Template Surat</a></li>
-                            <li><a href="{{ route('users.index') }}" class="active">User</a></li>
-                            <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
+                            <li><a href="{{ route('indeks.index') }}"
+                                    class="{{ request()->routeIs('indeks.index') ? 'active' : '' }}">indeks</a></li>
+                            <li><a href="{{ route('template.index') }}"
+                                    class="{{ request()->routeIs('template.index') ? 'active' : '' }}">Template
+                                    Surat</a></li>
+                            <li><a href="{{ route('users.index') }}"
+                                    class="{{ request()->routeIs('users.index') ? 'active' : '' }}">User</a></li>
+                            <li><a href="{{ route('profile.index') }}"
+                                    class="{{ request()->routeIs('profile.index') ? 'active' : '' }}">Profile</a></li>
                         </ul>
                     </li>
                 </ul>
+
                 <div class="logout_btn">
                     <a href="/">Logout</a>
                 </div>
@@ -571,8 +589,8 @@
                         {{-- Previous Button --}}
                         <li class="page-item {{ $suratKeluar->onFirstPage() ? 'disabled' : '' }}">
                             <a class="page-link"
-                               href="{{ $suratKeluar->previousPageUrl() }}&limit={{ $suratKeluar->perPage() }}"
-                               aria-label="Previous">
+                                href="{{ $suratKeluar->previousPageUrl() }}&limit={{ $suratKeluar->perPage() }}"
+                                aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                                 <span class="sr-only">Previous</span>
                             </a>
@@ -589,7 +607,8 @@
                         {{-- First Page link --}}
                         @if ($startPage > 1)
                             <li class="page-item">
-                                <a class="page-link" href="{{ $suratKeluar->url(1) }}&limit={{ $suratKeluar->perPage() }}">1</a>
+                                <a class="page-link"
+                                    href="{{ $suratKeluar->url(1) }}&limit={{ $suratKeluar->perPage() }}">1</a>
                             </li>
                             @if ($startPage > 2)
                                 <li class="page-item disabled"><span class="page-link">...</span></li>
@@ -599,7 +618,8 @@
                         {{-- Page Range --}}
                         @for ($i = $startPage; $i <= $endPage; $i++)
                             <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                <a class="page-link" href="{{ $suratKeluar->url($i) }}&limit={{ $suratKeluar->perPage() }}">{{ $i }}</a>
+                                <a class="page-link"
+                                    href="{{ $suratKeluar->url($i) }}&limit={{ $suratKeluar->perPage() }}">{{ $i }}</a>
                             </li>
                         @endfor
 
@@ -609,15 +629,16 @@
                                 <li class="page-item disabled"><span class="page-link">...</span></li>
                             @endif
                             <li class="page-item">
-                                <a class="page-link" href="{{ $suratKeluar->url($lastPage) }}&limit={{ $suratKeluar->perPage() }}">{{ $lastPage }}</a>
+                                <a class="page-link"
+                                    href="{{ $suratKeluar->url($lastPage) }}&limit={{ $suratKeluar->perPage() }}">{{ $lastPage }}</a>
                             </li>
                         @endif
 
                         {{-- Next Button --}}
                         <li class="page-item {{ $suratKeluar->hasMorePages() ? '' : 'disabled' }}">
                             <a class="page-link"
-                               href="{{ $suratKeluar->nextPageUrl() }}&limit={{ $suratKeluar->perPage() }}"
-                               aria-label="Next">
+                                href="{{ $suratKeluar->nextPageUrl() }}&limit={{ $suratKeluar->perPage() }}"
+                                aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                                 <span class="sr-only">Next</span>
                             </a>

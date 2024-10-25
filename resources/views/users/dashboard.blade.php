@@ -12,20 +12,20 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script>
-		$(document).ready(function(){
-			$(".siderbar_menu li").click(function(){
-			  $(".siderbar_menu li").removeClass("active");
-			  $(this).addClass("active");
-			});
+        $(document).ready(function() {
+            $(".siderbar_menu li").click(function() {
+                $(".siderbar_menu li").removeClass("active");
+                $(this).addClass("active");
+            });
 
-			$(".hamburger").click(function(){
-			  $(".wrapper").addClass("active");
-			});
+            $(".hamburger").click(function() {
+                $(".wrapper").addClass("active");
+            });
 
-			$(".close, .bg_shadow").click(function(){
-			  $(".wrapper").removeClass("active");
-			});
-		});
+            $(".close, .bg_shadow").click(function() {
+                $(".wrapper").removeClass("active");
+            });
+        });
 
         function confirmDelete(suratmasukId) {
         Swal.fire({
@@ -79,32 +79,43 @@
               </div>
 
               <ul class="siderbar_menu">
-                  <li class="active"><a href="{{ route('users.dashboard')}}">
-                    <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
-                    <div class="title">DASHBOARD</div>
+                <li class="{{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('superadmin.dashboard') }}">
+                        <div class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
+                        <div class="title">DASHBOARD</div>
                     </a>
                 </li>
-                <li><a href="#">
-                    <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
-                    <div class="title">SURAT</div>
-                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                <li class="{{ request()->is('surat*') ? 'active' : '' }}">
+                    <a href="#">
+                        <div class="icon"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                        <div class="title">SURAT</div>
+                        <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
-                  <ul class="accordion">
-                       <li><a href="{{ route('suratmasuk.index')}}" class="active">Surat Masuk</a></li>
-                       <li><a href="{{ route('suratkeluar.index')}}" class="active">Surat Keluar</a></li>
+                    <ul class="accordion">
+
+                        <li><a href="{{ route('suratmasuk.index') }}"
+                                class="{{ request()->routeIs('suratmasuk.index') ? 'active' : '' }}">Surat Masuk</a>
+                        </li>
+                        <li><a href="{{ route('suratkeluar.index') }}"
+                                class="{{ request()->routeIs('suratkeluar.index') ? 'active' : '' }}">Surat
+                                Keluar</a></li>
+
                     </ul>
                 </li>
-                <li><a href="#">
-                    <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
-                    <div class="title">PENGATURAN</div>
-                    <div class="arrow"><i class="fas fa-chevron-down"></i></div>
+                <li class="{{ request()->is('pengaturan*') ? 'active' : '' }}">
+                    <a href="#">
+                        <div class="icon"><i class="fa fa-cog" aria-hidden="true"></i></div>
+                        <div class="title">PENGATURAN</div>
+                        <div class="arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
-                  <ul class="accordion">
-                       <li><a href="{{ route('indeks.index')}}" class="active">indeks</a></li>
-                       <li><a href="{{ route('profile.index') }}" class="active">Profile</a></li>
+                    <ul class="accordion">
+                        <li><a href="{{ route('indeks.index') }}"
+                                class="{{ request()->routeIs('indeks.index') ? 'active' : '' }}">indeks</a></li>
+                        <li><a href="{{ route('profile.index') }}"
+                                class="{{ request()->routeIs('profile.index') ? 'active' : '' }}">Profile</a></li>
                     </ul>
                 </li>
-              </ul>
+            </ul>
              <div class="logout_btn">
                   <a href="/">Logout</a>
               </div>
@@ -219,14 +230,7 @@
                         <td>{{ $item->perihal }}</td>
                         <td>{{ $item->penerima }}</td>
                         <td>{{ $item->tanggal_diterima }}</td>
-                        <td>@php
-                            $filePath = asset('storage/' . $item->dokumen); // Path untuk file PDF
-                            $fileName = $item->dokumen; // Menampilkan nama file asli yang disimpan
-                        @endphp
-
-                        <!-- Tampilkan link untuk download dan preview -->
-                        <a href="{{ $filePath }}" target="_blank">{{ $fileName }}</a>
-                        </td>
+                        <td><a href="{{ $item->dokumen }}">Lihat Dokumen</a></td>
                         <td>
                             <!-- Tombol untuk mengedit data -->
                             @if(auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
