@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://kit.fontawesome.com/5d0ff31e1a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
@@ -52,7 +52,7 @@
             });
         });
 
-        function confirmDelete(suratmasukId) {
+        function confirmDelete(draftId) {
             Swal.fire({
                 title: "Apa kamu yakin?",
                 text: "Data ini tidak dapat dikembalikan",
@@ -63,7 +63,7 @@
                 confirmButtonText: "Ya, hapus ini!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById("delete-form-" + suratmasukId).submit();
+                    document.getElementById("delete-form-" + draftId).submit();
                 }
             });
         }
@@ -191,16 +191,16 @@
                                         <a href="{{ route('draft.loadById', $draft->id) }}" class="btn btn-primary">
                                             Edit Draft
                                         </a>
+                                        <br />
 
                                         <!-- Button to delete the draft -->
-                                        <form action="{{ route('draft.delete', $draft->id) }}" method="POST"
+                                        <form action="{{ route('draft.delete', $draft->id) }}" method="POST" id="delete-form-{{ $draft->id }}"" style="display:inline;"
                                             style="display:block;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this draft?');">
-                                                Hapus Draft
-                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="confirmDelete({{ $draft->id }})">
+                                            Hapus Draft</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -210,5 +210,7 @@
                 @endif
             </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </html>

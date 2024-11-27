@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Indeks</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://kit.fontawesome.com/5d0ff31e1a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
@@ -152,9 +152,9 @@
             </div>
 
             <!-- Form untuk edit user -->
-            <div class="card mt-4">
+            <div class="card mt-4" style="margin :5%">
                 <div class="card-header">Edit Indeks</div>
-                <div class="card-body">
+                <div class="card-bodyS" style="width: 80%; padding-left:20px; padding-top:10px">
                     <form action="{{ route('indeks.update', $indeks->indeks_id) }}" method="POST">
                         @csrf
                         @method('PUT') <!-- Tambahkan method PUT untuk update -->

@@ -324,6 +324,7 @@ body {
 
 .surat-section {
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .surat-section h3 {
@@ -625,11 +626,50 @@ table a:hover {
 }
 
 .card-header {
-    font-size: 16px;
-    font-weight: bold;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    position: relative;
 }
+.card-header .controls {
+    position: absolute;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+.card-header .controls i {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #e9ecef; /* Warna latar bulat */
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.card-header .controls i:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.card-body {
+    overflow: hidden; /* Mencegah konten keluar */
+    transition: height 0.3s ease; /* Transisi untuk perubahan tinggi */
+    height: 250px;
+    width: 400px;
+}
+
+.card-body.minimized {
+    height: 50px; /* Tinggi minimum untuk memastikan teks tetap terlihat */
+    width: 400px;
+    display: flex; /* Menjaga teks tetap rapi */
+    justify-content: center; /* Tengah secara horizontal */
+    align-items: center; /* Tengah secara vertikal */
+    padding: 10px 15px; /* Memberikan ruang sekitar teks */
+}
+
 
 /* CSS untuk container form */
 #filterForm {

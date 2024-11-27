@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Surat Keluar</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://kit.fontawesome.com/5d0ff31e1a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
@@ -164,7 +164,7 @@
 
                 <div class="card">
                     <div class="card-header">Edit Surat Keluar</div>
-                    <div class="card-body">
+                    <div class="card-bodyS" style="width: 95%; padding-left:10px; padding-top:10px">
                         <form action="{{ route('suratkeluar.update', $suratKeluar->suratkeluar_id) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf

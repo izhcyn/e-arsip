@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://kit.fontawesome.com/5d0ff31e1a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
@@ -50,11 +50,16 @@
 
         // Function to minimize chart
         function toggleChart(chartId) {
-            const chartContainer = document.getElementById(chartId).parentElement.parentElement;
-            const canvas = chartContainer.querySelector('canvas');
-            if (canvas.style.display === 'none') {
+            const canvas = document.getElementById(chartId); // Grafik (canvas)
+            const cardBody = canvas.closest('.card-body');  // Elemen container body
+
+            if (cardBody.classList.contains('minimized')) {
+                // Jika mode minimize, kembali ke ukuran penuh
+                cardBody.classList.remove('minimized');
                 canvas.style.display = 'block';
             } else {
+                // Jika mode penuh, minimalkan
+                cardBody.classList.add('minimized');
                 canvas.style.display = 'none';
             }
         }
@@ -121,11 +126,14 @@
                             <li><a href="{{ route('template.index') }}"
                                     class="{{ request()->routeIs('template.index') ? 'active' : '' }}">Template
                                     Surat</a></li>
+                            <li><a href="{{ route('users.index') }}"
+                                    class="{{ request()->routeIs('users.index') ? 'active' : '' }}">User</a></li>
                             <li><a href="{{ route('profile.index') }}"
                                     class="{{ request()->routeIs('profile.index') ? 'active' : '' }}">Profile</a></li>
                         </ul>
                     </li>
                 </ul>
+
                 <div class="logout_btn">
                     <a href="/">Logout</a>
                 </div>
@@ -185,15 +193,20 @@
                         </div>
                     @endif
 
+
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                Total Surat Masuk
+                                <div class="controls">
+                                    <i class="fas fa-minus" onclick="toggleChart('chartIncoming')"></i>
+                                    <i class="fas fa-times" onclick="removeChart('chartIncoming')"></i>
+                                </div>
+                                <span>Total Surat Masuk</span>
                             </div>
                             <div class="card-body">
-                                <canvas id="chartIncoming" width="400" height="200"></canvas>
+                                <canvas id="chartIncoming"></canvas>
                             </div>
                         </div>
                     </div>
@@ -201,14 +214,17 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                Total Surat Keluar
+                                <div class="controls">
+                                    <i class="fas fa-minus" onclick="toggleChart('chartOutgoing')"></i>
+                                    <i class="fas fa-times" onclick="removeChart('chartOutgoing')"></i>
+                                </div>
+                                <span>Total Surat Keluar</span>
                             </div>
                             <div class="card-body">
-                                <canvas id="chartOutgoing" width="400" height="200"></canvas>
+                                <canvas id="chartOutgoing"></canvas>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="surat-section">
@@ -241,14 +257,7 @@
                                         <td>{{ $item->perihal }}</td>
                                         <td>{{ $item->penerima }}</td>
                                         <td>{{ $item->tanggal_diterima }}</td>
-                                        <td>@php
-                                            $filePath = asset('storage/' . $item->dokumen); // Path untuk file PDF
-                                            $fileName = $item->dokumen; // Menampilkan nama file asli yang disimpan
-                                        @endphp
-
-                                            <!-- Tampilkan link untuk download dan preview -->
-                                            <a href="{{ $filePath }}" target="_blank">{{ $fileName }}</a>
-                                        </td>
+                                        <td><a href="{{ $item->dokumen }}">Lihat Dokumen</a></td>
                                         <td>
                                             <!-- Tombol untuk mengedit data -->
                                             @if (auth()->user()->role == 'super_admin' || auth()->user()->role == 'admin')
@@ -258,19 +267,7 @@
                                                 </a>
                                             @endif
 
-                                            <!-- Tombol untuk menghapus data -->
-                                            @if (auth()->user()->role == 'super_admin')
-                                                <form action="{{ route('suratmasuk.destroy', $item->suratmasuk_id) }}"
-                                                    method="POST" style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                        title="Hapus"
-                                                        onclick="confirmDeleteSM({{ $item->suratkeluar_id }})">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
+
                                         </td>
 
                                     </tr>
@@ -321,19 +318,7 @@
                                                 </a>
                                             @endif
 
-                                            @if (auth()->user()->role == 'super_admin')
-                                                <form
-                                                    action="{{ route('suratkeluar.destroy', $item->suratkeluar_id) }}"
-                                                    method="POST" style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                        title="Hapus"
-                                                        onclick="confirmDeleteSK({{ $item->suratkeluar_id }})">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            @endif
+
                                         </td>
                                     </tr>
                                 @endforeach

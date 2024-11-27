@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://kit.fontawesome.com/5d0ff31e1a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
@@ -50,11 +50,16 @@
 
         // Function to minimize chart
         function toggleChart(chartId) {
-            const chartContainer = document.getElementById(chartId).parentElement.parentElement;
-            const canvas = chartContainer.querySelector('canvas');
-            if (canvas.style.display === 'none') {
+            const canvas = document.getElementById(chartId); // Grafik (canvas)
+            const cardBody = canvas.closest('.card-body');  // Elemen container body
+
+            if (cardBody.classList.contains('minimized')) {
+                // Jika mode minimize, kembali ke ukuran penuh
+                cardBody.classList.remove('minimized');
                 canvas.style.display = 'block';
             } else {
+                // Jika mode penuh, minimalkan
+                cardBody.classList.add('minimized');
                 canvas.style.display = 'none';
             }
         }
@@ -204,10 +209,14 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                Total Surat Masuk
+                                <div class="controls">
+                                    <i class="fas fa-minus" onclick="toggleChart('chartIncoming')"></i>
+                                    <i class="fas fa-times" onclick="removeChart('chartIncoming')"></i>
+                                </div>
+                                <span>Total Surat Masuk</span>
                             </div>
                             <div class="card-body">
-                                <canvas id="chartIncoming" width="400" height="200"></canvas>
+                                <canvas id="chartIncoming"></canvas>
                             </div>
                         </div>
                     </div>
@@ -215,14 +224,17 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                Total Surat Keluar
+                                <div class="controls">
+                                    <i class="fas fa-minus" onclick="toggleChart('chartOutgoing')"></i>
+                                    <i class="fas fa-times" onclick="removeChart('chartOutgoing')"></i>
+                                </div>
+                                <span>Total Surat Keluar</span>
                             </div>
                             <div class="card-body">
-                                <canvas id="chartOutgoing" width="400" height="200"></canvas>
+                                <canvas id="chartOutgoing"></canvas>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div class="surat-section">

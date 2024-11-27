@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Surat Keluar</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://kit.fontawesome.com/5d0ff31e1a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/surat.css">
     <link rel="stylesheet" href="/css/dashboard.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
@@ -236,11 +236,16 @@
 
         // Function to minimize chart
         function toggleChart(chartId) {
-            const chartContainer = document.getElementById(chartId).parentElement.parentElement;
-            const canvas = chartContainer.querySelector('canvas');
-            if (canvas.style.display === 'none') {
+            const canvas = document.getElementById(chartId); // Grafik (canvas)
+            const cardBody = canvas.closest('.card-body');  // Elemen container body
+
+            if (cardBody.classList.contains('minimized')) {
+                // Jika mode minimize, kembali ke ukuran penuh
+                cardBody.classList.remove('minimized');
                 canvas.style.display = 'block';
             } else {
+                // Jika mode penuh, minimalkan
+                cardBody.classList.add('minimized');
                 canvas.style.display = 'none';
             }
         }
@@ -430,7 +435,7 @@
                 <!-- Form for Adding Surat Keluar -->
                 <div class="card mt-4 user-form" style="display: none;">
                     <div class="card-header">Tambah Surat Keluar</div>
-                    <div class="card-body">
+                    <div class="card-bodyS" style="width: 95%; padding-left:10px; padding-top:10px>
                         <form action="{{ route('suratkeluar.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
@@ -646,32 +651,28 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                Total Surat Keluar
-                                <span class="minimize-btn" onclick="toggleChart('chartOutgoing')">
-                                    <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                                </span>
-                                <span class="close-btn" onclick="removeChart('chartOutgoing')">
-                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                                </span>
+                                <div class="controls">
+                                    <i class="fas fa-minus" onclick="toggleChart('chartOutgoing')"></i>
+                                    <i class="fas fa-times" onclick="removeChart('chartOutgoing')"></i>
+                                </div>
+                                <span>Total Surat Keluar</span>
                             </div>
                             <div class="card-body">
-                                <canvas id="chartOutgoing" width="400" height="200"></canvas>
+                                <canvas id="chartOutgoing"></canvas>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                Total Indeks Dipakai
-                                <span class="minimize-btn" onclick="toggleChart('chartIndex')">
-                                    <i class="fa fa-minus-circle" aria-hidden="true"></i>
-                                </span>
-                                <span class="close-btn" onclick="removeChart('chartIndex')">
-                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                                </span>
+                                <div class="controls">
+                                    <i class="fas fa-minus" onclick="toggleChart('chartIndex')"></i>
+                                    <i class="fas fa-times" onclick="removeChart('chartIndex')"></i>
+                                </div>
+                                <span>Grafik Total Indeks Dipakai</span>
                             </div>
                             <div class="card-body">
-                                <canvas id="chartIndex" width="400" height="200"></canvas>
+                                <canvas id="chartIndex"></canvas>
                             </div>
                         </div>
                     </div>

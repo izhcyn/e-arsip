@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Buat Surat</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://kit.fontawesome.com/5d0ff31e1a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="stylesheet" href="/css/buatsurat.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -305,25 +305,57 @@
                         },
                         {
                             selector: '#kepada',
-                            message: 'Kepada harus diisi.'
+                            message: 'Kepada harus diisi.',
+                            isTinyMCE: true
                         },
                         {
                             selector: '#alamat',
-                            message: 'Alamat harus diisi.'
+                            message: 'Alamat harus diisi.',
+                            isTinyMCE: true
                         },
                         {
                             selector: '#isiSurat',
-                            message: 'Isi Surat harus diisi.'
+                            message: 'Isi Surat harus diisi.',
+                            isTinyMCE: true
                         },
                         {
                             selector: '#penulis',
-                            message: 'Penulis harus diisi.'
+                            message: 'Penulis harus diisi.',
+                            isTinyMCE: true
                         },
                         {
                             selector: '#jabatan',
                             message: 'Jabatan harus diisi.'
                         }
                     ];
+
+                    for (const field of fields) {
+        let value = null;
+
+        // Jika field adalah TinyMCE, gunakan API TinyMCE untuk mendapatkan nilai
+        if (field.isTinyMCE) {
+            const editor = tinymce.get(field.selector.replace('#', ''));
+            if (editor) {
+                value = editor.getContent({ format: 'text' }).trim();
+            }
+        } else {
+            const element = document.querySelector(field.selector);
+            if (element) {
+                value = element.value.trim();
+            }
+        }
+
+        if (!value) {
+            alert(field.message);
+            if (!field.isTinyMCE) {
+                document.querySelector(field.selector).focus();
+            } else {
+                tinymce.get(field.selector.replace('#', '')).focus();
+            }
+            return false;
+        }
+    }
+    return true;
 
                     for (const field of fields) {
                         const element = document.querySelector(field.selector);

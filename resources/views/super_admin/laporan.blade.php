@@ -18,7 +18,7 @@
                 // Tutup semua dropdown lain
                 $(".siderbar_menu .accordion").removeClass("show");
                 $(".siderbar_menu .arrow").removeClass("rotate");
-                $(".siderbar_menu > li").removeClass("active");  // Hapus active dari semua menu utama
+                $(".siderbar_menu > li").removeClass("active"); // Hapus active dari semua menu utama
 
                 // Buka dropdown yang diklik dan tambahkan kelas active
                 $(this).addClass("active");
@@ -33,11 +33,12 @@
             $(".accordion li a").click(function() {
                 // Tambahkan kelas active ke item utama ketika submenu diklik
                 $(this).closest("li").addClass("active");
-                $(this).addClass("active");  // Set submenu juga aktif
+                $(this).addClass("active"); // Set submenu juga aktif
             });
 
             // Saat halaman di-load, buka dropdown dan aktifkan panah jika submenu aktif
-            $(".accordion .active").closest(".accordion").addClass("show").closest("li").addClass("active").find(".arrow").addClass("rotate");
+            $(".accordion .active").closest(".accordion").addClass("show").closest("li").addClass("active").find(
+                ".arrow").addClass("rotate");
 
             // Menu hamburger untuk membuka sidebar (mobile)
             $(".hamburger").click(function() {
@@ -50,7 +51,6 @@
             });
         });
     </script>
-
 </head>
 
 <body>
@@ -113,14 +113,11 @@
                             <li><a href="{{ route('template.index') }}"
                                     class="{{ request()->routeIs('template.index') ? 'active' : '' }}">Template
                                     Surat</a></li>
-                            <li><a href="{{ route('users.index') }}"
-                                    class="{{ request()->routeIs('users.index') ? 'active' : '' }}">User</a></li>
                             <li><a href="{{ route('profile.index') }}"
                                     class="{{ request()->routeIs('profile.index') ? 'active' : '' }}">Profile</a></li>
                         </ul>
                     </li>
                 </ul>
-
                 <div class="logout_btn">
                     <a href="/">Logout</a>
                 </div>
@@ -133,7 +130,7 @@
                     <i class="fas fa-bars"></i>
                 </div>
                 <div class="logo">
-                    <a href="#">Laporan</a>
+                    <a href="#">LAPORAN</a>
                 </div>
                 <div class="user_info">
                     @if ($user->profile_picture)
@@ -150,88 +147,133 @@
                 <!-- Tempat grafik -->
                 <div class="canvas-chart mt-4">
                     <h4 style="font-weight: 700;">Grafik Surat Bulanan</h4>
+
                     <!-- Form untuk memilih jenis data, bulan, dan tahun -->
-                    <form id="filterForm">
+                    <form id="filterForm" method="GET" action="{{ route('laporan.index') }}">
                         <select name="jenis_data" required>
-                            <option value="surat_masuk" {{ $jenisData == 'surat_masuk' ? 'selected' : '' }}>Surat Masuk
-                            </option>
-                            <option value="surat_keluar" {{ $jenisData == 'surat_keluar' ? 'selected' : '' }}>Surat
-                                Keluar</option>
-                            <option value="keseluruhan" {{ $jenisData == 'keseluruhan' ? 'selected' : '' }}>Keseluruhan
-                            </option>
+                            <option value="surat_masuk" {{ $jenisData == 'surat_masuk' ? 'selected' : '' }}>Surat Masuk</option>
+                            <option value="surat_keluar" {{ $jenisData == 'surat_keluar' ? 'selected' : '' }}>Surat Keluar</option>
+                            <option value="keseluruhan" {{ $jenisData == 'keseluruhan' ? 'selected' : '' }}>Keseluruhan</option>
                         </select>
 
                         <select name="bulan" required>
                             @for ($i = 1; $i <= 12; $i++)
-                                <option value="{{ $i }}" {{ $i == $bulan ? 'selected' : '' }}>
-                                    {{ $bulanIndo[$i] }}</option>
+                                <option value="{{ $i }}" {{ $i == $bulan ? 'selected' : '' }}>{{ $bulanIndo[$i] }}</option>
                             @endfor
                         </select>
 
                         <select name="tahun" required>
                             @for ($i = 2020; $i <= date('Y'); $i++)
-                                <option value="{{ $i }}" {{ $i == $tahun ? 'selected' : '' }}>
-                                    {{ $i }}</option>
+                                <option value="{{ $i }}" {{ $i == $tahun ? 'selected' : '' }}>{{ $i }}</option>
                             @endfor
                         </select>
+
+                        <select name="periode" required>
+                            <option value="harian" {{ $periode == 'harian' ? 'selected' : '' }}>Per Hari</option>
+                            <option value="mingguan" {{ $periode == 'mingguan' ? 'selected' : '' }}>Per Minggu</option>
+                            <option value="bulanan" {{ $periode == 'bulanan' ? 'selected' : '' }}>Per Bulan</option>
+                            <option value="tahunan" {{ $periode == 'tahunan' ? 'selected' : '' }}>Per Tahun</option>
+                        </select>
+
+                        <button type="submit">Filter</button>
                     </form>
+
                     <canvas id="myChart"></canvas>
                 </div>
                 <!-- Bagian data laporan -->
                 <div class="data-laporan mt-4">
                     <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Hari Ini:
-                        <strong>{{ $totalSuratHariIni }}</strong>
-                    </p>
-                    <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Minggu Ini:
-                        <strong>{{ $totalSuratMingguIni }}</strong>
-                    </p>
-                    <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Bulan Ini:
-                        <strong>{{ $totalSuratBulanIni }}</strong>
-                    </p>
-                    <p>Total Data {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Bulan Ini:
-                        <strong>{{ array_sum($jumlahPerMinggu) }}</strong>
-                    </p>
-                </div>
+                        <strong>{{ $totalSuratHariIni }}</strong></p>
 
+                    <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Minggu Ini:
+                        <strong>{{ $totalSuratMingguIni }}</strong></p>
+
+                    <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Bulan Ini:
+                        <strong>{{ $totalSuratBulanIni }}</strong></p>
+
+                    <p>Total Data {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Bulan Ini:
+                        <strong>{{ array_sum($jumlahPerMinggu) }}</strong></p>
+                </div>
 
             </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
-            datasets: [{
-                label: 'Total {{ ucfirst($jenisData) }}',
-                data: {!! json_encode($jumlahPerMinggu) !!}, // Data dari controller
-                backgroundColor: '#0077B6',
-                borderColor: '#0077B6',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+var ctx = document.getElementById('myChart').getContext('2d');
+var periode = "{{ $periode }}"; // Get period from PHP
+
+// Initialize labels and data arrays
+var labels = [];
+var data = [];
+
+@if($periode === 'harian')
+    // Data for daily (31 days max)
+    labels = Array.from({ length: 31 }, (_, i) => 'Hari ' + (i + 1));
+    data = [
+        @foreach($data['harian'] as $day => $count)
+            {{ $count }},
+        @endforeach
+    ];
+@elseif($periode === 'mingguan')
+    // Data for weekly (4 weeks max)
+    labels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+    data = [
+        @foreach($data['mingguan'] as $week => $count)
+            {{ $count }},
+        @endforeach
+    ];
+@elseif($periode === 'bulanan')
+    // Data for monthly
+    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    data = [
+        @foreach($data['bulanan'] as $month => $count)
+            {{ $count }},
+        @endforeach
+    ];
+@elseif($periode === 'tahunan')
+    // Data for yearly
+    labels = Object.keys({!! json_encode($data['tahunan']) !!});
+    data = Object.values({!! json_encode($data['tahunan']) !!});
+@endif
+
+// Create the chart with Chart.js
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Jumlah Surat',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
             }
         }
-    });
+    }
+});
+
 </script>
 
 <script>
-    // Ambil elemen form
-    var filterForm = document.getElementById('filterForm');
+// Ambil elemen form
+var filterForm = document.getElementById('filterForm');
 
-    // Tambahkan event listener untuk setiap elemen form
-    filterForm.querySelectorAll('select').forEach(function(selectElement) {
-        selectElement.addEventListener('change', function() {
-            // Ketika ada perubahan, submit form secara otomatis
-            filterForm.submit();
-        });
+// Tambahkan event listener untuk setiap elemen form
+filterForm.querySelectorAll('select').forEach(function(selectElement) {
+    selectElement.addEventListener('change', function() {
+        // Ketika ada perubahan, submit form secara otomatis
+        filterForm.submit();
     });
+});
+
+
 </script>
 
 </html>
