@@ -151,20 +151,27 @@
                     <!-- Form untuk memilih jenis data, bulan, dan tahun -->
                     <form id="filterForm" method="GET" action="{{ route('laporan.index') }}">
                         <select name="jenis_data" required>
-                            <option value="surat_masuk" {{ $jenisData == 'surat_masuk' ? 'selected' : '' }}>Surat Masuk</option>
-                            <option value="surat_keluar" {{ $jenisData == 'surat_keluar' ? 'selected' : '' }}>Surat Keluar</option>
-                            <option value="keseluruhan" {{ $jenisData == 'keseluruhan' ? 'selected' : '' }}>Keseluruhan</option>
+                            <option value="surat_masuk" {{ $jenisData == 'surat_masuk' ? 'selected' : '' }}>Surat Masuk
+                            </option>
+                            <option value="surat_keluar" {{ $jenisData == 'surat_keluar' ? 'selected' : '' }}>Surat
+                                Keluar</option>
+                            <option value="keseluruhan" {{ $jenisData == 'keseluruhan' ? 'selected' : '' }}>Keseluruhan
+                            </option>
                         </select>
 
-                        <select name="bulan" required>
+                        <select name="bulan" class="form-control mr-2">
                             @for ($i = 1; $i <= 12; $i++)
-                                <option value="{{ $i }}" {{ $i == $bulan ? 'selected' : '' }}>{{ $bulanIndo[$i] }}</option>
+                                <option value="{{ $i }}" {{ request('bulan') == $i ? 'selected' : '' }}>
+                                    {{ \Carbon\Carbon::create()->month($i)->format('F') }}
+                                </option>
                             @endfor
                         </select>
 
-                        <select name="tahun" required>
-                            @for ($i = 2020; $i <= date('Y'); $i++)
-                                <option value="{{ $i }}" {{ $i == $tahun ? 'selected' : '' }}>{{ $i }}</option>
+                        <select name="tahun" class="form-control mr-2">
+                            @for ($i = now()->year - 10; $i <= now()->year + 1; $i++)
+                                <option value="{{ $i }}" {{ request('tahun') == $i ? 'selected' : '' }}>
+                                    {{ $i }}
+                                </option>
                             @endfor
                         </select>
 
@@ -174,7 +181,6 @@
                             <option value="bulanan" {{ $periode == 'bulanan' ? 'selected' : '' }}>Per Bulan</option>
                             <option value="tahunan" {{ $periode == 'tahunan' ? 'selected' : '' }}>Per Tahun</option>
                         </select>
-
                         <button type="submit">Filter</button>
                     </form>
 
@@ -183,97 +189,120 @@
                 <!-- Bagian data laporan -->
                 <div class="data-laporan mt-4">
                     <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Hari Ini:
-                        <strong>{{ $totalSuratHariIni }}</strong></p>
+                        <strong>{{ $totalSuratHariIni }}</strong>
+                    </p>
 
                     <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Minggu Ini:
-                        <strong>{{ $totalSuratMingguIni }}</strong></p>
+                        <strong>{{ $totalSuratMingguIni }}</strong>
+                    </p>
 
                     <p>Total {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Bulan Ini:
-                        <strong>{{ $totalSuratBulanIni }}</strong></p>
+                        <strong>{{ $totalSuratBulanIni }}</strong>
+                    </p>
 
-                    <p>Total Data {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Bulan Ini:
-                        <strong>{{ array_sum($jumlahPerMinggu) }}</strong></p>
+                    <p>Total Data {{ ucfirst(str_replace('_', ' ', $jenisData)) }} Tahun Ini:
+                        <strong>{{ $totalSuratTahunIni }}</strong>
+                    </p>
                 </div>
 
             </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var periode = "{{ $periode }}"; // Get period from PHP
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var periode = "{{ $periode }}"; // Get period from PHP
 
-// Initialize labels and data arrays
-var labels = [];
-var data = [];
+    // Initialize labels and data arrays
+    var labels = [];
+    var data = [];
 
-@if($periode === 'harian')
-    // Data for daily (31 days max)
-    labels = Array.from({ length: 31 }, (_, i) => 'Hari ' + (i + 1));
-    data = [
-        @foreach($data['harian'] as $day => $count)
-            {{ $count }},
-        @endforeach
-    ];
-@elseif($periode === 'mingguan')
-    // Data for weekly (4 weeks max)
-    labels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
-    data = [
-        @foreach($data['mingguan'] as $week => $count)
-            {{ $count }},
-        @endforeach
-    ];
-@elseif($periode === 'bulanan')
-    // Data for monthly
-    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-    data = [
-        @foreach($data['bulanan'] as $month => $count)
-            {{ $count }},
-        @endforeach
-    ];
-@elseif($periode === 'tahunan')
-    // Data for yearly
-    labels = Object.keys({!! json_encode($data['tahunan']) !!});
-    data = Object.values({!! json_encode($data['tahunan']) !!});
-@endif
+    @if ($periode === 'harian')
+        // Perhitungan jumlah hari dalam bulan tertentu
+        var totalDays = new Date({{ $tahun }}, {{ $bulan }}, 0).getDate(); // Total hari dalam bulan
+        labels = Array.from({
+            length: totalDays
+        }, (_, i) => 'Hari ' + (i + 1));
+        data = Array(totalDays).fill(0); // Inisialisasi data kosong
 
-// Create the chart with Chart.js
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: labels,
-        datasets: [{
-            label: 'Jumlah Surat',
-            data: data,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
+        // Isi data sesuai dengan hari
+        @foreach ($data['harian'] as $day => $count)
+            var dayParts = "{{ $day }}".split('-'); // Pecah format "YYYY-MM-DD"
+            var dayIndex = parseInt(dayParts[2], 10) - 1; // Ambil tanggal sebagai indeks
+            data[dayIndex] = {{ $count }};
+        @endforeach
+    @elseif ($periode === 'mingguan')
+        // Label untuk 4 minggu dalam bulan
+        labels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+        data = Array(4).fill(0); // Inisialisasi data kosong
+
+        // Isi data sesuai dengan minggu
+        @foreach ($data['mingguan'] as $week => $count)
+            var weekNumber = parseInt("{{ $week }}", 10); // Ambil angka minggu
+            if (weekNumber >= 1 && weekNumber <= 4) { // Pastikan minggu hanya 1-4
+                data[weekNumber - 1] = {{ $count }};
+            }
+        @endforeach
+    @elseif ($periode === 'bulanan')
+        // Label untuk semua bulan
+        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        data = [
+            @foreach ($data['bulanan'] as $month => $count)
+                {{ $count }},
+            @endforeach
+        ];
+    @elseif ($periode === 'tahunan')
+        // Label untuk 2 tahun sebelum, tahun sekarang, dan 2 tahun setelah
+        var currentYear = new Date().getFullYear();
+        labels = Array.from({
+            length: 5
+        }, (_, i) => currentYear - 2 + i); // 2 tahun sebelum hingga 2 tahun setelah
+        data = Array(5).fill(0); // Inisialisasi data kosong
+
+        // Isi data sesuai dengan tahun
+        @foreach ($data['tahunan'] as $year => $count)
+            var yearIndex = labels.indexOf(parseInt({{ $year }}, 10));
+            if (yearIndex >= 0) {
+                data[yearIndex] = {{ $count }};
+            }
+        @endforeach
+    @endif
+
+    // Create the chart with Chart.js
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Jumlah Surat',
+                data: data,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
-    }
-});
-
+    });
 </script>
 
+
 <script>
-// Ambil elemen form
-var filterForm = document.getElementById('filterForm');
+    // Ambil elemen form
+    var filterForm = document.getElementById('filterForm');
 
-// Tambahkan event listener untuk setiap elemen form
-filterForm.querySelectorAll('select').forEach(function(selectElement) {
-    selectElement.addEventListener('change', function() {
-        // Ketika ada perubahan, submit form secara otomatis
-        filterForm.submit();
+    // Tambahkan event listener untuk setiap elemen form
+    filterForm.querySelectorAll('select').forEach(function(selectElement) {
+        selectElement.addEventListener('change', function() {
+            // Ketika ada perubahan, submit form secara otomatis
+            filterForm.submit();
+        });
     });
-});
-
-
 </script>
 
 </html>
